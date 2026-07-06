@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+        />
+        <title>The Microscopic Montado</title>
+
+        <!-- 年份用的点阵字体（接近你截图里的 LED 数码管效果）。
+             默认 Micro 5（点最分明）；若觉得太稀疏，把 --font-year 里
+             "DotGothic16" 提到最前面即可（像素更实）。
+             注意：年份现已改用 Helvetica，这段字体若不再用到可删。 -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Micro+5&family=DotGothic16&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            /* =======================================================================
+     ★ 需要你手动调整的地方都集中在这里（:root）
+     ----------------------------------------------------------------------- */
+            :root {
+                /* ① 世界地图视频上「阿连特茹」标记框的中心位置（百分比，相对地图层）。 */
+                --dot-x: 47.8%;
+                --dot-y: 28.6%;
+
+                /* ② 地图视频宽高比（Plate Carrée 等距圆柱投影 = 2:1）。 */
+                --map-aspect: 2;
+
+                /* ③ 背景视频渐显/渐隐时长（毫秒），与 JS 里 FADE_MS 保持一致。 */
+                /* ④ 配色 */
+                --ocean: #0b1a2b;
+                --beacon: #f5c453;
+                --core: #fff4dc;
+                --ink: #f3ece0;
+
+                /* ── 阿连特茹标记框（四角直角、四边中空、持续呼吸、随底色反相），可自己手调 ──
+                   位置 = 上面的 --dot-x / --dot-y */
+                --frame-w: 46px; /* 框宽 */
+                --frame-h: 30px; /* 框高 */
+                --frame-thickness: 3px; /* 线粗 */
+                --corner: 10px; /* 每个直角的「臂长」= 直角显示多少（越大角越长） */
+                /* 框颜色：默认 #fff，配合 .marker-frame 里的 mix-blend-mode: difference，
+                   会自动显示成「底下视频的反相色」（和导航栏一个原理）。
+                   想要固定颜色：改成具体色值，并删掉 .marker-frame 里的 mix-blend-mode 行。 */
+                --frame-color: #fff;
+                --frame-breathe: 2s; /* 呼吸一次的时长（越小越快） */
+                --frame-breathe-scale: 0.7; /* 呼吸最小缩放（越小起伏越大；1 = 不缩放） */
+
+                /* 引导点击文字：与方框同色（白 + 反相）、与方框同步呼吸。
+                   文字内容在 HTML 的 .marker-click 里改（默认 click）。 */
+                --click-size: 17px; /* click 文字字号 */
+
+                /* ⑤ ── 字幕 / 图例叠加层（视口锚定，不会被播放器裁掉）────────────── */
+                --cap-font:
+                    "Helvetica Neue", Helvetica, Arial, "PingFang SC",
+                    sans-serif;
+                /* 与 index 背景大字一致的字体（年份用它） */
+                --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                --font-year:
+                    "Micro 5", "DotGothic16", ui-monospace, "Courier New",
+                    monospace;
+
+                /* 字色：温度地图整体偏浅 → 用深色字（同你截图）。
+                   若以后换成深色背景视频，把下面两行换成浅色：
+                   --cap-color:#f3ece0; --cap-shadow:0 1px 6px rgba(0,0,0,.5); */
+                --cap-color: #111;
+                --cap-shadow: 0 1px 2px rgba(255, 255, 255, 0.35);
+
+                /* ── 标题 / 年份位置（左侧）：对齐 index 背景大字 .bg-text ──────── */
+                --cap-margin-x: 3.3vw; /* 距左边缘 = bg-text 左距(0.3em @ 11vw) */
+                --cap-bottom: 7.7vw; /* 距底部 = bg-text 下距(0.7em @ 11vw) */
+                --year-wipe: 0.55s; /* 年份「扫描揭示」时长（与 JS 的 YEAR_WIPE_MS 一致，越大越慢） */
+
+                /* ── 竖向图例位置 / 尺寸（右侧），可自己手调 ────────────────────── */
+                --legend-right: 3.3vw; /* 距右边缘 = 字幕左距，左右对称 */
+                --legend-bottom: calc(
+                    58px + 16px
+                ); /* 距底部；数值越大越往上。抬高以避开底部 FIELD GUIDE 横条(58px)+留白 */
+                --legend-h: clamp(120px, 26vh, 280px); /* 竖向色条高度 */
+                --legend-bar-w: clamp(10px, 2vw, 14px); /* 色条粗细 */
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            html,
+            body {
+                height: 100%;
+                overflow: hidden;
+                background: #000;
+                font-family:
+                    "PingFang SC",
+                    "Hiragino Sans GB",
+                    "Microsoft YaHei",
+                    -apple-system,
+                    system-ui,
+                    sans-serif;
+            }
+
+            /* ===== 世界地图（轮播背景视频） ======================================== */
+            .map {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: max(100vw, calc(100vh * var(--map-aspect)));
+                aspect-ratio: var(--map-aspect) / 1;
+                background-color: #000; /* ← 原来只有这行 */
+                background-image: url("Images/PlateCarree.png"); /* ← 新增 */
+                background-size: cover; /* ← 新增，铺满整个 .map */
+                background-position: center;
+            }
+            .map__video {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                opacity: 0;
+                transition: opacity 1.2s ease;
+                z-index: 0;
+            }
+
+            /* ===== 阿连特茹标记框（四角直角、四边中空、持续呼吸、随底色反相） =====
+               关键：方框是 .map 的直接子元素（与视频做兄弟），中间不能再套带
+               transform / opacity<1 / z-index 的外壳，否则会被隔离、无法和视频反相。 */
+            .marker-frame {
+                position: absolute;
+                left: var(--dot-x);
+                top: var(--dot-y);
+                width: var(--frame-w);
+                height: var(--frame-h);
+                transform: translate(
+                    -50%,
+                    -50%
+                ); /* 以 --dot-x/--dot-y 为中心 */
+                pointer-events: none; /* 点击交给下面的透明按钮 */
+                /* 只画四个直角：共 8 段（每个角 横臂 + 竖臂 各一段），四条边中间自然留空 */
+                background:
+                    linear-gradient(var(--frame-color), var(--frame-color)) left
+                        top / var(--corner) var(--frame-thickness) no-repeat,
+                    linear-gradient(var(--frame-color), var(--frame-color)) left
+                        top / var(--frame-thickness) var(--corner) no-repeat,
+                    linear-gradient(var(--frame-color), var(--frame-color))
+                        right top / var(--corner) var(--frame-thickness)
+                        no-repeat,
+                    linear-gradient(var(--frame-color), var(--frame-color))
+                        right top / var(--frame-thickness) var(--corner)
+                        no-repeat,
+                    linear-gradient(var(--frame-color), var(--frame-color)) left
+                        bottom / var(--corner) var(--frame-thickness) no-repeat,
+                    linear-gradient(var(--frame-color), var(--frame-color)) left
+                        bottom / var(--frame-thickness) var(--corner) no-repeat,
+                    linear-gradient(var(--frame-color), var(--frame-color))
+                        right bottom / var(--corner) var(--frame-thickness)
+                        no-repeat,
+                    linear-gradient(var(--frame-color), var(--frame-color))
+                        right bottom / var(--frame-thickness) var(--corner)
+                        no-repeat;
+                /* 跟随底下视频反相（与导航栏同原理）：白色 + difference = 反相色。
+                   不想反相、想用固定颜色时：删掉这一行，并把 --frame-color 改成具体色值。 */
+                mix-blend-mode: difference;
+                animation: frame-breathe var(--frame-breathe) ease-in-out
+                    infinite;
+            }
+            /* 呼吸只做缩放（不碰 opacity，避免和上面的淡入淡出打架）。
+               注意 keyframes 里要带上 translate(-50%,-50%)，否则会丢掉居中。 */
+            @keyframes frame-breathe {
+                0%,
+                100% {
+                    transform: translate(-50%, -50%) scale(1);
+                }
+                50% {
+                    transform: translate(-50%, -50%)
+                        scale(var(--frame-breathe-scale));
+                }
+            }
+
+            /* 透明点击区 + 悬停地名标签（不反相，所以标签是正常的深色胶囊） */
+            .marker-hit {
+                position: absolute;
+                left: var(--dot-x);
+                top: var(--dot-y);
+                width: var(--frame-w);
+                height: var(--frame-h);
+                transform: translate(-50%, -50%);
+                padding: 0;
+                border: none;
+                background: none;
+                cursor: pointer;
+                z-index: 1;
+            }
+            .marker-hit .label {
+                position: absolute;
+                left: 50%;
+                bottom: calc(100% + 12px);
+                transform: translateX(-50%);
+                white-space: nowrap;
+                padding: 5px 12px;
+                border-radius: 999px;
+                font-size: 13px;
+                letter-spacing: 0.3px;
+                color: var(--ink);
+                background: rgba(10, 18, 30, 0.72);
+                border: 1px solid rgba(245, 196, 83, 0.4);
+                backdrop-filter: blur(6px);
+                opacity: 0;
+                pointer-events: none;
+                transition:
+                    opacity 0.25s ease,
+                    transform 0.25s ease;
+            }
+            .marker-hit:hover .label,
+            .marker-hit:focus-visible .label {
+                opacity: 1;
+                transform: translateX(-50%) translateY(-2px);
+            }
+            .marker-hit:focus-visible {
+                outline: 2px solid var(--core);
+                outline-offset: 6px;
+            }
+
+            /* ===== 引导点击：click 文字（与方框同色、同步呼吸） =====
+               与方框完全一致：白色 + difference 反相；必须是 .map 直接子元素才能正确反相。
+               呼吸用与方框相同的 --frame-breathe，所以两者同步。 */
+            .marker-click {
+                position: absolute;
+                left: var(--dot-x);
+                top: var(--dot-y);
+                /* 放到框正下方：往下挪 半个框高 + 10px */
+                transform: translate(-50%, calc(var(--frame-h) / 2 + 10px));
+                transform-origin: 50% calc(var(--frame-h) / -2 - 10px);
+                pointer-events: none;
+                font-family: var(--cap-font);
+                font-size: var(--click-size);
+                font-weight: 700;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                white-space: nowrap;
+                color: var(--frame-color); /* 与方框同色（白） */
+                mix-blend-mode: difference; /* 同方框：随底色反相 */
+                animation: click-breathe var(--frame-breathe) ease-in-out
+                    infinite;
+            }
+            /* 与方框同参数的呼吸；keyframes 里要带上原本的居中位移，否则会跑位 */
+            @keyframes click-breathe {
+                0%,
+                100% {
+                    transform: translate(-50%, calc(var(--frame-h) / 2 + 10px))
+                        scale(1);
+                }
+                50% {
+                    transform: translate(-50%, calc(var(--frame-h) / 2 + 10px))
+                        scale(var(--frame-breathe-scale));
+                }
+            }
+
+            /* ===== 字幕 / 图例叠加层（固定在视口，永不被裁切） ===================== */
+            .climate-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 2; /* 在视频之上、退场遮罩之下；不挡标记框点击 */
+                pointer-events: none;
+                font-family: var(--cap-font);
+                color: var(--cap-color);
+                opacity: 0; /* 默认隐藏，由 JS 跟随视频一起渐显/渐隐 */
+                /* ⚠ 这里的时长要和 JS 里的 FADE_MS(1200) 保持一致 */
+                transition: opacity 1.2s ease;
+            }
+
+            /* — 左侧：主标题 / 副标题 / 年份 — */
+            .climate-caption {
+                position: absolute;
+                left: max(var(--cap-margin-x), env(safe-area-inset-left));
+                bottom: max(var(--cap-bottom), env(safe-area-inset-bottom));
+            }
+            .climate-caption__title {
+                left: 0.3em; /* ✏️ 微调左侧对齐 */
+                font-family: var(--font-main);
+                font-size: 4vw; /* ✏️ 字号，vw 单位保持响应式 */
+                font-weight: 400; /* ✏️ 字重 */
+                color: #000000; /* ✏️ 极浅灰，退到背景不抢焦点 */
+                line-height: 1; /* ✏️ 行高，两行紧凑贴合 */
+                letter-spacing: 0em; /* ✏️ 轻微收紧字距 */
+                pointer-events: none;
+                user-select: none;
+                opacity: 1;
+                transition: opacity 0.5s ease;
+                line-height: 1.1;
+            }
+            .climate-caption__sub {
+                left: 0.3em; /* ✏️ 微调左侧对齐 */
+                font-family: var(--font-main);
+                font-size: 4vw; /* ✏️ 字号，vw 单位保持响应式 */
+                font-weight: 400; /* ✏️ 字重 */
+                color: #000000; /* ✏️ 极浅灰，退到背景不抢焦点 */
+                line-height: 1; /* ✏️ 行高，两行紧凑贴合 */
+                letter-spacing: 0em; /* ✏️ 轻微收紧字距 */
+                pointer-events: none;
+                user-select: none;
+                opacity: 1;
+                transition: opacity 0.5s ease;
+                line-height: 1.1;
+                margin-top: 0px;
+            }
+            .climate-year {
+                position: relative; /* 两层年份叠放的定位容器 */
+                margin-bottom: clamp(
+                    28px,
+                    6vh,
+                    72px
+                ); /* 年份在上，间距放到它下方（= 标题离年份的距离，调这里） */
+                font-family: var(--font-main); /* 同 index 背景大字 */
+                font-size: 7vw; /* 同 bg-text 字号 */
+                line-height: 1;
+                font-weight: 400; /* 同 bg-text 字重 */
+                letter-spacing: 0em; /* 同 bg-text 字距 */
+                white-space: nowrap;
+                height: 1.1em; /* 固定高度：年份切换时上面的标题不会被顶动 */
+            }
+            /* 两层年份：旧的在上层，被一道从左到右的「扫描线」擦掉，露出下层的新年份 */
+            .climate-year .yr {
+                position: absolute;
+                left: 0;
+                bottom: 0; /* 底对齐 */
+                white-space: nowrap;
+                opacity: 0; /* 默认隐藏；当前显示的那层加 .is-front */
+            }
+            .climate-year .yr.is-front {
+                opacity: 1;
+                z-index: 1;
+            }
+            .climate-year .yr.is-wiping {
+                opacity: 1;
+                z-index: 2; /* 在上层，把自己擦掉以露出下层 */
+                animation: year-wipe var(--year-wipe) ease forwards;
+            }
+            @keyframes year-wipe {
+                from {
+                    clip-path: inset(0 0 0 0);
+                }
+                to {
+                    clip-path: inset(0 0 0 100%);
+                }
+            }
+
+            /* — 右侧：竖向温度图例（红在上、蓝在下） — */
+            .legend {
+                position: absolute;
+                right: max(var(--legend-right), env(safe-area-inset-right));
+                bottom: max(var(--legend-bottom), env(safe-area-inset-bottom));
+                color: var(--cap-color);
+
+                font-variant-numeric: tabular-nums;
+            }
+            /* 单位（°C）放最上面，右对齐在刻度一侧 */
+            .legend__unit {
+                font-size: clamp(10px, 1vw, 13px);
+                opacity: 0.85;
+                text-align: right;
+                margin-bottom: 2px;
+            }
+            /* 色条 + 刻度并排 */
+            .legend__scale {
+                display: flex;
+                align-items: stretch; /* 让刻度列高度 = 色条高度 */
+                gap: 7px;
+            }
+            .legend__bar {
+                width: var(--legend-bar-w);
+                height: var(--legend-h);
+                border-radius: 2px;
+                box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+            }
+            /* 温度：红在上、蓝在下（to top：0% 在底部、100% 在顶部）。
+               想换成 PNG：把对应类的 background 改成
+               background: url("images/xxx.png") center/100% 100% no-repeat; */
+            .legend__bar--temp {
+                background: linear-gradient(
+                    to top,
+                    #053061 0%,
+                    #2166ac 10%,
+                    #4393c3 20%,
+                    #92c5de 30%,
+                    #d1e5f0 40%,
+                    #f7f7f7 50%,
+                    #fddbc7 60%,
+                    #f4a582 70%,
+                    #d6604d 80%,
+                    #b2182b 90%,
+                    #67001f 100%
+                );
+            }
+            /* 植被 NDVI：绿在上、棕在下（BrBG 配色，对应你上传的图例） */
+            .legend__bar--ndvi {
+                background: linear-gradient(
+                    to top,
+                    #543005 0%,
+                    #8c510a 10%,
+                    #bf812d 20%,
+                    #dfc27d 30%,
+                    #f6e8c3 40%,
+                    #f5f5f5 50%,
+                    #c7eae5 60%,
+                    #80cdc1 70%,
+                    #35978f 80%,
+                    #01665e 90%,
+                    #003c30 100%
+                );
+            }
+            /* 刻度：3 在上 … -3 在下，等分对齐色条上下端 */
+            .legend__ticks {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                font-size: clamp(10px, 1vw, 13px);
+                line-height: 1;
+            }
+
+            /* ===== 退场遮罩（点击标记框后渐黑） ==================================== */
+            .exit-overlay {
+                position: fixed;
+                inset: 0;
+                background: #000;
+                opacity: 0;
+                z-index: 9999;
+                pointer-events: none;
+                transition: opacity 0.7s ease;
+            }
+            .exit-overlay.active {
+                opacity: 1;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .marker-frame {
+                    animation: none;
+                    transition: none !important;
+                }
+                .marker-click {
+                    animation: none;
+                    transition: none !important;
+                }
+                .map__video {
+                    transition: none !important;
+                }
+                .exit-overlay {
+                    transition: none !important;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="site-nav"></div>
+        <script src="nav.js"></script>
+
+        <!-- 退场遮罩 -->
+        <div class="exit-overlay" id="exitOverlay"></div>
+
+        <!-- 世界地图：两个交替的视频 slot + 阿连特茹标记框（反相方框 + 透明点击区） -->
+        <div class="map">
+            <video
+                class="map__video"
+                id="bgVid0"
+                muted
+                playsinline
+                preload="auto"
+            ></video>
+            <video
+                class="map__video"
+                id="bgVid1"
+                muted
+                playsinline
+                preload="auto"
+            ></video>
+
+            <!-- 引导点击：click 文字（与方框同色、同步呼吸）。文字改这里 -->
+            <div class="marker-click" id="markerClick" aria-hidden="true">
+                site
+            </div>
+
+            <!-- 反相方框：纯视觉，跟视频做兄弟才能正确反相 -->
+            <div class="marker-frame" id="markerFrame" aria-hidden="true"></div>
+
+            <!-- 透明点击区：负责点击跳转 + 悬停地名标签 -->
+            <button
+                class="marker-hit"
+                id="worldBeacon"
+                aria-label="Enter the Alentejo region"
+            >
+                <span class="label">Portugal · Alentejo</span>
+            </button>
+        </div>
+
+        <!-- 字幕 / 图例叠加层（锚定视口，与视频比例无关，永不被裁切） -->
+        <div class="climate-overlay" id="climateOverlay">
+            <div class="climate-caption">
+                <div class="climate-year" id="climateYear" aria-hidden="true">
+                    <span class="yr"></span>
+                    <span class="yr"></span>
+                </div>
+                <div class="climate-caption__title" id="capTitle"></div>
+                <div class="climate-caption__sub" id="capSub"></div>
+            </div>
+
+            <!-- 竖向图例：两段视频各一套，位置/格式相同，由 JS 切换显示 -->
+            <div class="legend" id="legendTemp">
+                <div class="legend__unit">°C</div>
+                <div class="legend__scale">
+                    <div class="legend__bar legend__bar--temp"></div>
+                    <div class="legend__ticks">
+                        <span>3</span><span>2</span><span>1</span><span>0</span
+                        ><span>-1</span><span>-2</span><span>-3</span>
+                    </div>
+                </div>
+            </div>
+            <div class="legend" id="legendNdvi" style="display: none">
+                <div class="legend__unit">NDVI</div>
+                <div class="legend__scale">
+                    <div class="legend__bar legend__bar--ndvi"></div>
+                    <div class="legend__ticks">
+                        <span>+0.10</span><span>+0.05</span><span>0</span
+                        ><span>-0.05</span><span>-0.10</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // ══════════════════════════════════════════════════════════════
+            // ★ 背景视频轮播配置 — 在这里填写所有背景视频的路径（按顺序循环）
+            // ══════════════════════════════════════════════════════════════
+            // ── 每段视频的内容（标题 / 副标题 / 四个年份 / 用哪套图例）────────
+            //    再加视频：往下复制一个 { } 即可；legend 用 "temp" 或 "ndvi"。
+            //    副标题里用 <br> 换行。
+            var VIDEOS = [
+                {
+                    src: "videos/PlateCarree_temp_anomaly_web",
+                    title: "Temperature Anomaly",
+                    subtitle:
+                        "How much warmer or cooler<br>than the 1951–1980 average",
+                    years: ["1986-1995", "1996-2005", "2006-2015", "2016-2025"],
+                    legend: "temp",
+                },
+                {
+                    src: "videos/ndvi_anomaly_web",
+                    title: "Vegetation Change",
+                    subtitle:
+                        "Where plant cover grew denser or thinned out<br>than the 1982–1990 average",
+                    years: ["1991-2000", "2001-2010", "2011-2020", "2021-2022"],
+                    legend: "ndvi",
+                },
+            ];
+            var BG_VIDEOS = VIDEOS.map(function (x) {
+                return x.src;
+            });
+            // 按浏览器能力选格式：Chrome/Firefox/Android 用 .webm，Safari/iOS 用 .mp4。
+            // BG_VIDEOS 存的是不带扩展名的基础路径，这里补上扩展名。
+            var CAN_WEBM = !!document
+                .createElement("video")
+                .canPlayType('video/webm; codecs="vp9, vp8"');
+            function pickSrc(base) {
+                return base + (CAN_WEBM ? ".webm" : ".mp4");
+            }
+            var FADE_MS = 1200; // 渐隐/渐显时长（毫秒），与 CSS transition 保持一致
+            var BLACK_MS = 400; // 两段视频之间纯黑停顿时长（毫秒）
+
+            // ── 内部状态 ──────────────────────────────────────────────────
+            var bgSlots = [
+                document.getElementById("bgVid0"),
+                document.getElementById("bgVid1"),
+            ];
+            var activeSlot = 0;
+            var nextVidIdx = 1 % BG_VIDEOS.length;
+
+            bgSlots.forEach(function (v) {
+                v.addEventListener("ended", onBgEnded);
+            });
+
+            // 初始化：启动第一段视频
+            (function initBg() {
+                bgSlots[0].src = pickSrc(BG_VIDEOS[0]);
+                fadeInOnPlay(bgSlots[0], bgSlots[0].play());
+                bgSlots[1].src = pickSrc(BG_VIDEOS[1 % BG_VIDEOS.length]);
+                bgSlots[1].load();
+            })();
+
+            function fadeInOnPlay(v, promise) {
+                function doFadeIn() {
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            v.style.opacity = "1";
+                            // 按当前这段视频换好标题/副标题/图例/年份，再让字幕层淡入
+                            applyVideoMeta(vidIndexOf(v));
+                            fadeOverlay(true);
+                            // 标记框：每段视频都跟着一起渐显
+                        });
+                    });
+                }
+                if (promise && typeof promise.then === "function") {
+                    promise.then(doFadeIn).catch(doFadeIn);
+                } else {
+                    doFadeIn();
+                }
+            }
+
+            function onBgEnded() {
+                var outSlot = activeSlot;
+                var inSlot = 1 - activeSlot;
+                var inVidIdx = nextVidIdx;
+                var afterNext = (inVidIdx + 1) % BG_VIDEOS.length;
+
+                bgSlots[outSlot].style.opacity = "0";
+                fadeOverlay(false); // 字幕/图例与正在淡出的视频一起渐隐
+                setTimeout(function () {
+                    var v = bgSlots[inSlot];
+                    v.currentTime = 0;
+                    fadeInOnPlay(v, v.play());
+                    activeSlot = inSlot;
+                    nextVidIdx = afterNext;
+                    bgSlots[outSlot].src = pickSrc(BG_VIDEOS[afterNext]);
+                    bgSlots[outSlot].load();
+                }, FADE_MS + BLACK_MS);
+            }
+
+            // ══════════════════════════════════════════════════════════════
+            // ★ 字幕系统：每段视频显示自己的标题/副标题/图例，四个年份按 1/4 时长切换
+            // ══════════════════════════════════════════════════════════════
+            var climateOverlay = document.getElementById("climateOverlay");
+            var climateYearEl = document.getElementById("climateYear");
+            var yearLayers = climateYearEl.querySelectorAll(".yr");
+            var yearFront = 0; // 当前显示的是哪一层
+            var capTitleEl = document.getElementById("capTitle");
+            var capSubEl = document.getElementById("capSub");
+            var legendEls = {
+                temp: document.getElementById("legendTemp"),
+                ndvi: document.getElementById("legendNdvi"),
+            };
+            var currentVidIdx = -1;
+            var lastQuarter = -1;
+
+            // 找出某个 <video> 当前播放的是 VIDEOS 里的第几段
+            function vidIndexOf(v) {
+                if (!v || !v.src) return -1;
+                for (var i = 0; i < BG_VIDEOS.length; i++) {
+                    if (v.src.indexOf(BG_VIDEOS[i]) !== -1) return i;
+                }
+                return -1;
+            }
+
+            // 切到第 idx 段视频时：换标题/副标题/图例，并让年份从第一段重新开始
+            function applyVideoMeta(idx) {
+                currentVidIdx = idx;
+                lastQuarter = -1;
+                var meta = VIDEOS[idx];
+                if (!meta) return;
+                capTitleEl.textContent = meta.title;
+                capSubEl.innerHTML = meta.subtitle;
+                // 这段视频的第一个年份直接摆上（不扫描），之后进入下一个 1/4 才扫描
+                lastQuarter = 0;
+                setYearInstant(meta.years[0]);
+                // 只显示这段视频对应的那套图例
+                for (var key in legendEls) {
+                    if (legendEls[key]) {
+                        legendEls[key].style.display =
+                            key === meta.legend ? "" : "none";
+                    }
+                }
+            }
+
+            // 让整层字幕/图例的透明度跟随视频（与 <video> 的渐变同步）
+            function fadeOverlay(on) {
+                climateOverlay.style.opacity = on ? "1" : "0";
+            }
+
+            // 年份切换：扫描揭示 —— 旧年份在上层被一道从左到右的扫描线擦掉，
+            // 露出下层的新年份；两层叠放，不会出现两个年份重叠的鬼影。
+            var YEAR_WIPE_MS = 550; // 与 CSS 的 --year-wipe 时长一致（越大越慢）
+
+            // 直接摆上某个年份（切到新视频的第一帧用，不做扫描）
+            function setYearInstant(text) {
+                var f = yearFront;
+                var fEl = yearLayers[f];
+                var bEl = yearLayers[1 - f];
+                fEl.textContent = text;
+                fEl.classList.remove("is-wiping");
+                fEl.classList.add("is-front");
+                bEl.classList.remove("is-front", "is-wiping");
+            }
+
+            // 扫描切换到新年份
+            function showYear(text) {
+                var f = yearFront;
+                var b = 1 - f;
+                var outEl = yearLayers[f]; // 旧：上层，擦掉自己
+                var inEl = yearLayers[b]; // 新：下层，被露出
+                inEl.textContent = text;
+                inEl.classList.remove("is-wiping");
+                inEl.classList.add("is-front");
+                outEl.classList.remove("is-front", "is-wiping");
+                void climateYearEl.offsetWidth; // 重排，重启扫描动画
+                outEl.classList.add("is-wiping");
+                yearFront = b;
+                // 扫完后把旧层彻底藏起来
+                setTimeout(function () {
+                    outEl.classList.remove("is-wiping");
+                }, YEAR_WIPE_MS);
+            }
+
+            function onCaptionTimeUpdate(e) {
+                var v = e.target;
+                if (v !== bgSlots[activeSlot]) return; // 只跟随当前显示的视频
+                var meta = VIDEOS[currentVidIdx];
+                if (!meta) return;
+
+                var dur = v.duration;
+                if (!dur || isNaN(dur) || !isFinite(dur)) return;
+
+                var q = Math.floor((v.currentTime / dur) * 4);
+                if (q > 3) q = 3;
+                if (q < 0) q = 0;
+                if (q !== lastQuarter) {
+                    lastQuarter = q;
+                    showYear(meta.years[q]);
+                }
+            }
+
+            bgSlots.forEach(function (v) {
+                v.addEventListener("timeupdate", onCaptionTimeUpdate);
+            });
+
+            // ── 点标记框 → 渐黑退场 → 跳转第二页 ──────────────────────────
+            var worldBeacon = document.getElementById("worldBeacon");
+            var exitOverlay = document.getElementById("exitOverlay");
+            var navigating = false;
+
+            worldBeacon.addEventListener("click", function () {
+                if (navigating) return;
+                navigating = true;
+
+                // 把标记框中心坐标传给第二页，用于复现从此处放大的动画
+                var r = worldBeacon.getBoundingClientRect();
+                var ox = Math.round(r.left + r.width / 2);
+                var oy = Math.round(r.top + r.height / 2);
+
+                // 渐黑遮罩淡入
+                exitOverlay.classList.add("active");
+
+                // 遮罩不透明后跳转
+                setTimeout(function () {
+                    window.location.href =
+                        "montado.html?ox=" + ox + "&oy=" + oy;
+                }, 700);
+            });
+        </script>
+        <script>
+            // ═══════════════════════════════════════════════════════════════
+            // 标记框按经纬度精确定位（PlateCarree / 等距圆柱 全球图）
+            // 无论手机竖屏 / 横屏 / 电脑，方框都钉在阿连特茹，随视频画面走、不漂移。
+            // 想改目标点：只改 TARGET_LON / TARGET_LAT 两个数。
+            // ═══════════════════════════════════════════════════════════════
+            (function () {
+                // 视频画面的地理范围（完整全球等距圆柱）
+                var MAP = { west: -180, east: 180, north: 90, south: -90 };
+                // 目标点：阿连特茹 ≈ 埃武拉（西经为负、北纬为正）
+                var TARGET_LON = -7.92;
+                var TARGET_LAT = 38.52;
+                // 视频画面宽高比兜底值（.map 的 --map-aspect = 2）；有真实视频尺寸时以其为准
+                var FALLBACK_ASPECT = 2;
+
+                var mapEl = document.querySelector(".map");
+                var slots = [
+                    document.getElementById("bgVid0"),
+                    document.getElementById("bgVid1"),
+                ];
+
+                // 目标点在"视频画面"里的归一化坐标（0~1）
+                var cx = (TARGET_LON - MAP.west) / (MAP.east - MAP.west);
+                var cy = (MAP.north - TARGET_LAT) / (MAP.north - MAP.south);
+
+                function videoAspect() {
+                    for (var i = 0; i < slots.length; i++) {
+                        var v = slots[i];
+                        if (v && v.videoWidth && v.videoHeight)
+                            return v.videoWidth / v.videoHeight;
+                    }
+                    return FALLBACK_ASPECT;
+                }
+
+                // 视频以 object-fit:cover 铺在 .map 内。把目标点从"画面归一化坐标"
+                // 换算成 .map 里的百分比（考虑 cover 的居中裁剪）。
+                function positionMarker() {
+                    if (!mapEl) return;
+                    var mw = mapEl.clientWidth,
+                        mh = mapEl.clientHeight;
+                    if (!mw || !mh) return;
+                    var A = videoAspect();
+                    var rW, rH;
+                    if (A > mw / mh) {
+                        // 视频比 .map 更宽 → 贴合高度、裁左右
+                        rH = mh;
+                        rW = mh * A;
+                    } else {
+                        // 视频比 .map 更高（或相等）→ 贴合宽度、裁上下
+                        rW = mw;
+                        rH = mw / A;
+                    }
+                    var x = cx * rW - (rW - mw) / 2;
+                    var y = cy * rH - (rH - mh) / 2;
+                    var root = document.documentElement.style;
+                    root.setProperty("--dot-x", (x / mw) * 100 + "%");
+                    root.setProperty("--dot-y", (y / mh) * 100 + "%");
+                }
+
+                positionMarker();
+                window.addEventListener("resize", positionMarker);
+                window.addEventListener("orientationchange", positionMarker);
+                slots.forEach(function (v) {
+                    if (v) v.addEventListener("loadedmetadata", positionMarker);
+                });
+            })();
+        </script>
+    </body>
+</html>

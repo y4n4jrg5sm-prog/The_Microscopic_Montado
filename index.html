@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="black-translucent"
+        />
+        <meta charset="UTF-8" />
+        <!-- 让手机/iPad 按真实设备宽度渲染；展台防误触缩放。想让公开网页版可放大就删掉 maximum-scale/user-scalable。 -->
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+        />
+        <title>The Microscopic Montado</title>
+        <style>
+            /* ==================== 双态切换外壳 ====================
+               这个 index.html 本身只是一个“壳”：
+                 · 上面板（front）用 iframe 载入 home.html（土壤背景那页）
+                 · 下面板（back）用 iframe 载入 field-guide.html（有大字那页）
+               两页各自的 CSS/JS 完全隔离在自己的 iframe 文档里，互不干扰，
+               所以你原来两页的代码一个字都不用改。
+
+               动作：#stage 高 200dvh（上下叠放两屏），点横条时整体上移一屏，
+               第二页从下往上顶进来；横条用相同时长/缓动从底滑到顶，一起移动。 */
+
+            :root {
+                --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                --bar-h: 58px; /* ✏️ 横条高度 */
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                height: 100%;
+                background: #ffffff;
+            }
+            body {
+                overflow: hidden;
+                font-family: var(--font-main);
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            #app {
+                position: fixed;
+                inset: 0;
+                overflow: hidden;
+            }
+            #stage {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 200dvh; /* 两屏叠放：上=home，下=field-guide */
+                transform: translateY(0);
+                transition: transform 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+                will-change: transform;
+            }
+            #app.at-top #stage {
+                transform: translateY(-100dvh); /* 上移一屏，露出第二页 */
+            }
+            #stage iframe {
+                display: block;
+                width: 100%;
+                height: 100dvh;
+                border: 0;
+                margin: 0;
+            }
+
+            /* ---- 横条 ---- */
+            #toggle-bar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: var(--bar-h);
+                /* 初始：停在视口底部（front 状态） */
+                transform: translateY(calc(100dvh - 100%));
+                transition:
+                    transform 0.75s cubic-bezier(0.76, 0, 0.24, 1),
+                    background-color 0.55s ease,
+                    color 0.55s ease;
+                background: #ffffff;
+                color: #111111;
+                border: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: clamp(16px, 5vw, 44px);
+                cursor: pointer;
+                z-index: 10000;
+                font-family: var(--font-main);
+                box-shadow:
+                    0 -1px 0 rgba(0, 0, 0, 0.08),
+                    0 -10px 26px rgba(0, 0, 0, 0.05);
+                -webkit-tap-highlight-color: transparent;
+            }
+            #app.at-top #toggle-bar {
+                /* 到顶（back 状态）：变黑 */
+                transform: translateY(0);
+                background: #0a0a0a;
+                color: #ffffff;
+                box-shadow:
+                    0 1px 0 rgba(255, 255, 255, 0.06),
+                    0 12px 28px rgba(0, 0, 0, 0.28);
+            }
+
+            /* 中间文字：两条标签叠放，交叉淡入淡出 */
+            #toggle-bar .bar-label {
+                position: relative;
+                display: inline-grid;
+            }
+            #toggle-bar .bar-label > span {
+                grid-area: 1 / 1;
+                text-align: center;
+                white-space: nowrap;
+                font-size: clamp(12px, 2.4vw, 16px);
+                letter-spacing: 0.24em;
+                text-transform: uppercase;
+                font-weight: 500;
+                transition: opacity 0.4s ease;
+            }
+            #toggle-bar .lab-front {
+                opacity: 1;
+            }
+            #toggle-bar .lab-back {
+                opacity: 0;
+            }
+            #app.at-top #toggle-bar .lab-front {
+                opacity: 0;
+            }
+            #app.at-top #toggle-bar .lab-back {
+                opacity: 1;
+            }
+
+            /* 两侧箭头：front 朝上、back 朝下（旋转 180°），并轻轻上下呼吸 */
+            #toggle-bar .chev {
+                width: 15px;
+                height: 15px;
+                flex: 0 0 auto;
+                color: currentColor;
+                rotate: 0deg;
+                transition: rotate 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+                animation: chevBob 1.9s ease-in-out infinite;
+            }
+            #app.at-top #toggle-bar .chev {
+                rotate: 180deg;
+            }
+            @keyframes chevBob {
+                0%,
+                100% {
+                    translate: 0 -2px;
+                }
+                50% {
+                    translate: 0 2px;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                #toggle-bar .chev {
+                    animation: none;
+                }
+                #stage,
+                #toggle-bar {
+                    transition-duration: 0.001s;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <div id="stage">
+                <!-- 上面板：home.html（土壤背景、无大字） -->
+                <iframe
+                    id="panel-front"
+                    src="microscopic.html"
+                    title="The Microscopic Montado"
+                    scrolling="no"
+                ></iframe>
+                <!-- 下面板：field-guide.html（有大字） -->
+                <iframe
+                    id="panel-back"
+                    src="field-guide.html"
+                    title="Field Guide"
+                    scrolling="no"
+                ></iframe>
+            </div>
+
+            <!-- 横条：点它就上下翻页 -->
+            <button id="toggle-bar" type="button" aria-label="Toggle page">
+                <svg
+                    class="chev"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <polyline points="6 15 12 9 18 15" />
+                </svg>
+                <span class="bar-label">
+                    <!-- ✏️ front 状态（home 在下、横条在底）显示的文字 -->
+                    <span class="lab-front">FIELD GUIDE</span>
+                    <!-- ✏️ back 状态（翻上去、横条在顶）显示的文字，可自行改名 -->
+                    <span class="lab-back">MICROSCOPIC MONTADO</span>
+                </span>
+                <svg
+                    class="chev"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <polyline points="6 15 12 9 18 15" />
+                </svg>
+            </button>
+        </div>
+
+        <script>
+            (function () {
+                const app = document.getElementById("app");
+                const bar = document.getElementById("toggle-bar");
+                bar.addEventListener("click", function () {
+                    app.classList.toggle("at-top");
+                });
+            })();
+        </script>
+    </body>
+</html>

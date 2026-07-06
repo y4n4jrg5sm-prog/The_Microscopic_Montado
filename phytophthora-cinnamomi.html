@@ -1,0 +1,2179 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script>
+            // 详情页始终整页打开：若被载入到 index.html 容器的 iframe 里，
+            // 立即跳到顶层窗口（这样可以正常滚动，底部也不会出现 FIELD GUIDE 横条）。
+            if (window.top !== window.self) {
+                window.top.location.replace(window.location.href);
+            }
+        </script>
+        <title>Phytophthora cinnamomi · The Microscopic Montado</title>
+
+        <style>
+            :root {
+                --bg: #ffffff;
+                --ink: #111111;
+                --text: #444444;
+                --muted: #888888;
+                --line: #e2e2e2;
+                --accent: #777;
+                --bar: #000000;
+                --pathogen: #888;
+                --defender: #888;
+                --water: #888;
+                --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                --font-display: var(--font-main);
+                --font-body: var(--font-main);
+                --font-mono: var(--font-main);
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: var(--font-body);
+                background-color: var(--bg);
+                color: var(--text);
+                line-height: 1.6;
+                position: relative; /* positioning context for .page-bg */
+            }
+
+            /* Body copy face for the top hero */
+            @font-face {
+                font-family: "Syne Mono";
+                src: url("fonts/SyneMono-Regular.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            /* Top hero — pinned full-bleed image + scrolling inverted copy.
+               NB: .hero-scroll has NO z-index, so it does not isolate the blend. */
+            .hero-scroll {
+                position: relative;
+                width: 100%;
+            }
+            .hero-bg-sticky {
+                position: sticky;
+                top: 0;
+                width: 100%;
+                line-height: 0;
+            }
+            .hero-bg-sticky img {
+                display: block;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 2560 / 1600; /* reserve correct height pre-load */
+            }
+
+            .hero-copy {
+                position: absolute;
+                top: 20.8vw; /* pre-JS estimate ≈ 1/3 down the image (H/3 for 2560×1600); JS sets exact px */
+                right: 0;
+                width: 40%; /* right two-fifths on desktop */
+                padding-right: clamp(20px, 4vw, 64px);
+                padding-left: 24px;
+                color: #ffffff; /* solid white copy */
+            }
+            .hero-copy p {
+                font-family: "Syne Mono", var(--font-mono);
+                font-size: clamp(13px, 1.3vw, 17px);
+                line-height: 1.72;
+                margin: 0 0 1.3em;
+                text-align: left;
+            }
+            .hero-copy p:last-child {
+                margin-bottom: 0;
+            }
+            .hero-copy em,
+            .hero-copy .sci {
+                font-style: italic;
+            }
+
+            /* Upward scroll hint — sits just above the copy's top line.
+               Absolutely positioned so it does NOT push the text start down,
+               and does NOT add to the copy height (T) used by the scroll math.
+               It rides up with the copy as the page scrolls. */
+            .hero-scroll-hint {
+                position: absolute;
+                left: 24px; /* aligns with .hero-copy padding-left */
+                top: 0;
+                transform: translateY(calc(-100% - 12px));
+                color: #ffffff;
+                pointer-events: none;
+            }
+            .hero-scroll-hint svg {
+                display: block;
+                width: 26px;
+                height: 26px;
+                animation: heroHintFloat 1.8s ease-in-out infinite;
+            }
+            @keyframes heroHintFloat {
+                0%,
+                100% {
+                    transform: translateY(3px);
+                    opacity: 0.5;
+                }
+                50% {
+                    transform: translateY(-3px);
+                    opacity: 1;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .hero-scroll-hint svg {
+                    animation: none;
+                    opacity: 0.75;
+                }
+            }
+            @media (max-width: 600px) {
+                .hero-scroll-hint {
+                    left: 20px; /* match mobile padding-left */
+                }
+            }
+
+            /* Citation dots — upper-right of the preceding word */
+            .hero-ref {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: currentColor;
+                vertical-align: super;
+                position: relative;
+                top: -0.15em;
+                margin-left: 3px;
+                cursor: pointer;
+            }
+            .hero-ref::after {
+                content: "";
+                position: absolute;
+                inset: -9px;
+                border-radius: 50%;
+            }
+            .hero-ref:focus-visible {
+                outline: 2px solid currentColor;
+                outline-offset: 3px;
+            }
+
+            /* Popup for the dots — a normal, readable card (never blended) */
+            .hero-ref-card {
+                position: fixed;
+                z-index: 1000;
+                display: none;
+                max-width: 360px;
+                width: max-content;
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 16px 18px;
+                box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+            }
+            .hero-ref-card.open {
+                display: block;
+            }
+            .hero-ref-card .hrc-kicker {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--accent);
+                margin-bottom: 10px;
+            }
+            .hero-ref-card .hrc-cite {
+                font-family: var(--font-main);
+                font-size: 12px;
+                color: #555;
+                line-height: 1.55;
+                border-top: 1px solid var(--line);
+                margin-top: 10px;
+                padding-top: 10px;
+            }
+            .hero-ref-card .hrc-cite:first-of-type {
+                border-top: none;
+                margin-top: 0;
+                padding-top: 0;
+            }
+            .hero-ref-card .hrc-cite a {
+                display: inline-block;
+                margin-top: 5px;
+                font-size: 12px;
+                color: var(--accent);
+                text-decoration: none;
+                word-break: break-all;
+            }
+            .hero-ref-card .hrc-cite a:hover {
+                text-decoration: underline;
+            }
+
+            @media (max-width: 1024px) {
+                .hero-copy {
+                    width: 56%;
+                }
+            }
+            @media (max-width: 600px) {
+                .hero-copy {
+                    width: 100%;
+                    padding-left: 20px;
+                    padding-right: 20px;
+                }
+                .hero-copy p {
+                    font-size: 14px;
+                }
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 96px 20px 60px;
+                position: relative;
+            }
+
+            hr {
+                border: none;
+                border-top: 1px solid var(--line);
+                margin: 50px 0;
+            }
+
+            a {
+                color: inherit;
+            }
+            .sci {
+                font-style: italic;
+            }
+
+            sup.ref {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--accent);
+                vertical-align: super;
+                position: relative;
+                top: -0.15em;
+                margin-left: 3px;
+                cursor: pointer;
+                text-decoration: none;
+                user-select: none;
+                transition: background 0.15s;
+            }
+            sup.ref:hover,
+            sup.ref:focus-visible {
+                background: var(--ink);
+            }
+            sup.ref::before {
+                content: none;
+            }
+            sup.ref::after {
+                /* enlarged touch / click target */
+                content: "";
+                position: absolute;
+                inset: -8px;
+                border-radius: 50%;
+            }
+
+            .ref-card {
+                position: fixed;
+                z-index: 999;
+                display: none;
+                max-width: 330px;
+                width: max-content;
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 16px 18px;
+                box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+            }
+            .ref-card.open {
+                display: block;
+            }
+            .ref-card .rc-kicker {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--accent);
+                margin-bottom: 8px;
+            }
+            .ref-card .rc-title {
+                font-size: 14px;
+                color: var(--ink);
+                font-weight: 600;
+                line-height: 1.35;
+                margin-bottom: 7px;
+            }
+            .ref-card .rc-meta {
+                font-size: 12px;
+                color: #666;
+                line-height: 1.55;
+                margin-bottom: 12px;
+            }
+            .ref-card a.rc-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 12px;
+                color: var(--accent);
+                text-decoration: none;
+                border-top: 1px solid var(--line);
+                padding-top: 10px;
+                width: 100%;
+            }
+            .ref-card a.rc-link:hover {
+                text-decoration: underline;
+            }
+
+            figure {
+                margin: 0;
+            }
+            .ph {
+                position: relative;
+                overflow: hidden;
+                background: #f4f2ee;
+                display: block;
+            }
+            .ph img {
+                display: block;
+            }
+            .ph-fallback {
+                display: none;
+                width: 100%;
+                height: 100%;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                font-family: var(--font-mono);
+                font-size: 11px;
+                color: var(--muted);
+                text-decoration: none;
+                padding: 14px;
+                aspect-ratio: 4 / 3;
+            }
+            .ph-fallback:hover {
+                color: var(--accent);
+            }
+
+            .credit {
+                font-family: var(--font-mono);
+                font-size: 10.5px;
+                color: var(--muted);
+                letter-spacing: 0.01em;
+                line-height: 1.55;
+                margin-top: 8px;
+            }
+            .credit b {
+                color: #666;
+                font-weight: 600;
+            }
+
+            .photo-grid3 {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            .photo-grid3 .ph {
+                aspect-ratio: 4 / 3;
+            }
+            .photo-grid3 .ph img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            @media (max-width: 760px) {
+                .photo-grid3 {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .photo-pair {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .photo-pair .ph {
+                aspect-ratio: 4 / 3;
+            }
+            .photo-pair .ph img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            @media (max-width: 760px) {
+                .photo-pair {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .ph.micro {
+                aspect-ratio: auto;
+                background: #fbfaf8;
+                border: 1px solid var(--line);
+            }
+            .ph.micro img {
+                width: 100%;
+                height: auto;
+                object-fit: contain;
+            }
+            .ph.micro .ph-fallback {
+                aspect-ratio: 3 / 2;
+            }
+
+            .section-photos {
+                margin: 30px 0 0;
+            }
+
+            .hero-section {
+                display: grid;
+                grid-template-columns: 1.7fr 1fr;
+                gap: 2cm;
+                align-items: start;
+                margin-top: 20px;
+            }
+            .continue-actions {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-bottom: 26px;
+            }
+            .continue-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 16px;
+                border: 1px solid var(--line);
+                border-radius: 22px;
+                background: #fff;
+                font-size: 12px;
+                letter-spacing: 0.04em;
+                color: #555;
+                text-decoration: none;
+                white-space: nowrap;
+                transition:
+                    box-shadow 0.2s,
+                    transform 0.2s,
+                    border-color 0.2s,
+                    color 0.2s;
+            }
+            .continue-btn:hover {
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+                transform: translateY(-1px);
+                border-color: var(--accent);
+                color: var(--ink);
+            }
+            .continue-btn .arrow {
+                transition: transform 0.2s;
+            }
+            .continue-btn:hover .arrow {
+                transform: translateX(-3px);
+            }
+            .hero-left h1 {
+                font-family: var(--font-display);
+                font-size: 54px;
+                font-weight: 700;
+                color: var(--ink);
+                letter-spacing: 0.03em;
+                margin-bottom: 8px;
+                line-height: 1.05;
+            }
+            .hero-left h1 em {
+                font-style: italic;
+            }
+            .hero-left .h1-zh {
+                font-family: var(--font-body);
+                font-size: 15px;
+                color: var(--muted);
+                letter-spacing: 0.04em;
+                margin-bottom: 28px;
+            }
+            .hero-left .description {
+                font-size: 15px;
+                color: #555;
+                text-align: justify;
+                max-width: none;
+            }
+            .hero-left .etym {
+                font-family: var(--font-display);
+                font-style: italic;
+                color: var(--muted);
+                font-size: 15px;
+                margin-top: 18px;
+                line-height: 1.6;
+            }
+
+            .hero-right {
+                position: relative;
+            }
+            .hero-right .wc-figure {
+                margin: 0; /* fills the right column, which is now image-width */
+                width: 100%;
+            }
+            .hero-right .wc-slot {
+                width: 100%;
+                background: transparent; /* let the page soil texture show through */
+                display: block;
+            }
+            .hero-right .wc-slot svg,
+            .hero-right .wc-slot img {
+                width: 100%;
+                height: auto;
+                display: block;
+                mix-blend-mode: multiply; /* key out the image's white so it prints onto the texture */
+            }
+            .hero-right .wc-caption {
+                width: 100%;
+                margin-top: 10px;
+                font-family: var(--font-mono);
+                font-size: 12px;
+                color: var(--muted);
+                line-height: 1.5;
+            }
+            .hero-right .wc-caption em {
+                font-style: italic;
+            }
+            .microbe-badge {
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(5px);
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 12px;
+                color: #444;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+            .microbe-badge .dot {
+                width: 8px;
+                height: 8px;
+                background: var(--pathogen);
+                border-radius: 50%;
+                flex-shrink: 0;
+            }
+
+            .sec-head {
+                font-family: var(--font-display);
+                font-weight: 300;
+                font-size: 30px;
+                color: var(--ink);
+                line-height: 1.1;
+                letter-spacing: 0.02em;
+                margin-bottom: 6px;
+            }
+
+            .content-block {
+                display: grid;
+                grid-template-columns: 1fr 1.2fr;
+                gap: 60px;
+                align-items: start;
+                margin: 50px 0;
+            }
+            .caption-text {
+                font-size: 15px;
+                color: #555;
+                max-width: 480px;
+                padding-top: 4px;
+            }
+            .caption-text.wide {
+                max-width: none;
+                width: 100%;
+                grid-column: 1 / -1; /* span the full row when inside a grid */
+            }
+
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 30px;
+                margin: 44px 0 0;
+            }
+            @media (max-width: 760px) {
+                .stats {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+            .stat {
+                border-top: 1px solid var(--ink);
+                padding-top: 12px;
+            }
+            .stat b {
+                font-family: var(--font-display);
+                font-weight: 300;
+                font-size: 34px;
+                color: var(--ink);
+                line-height: 1;
+                display: block;
+            }
+            .stat span {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                color: var(--muted);
+                letter-spacing: 0.02em;
+                margin-top: 10px;
+                display: block;
+                line-height: 1.5;
+            }
+
+            .map-figure svg {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+            .map-legend {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                color: var(--muted);
+                margin-top: 14px;
+                display: flex;
+                gap: 24px;
+                flex-wrap: wrap;
+            }
+            .map-legend i {
+                display: inline-block;
+                width: 0.7em;
+                height: 0.7em;
+                border-radius: 50%;
+                margin-right: 0.5em;
+                vertical-align: middle;
+            }
+
+            .notes {
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
+                margin-top: 8px;
+            }
+            .note {
+                border-left: 2px solid var(--accent);
+                padding-left: 14px;
+            }
+            .note b {
+                display: block;
+                color: var(--ink);
+                font-size: 15px;
+                margin-bottom: 3px;
+            }
+            .note p {
+                margin: 0;
+                font-size: 14px;
+                color: #555;
+            }
+
+            .band {
+                width: 100%;
+                background: #0c0f12;
+                aspect-ratio: 16 / 7;
+                overflow: hidden;
+                position: relative;
+            }
+            .band .root-target {
+                position: absolute;
+                right: 3%;
+                top: 0;
+                height: 100%;
+                width: auto;
+            }
+            .zoospore {
+                position: absolute;
+                width: clamp(40px, 5.5vw, 60px);
+                left: -8%;
+                top: 40%;
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+            }
+            .zoospore .zbody {
+                fill: var(--water);
+                opacity: 0.95;
+            }
+            .zoospore .zgroove {
+                fill: none;
+                stroke: #0c0f12;
+                stroke-width: 1.6;
+                opacity: 0.5;
+            }
+            .zoospore .znuc {
+                fill: #e8f0f6;
+            }
+            .zoospore .fla {
+                fill: none;
+                stroke: var(--water);
+                stroke-width: 1.7;
+                stroke-linecap: round;
+            }
+            @media (prefers-reduced-motion: no-preference) {
+                .zoospore {
+                    animation: swim var(--dur, 9s) linear infinite;
+                }
+                .zoospore .fla-a {
+                    animation: wag 1.1s ease-in-out infinite;
+                    transform-origin: left center;
+                }
+                .zoospore .fla-p {
+                    animation: wag 1.1s ease-in-out infinite reverse;
+                    transform-origin: left center;
+                }
+            }
+            @keyframes swim {
+                0% {
+                    transform: translate(0, 0) rotate(2deg);
+                    opacity: 0;
+                }
+                8% {
+                    opacity: 1;
+                }
+                35% {
+                    transform: translate(38vw, -22px) rotate(-6deg);
+                }
+                62% {
+                    transform: translate(64vw, 16px) rotate(5deg);
+                }
+                90% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(88vw, -6px) rotate(0deg);
+                    opacity: 0;
+                }
+            }
+            @keyframes wag {
+                0%,
+                100% {
+                    transform: rotate(-9deg);
+                }
+                50% {
+                    transform: rotate(9deg);
+                }
+            }
+            .band-credits {
+                font-size: 12px;
+                font-style: italic;
+                color: var(--muted);
+                margin-top: 8px;
+            }
+
+            .cascade-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-top: 8px;
+            }
+            @media (max-width: 640px) {
+                .cascade-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .phase {
+                border: 1px solid var(--line);
+                padding: 22px 22px;
+            }
+            .phase .s {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+            }
+            .phase.wet .s {
+                color: var(--water);
+            }
+            .phase.dry .s {
+                color: var(--pathogen);
+            }
+            .phase b {
+                display: block;
+                font-family: var(--font-display);
+                font-weight: 300;
+                font-size: 20px;
+                color: var(--ink);
+                margin: 10px 0 8px;
+            }
+            .phase p {
+                margin: 0;
+                font-size: 14px;
+                color: #555;
+            }
+
+            .arsenal {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                margin: 44px 0 0;
+            }
+            @media (max-width: 860px) {
+                .arsenal {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .card {
+                border: 1px solid var(--line);
+                padding: 26px 24px 28px;
+                background: #fff;
+                transition:
+                    box-shadow 0.3s,
+                    transform 0.3s;
+            }
+            .card:hover,
+            .card:focus-within {
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+                transform: translateY(-3px);
+            }
+            .card .microbe {
+                width: auto;
+                height: 64px;
+                object-fit: contain;
+                display: block;
+                margin-bottom: 14px;
+            }
+            .card h3 {
+                margin: 0;
+                font-family: var(--font-display);
+                font-weight: 300;
+                font-size: 22px;
+                color: var(--ink);
+                font-style: italic;
+            }
+            .card .role {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--defender);
+                margin: 6px 0 16px;
+            }
+            .card ul {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+            .card li {
+                font-size: 13.5px;
+                color: #555;
+                padding: 9px 0;
+                border-top: 1px solid var(--line);
+                line-height: 1.5;
+            }
+            .card li:first-child {
+                border-top: none;
+            }
+            .card li b {
+                color: var(--ink);
+                font-weight: 600;
+            }
+            .card .kicker {
+                margin-top: 14px;
+                font-size: 13px;
+                color: var(--defender);
+                line-height: 1.5;
+            }
+
+            .modes {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+                margin-top: 30px;
+            }
+            @media (max-width: 720px) {
+                .modes {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+            .mode {
+                border: 1px solid var(--line);
+                padding: 18px 16px;
+            }
+            .mode .n {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                color: var(--accent);
+            }
+            .mode b {
+                display: block;
+                font-size: 15px;
+                color: var(--ink);
+                margin: 6px 0 5px;
+            }
+            .mode span {
+                font-size: 12.5px;
+                color: #666;
+                line-height: 1.45;
+                display: block;
+            }
+
+            .thesis {
+                margin: 44px auto 0;
+                max-width: 620px;
+                text-align: center;
+            }
+            .thesis p {
+                font-family: var(--font-display);
+                font-weight: 300;
+                font-size: 26px;
+                color: var(--ink);
+                line-height: 1.3;
+                letter-spacing: 0.01em;
+            }
+            .thesis p em {
+                font-style: italic;
+                color: var(--accent);
+            }
+
+            .poem-section {
+                margin: 60px 0;
+                display: flex;
+                justify-content: center;
+            }
+            .poem-text {
+                font-family: var(--font-mono);
+                font-size: 14px;
+                color: #555;
+                line-height: 1.9;
+                white-space: pre-line;
+                max-width: 440px;
+                text-align: left;
+            }
+
+            .refs-footer {
+                max-width: 900px;
+                margin: 0 auto;
+            }
+            .refs-footer .sec-head {
+                font-size: 20px;
+                text-align: center;
+                margin-bottom: 22px;
+            }
+            .refs-list {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: grid;
+                gap: 14px;
+            }
+            .refs-list li {
+                display: grid;
+                grid-template-columns: 26px 1fr;
+                gap: 10px;
+                font-size: 12.5px;
+                color: #666;
+                line-height: 1.55;
+                border-top: 1px solid var(--line);
+                padding-top: 12px;
+            }
+            .refs-list li .rn {
+                font-family: var(--font-mono);
+                color: var(--accent);
+                font-size: 12px;
+            }
+            .refs-list li .rt {
+                color: var(--ink);
+                font-weight: 600;
+            }
+            .refs-list a {
+                color: var(--accent);
+                text-decoration: none;
+            }
+            .refs-list a:hover {
+                text-decoration: underline;
+            }
+            .refs-note {
+                font-family: var(--font-mono);
+                font-size: 10.5px;
+                color: var(--muted);
+                text-align: center;
+                margin-top: 20px;
+                line-height: 1.6;
+            }
+
+            .explore-title {
+                text-align: center;
+                font-size: 14px;
+                color: var(--muted);
+                letter-spacing: 0.1em;
+                margin-bottom: 30px;
+            }
+            .explore-scroller {
+                position: relative;
+            }
+            .explore-grid {
+                display: flex;
+                justify-content: flex-start;
+                gap: 44px;
+                overflow-x: auto;
+                padding: 4px 50px 14px;
+                scroll-behavior: smooth;
+                scrollbar-width: none;
+            }
+            .explore-grid::-webkit-scrollbar {
+                display: none;
+            }
+            @media (min-width: 760px) {
+                .explore-grid {
+                    justify-content: center;
+                }
+            }
+            .explore-item {
+                flex: 0 0 auto;
+                width: 110px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-decoration: none;
+                color: #666;
+                text-align: center;
+                transition:
+                    transform 0.2s,
+                    color 0.2s;
+            }
+            .explore-item img {
+                width: 70px;
+                height: 90px;
+                object-fit: contain;
+                margin-bottom: 12px;
+                opacity: 0.78;
+                transition: opacity 0.2s;
+            }
+            .explore-item span {
+                font-size: 11px;
+                line-height: 1.4;
+            }
+            .explore-item:hover {
+                transform: translateY(-4px);
+                color: var(--ink);
+            }
+            .explore-item:hover img {
+                opacity: 1;
+            }
+            .explore-arrow {
+                position: absolute;
+                top: 40%;
+                right: 0;
+                transform: translateY(-50%);
+                width: 34px;
+                height: 34px;
+                border: 1px solid var(--line);
+                border-radius: 50%;
+                background: #fff;
+                color: #555;
+                font-size: 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: box-shadow 0.2s;
+            }
+            .explore-arrow:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            @media (max-width: 760px) {
+                .hero-section,
+                .content-block {
+                    grid-template-columns: 1fr;
+                    gap: 30px;
+                }
+                .hero-left h1 {
+                    font-size: 40px;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                * {
+                    transition: none !important;
+                    scroll-behavior: auto !important;
+                }
+                .zoospore {
+                    animation: none !important;
+                    left: 70% !important;
+                    opacity: 1 !important;
+                }
+            }
+            :focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: 3px;
+            }
+
+            /* ============ Full-page soil background ============
+               A single layer covering the whole page height, sitting above the
+               white body background but behind all content (z-index:-1). The
+               source is a tall 682×8000 strip, so on desktop it's shown at full
+               page width (edge to edge) at its natural ratio; it's so tall it
+               effectively never needs to repeat. On iPad / phone it's scaled up
+               (and side-cropped) so the faint texture doesn't read as too dense. */
+            .page-bg {
+                position: absolute;
+                inset: 0; /* fills body's full height */
+                z-index: -1;
+                pointer-events: none;
+                background-image: url("images/soil-background.webp");
+                background-repeat: repeat-y;
+                background-position: top center;
+                background-size: 100% auto; /* desktop: edge to edge */
+            }
+            @media (max-width: 1024px) {
+                .page-bg {
+                    background-size: 160% auto; /* iPad: zoom in, crop sides */
+                }
+            }
+            @media (max-width: 600px) {
+                .page-bg {
+                    background-size: 230% auto; /* phone: zoom in more */
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Full-page faint soil texture, behind all content -->
+        <div class="page-bg" aria-hidden="true"></div>
+
+        <div id="site-nav"></div>
+        <script src="nav.js"></script>
+
+        <!-- ============ Top hero: pinned image + scrolling inverted copy ============ -->
+        <section class="hero-scroll" id="heroScroll">
+            <div class="hero-bg-sticky" id="heroBgSticky">
+                <img
+                    id="heroBgImg"
+                    src="images/oak-decline-phytophthora-cinnamomi-18.webp"
+                    alt="Cork oak decline from Phytophthora cinnamomi in the montado"
+                />
+            </div>
+
+            <div class="hero-copy" id="heroCopy">
+                <div class="hero-scroll-hint" aria-hidden="true">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <polyline points="6 15 12 9 18 15"></polyline>
+                    </svg>
+                </div>
+                <p>
+                    In Portugal the disease has a name:
+                    <em class="sci">a seca</em>, "the drought." Cork oaks yellow
+                    from the crown down, shed their leaves, and whole stands
+                    fall in rows across one or two summers, as if scorched dry
+                    by the sun. The real killer lies underground, and what it
+                    needs is moisture.<span
+                        class="hero-ref"
+                        data-ref="1"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 1"
+                    ></span>
+                </p>
+                <p>
+                    The story begins before the oaks. In 1838, Portugal recorded
+                    a strange disease in its chestnut trees: cut into the roots
+                    of a sick tree and a black fluid seeped out, like ink.
+                    People called it <em class="sci">doença da tinta</em>, ink
+                    disease. The black was the colour of tannins oxidising in
+                    the wounded root.<span
+                        class="hero-ref"
+                        data-ref="2"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 2"
+                    ></span>
+                    The pathogen was not native. It likely arose in the New
+                    Guinea region, an oomycete more closely related to algae
+                    than to fungi, carried across the world in nursery stock and
+                    infested soil, able to infect close to a thousand plant
+                    species.<span
+                        class="hero-ref"
+                        data-ref="3"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 3"
+                    ></span>
+                </p>
+                <p>
+                    More than a century later, it changed hosts. In the 1980s,
+                    the <em>dehesas</em> and <em>montados</em> of Spain and
+                    Portugal began to die back in patches. In the early 1990s
+                    the plant pathologist Clive Brasier isolated the cause from
+                    the roots of dying oaks:
+                    <em class="sci">Phytophthora cinnamomi</em>.<span
+                        class="hero-ref"
+                        data-ref="4"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 4"
+                    ></span>
+                    Today it is regarded as the leading factor in Iberian oak
+                    decline, reaching across an agro-silvo-pastoral system of
+                    roughly 3.1 million hectares in southwestern Europe. In the
+                    worst-hit areas, cork yield losses have ranged from 40 to 89
+                    percent.<span
+                        class="hero-ref"
+                        data-ref="5"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 5"
+                    ></span>
+                </p>
+                <p>
+                    Its killing works from the bottom up. When the soil is warm
+                    and wet, dormant spores wake, swim to the finest feeder
+                    roots, kill them, then spread up into the larger roots until
+                    they choke the tree's conducting system, and the leaves dry
+                    from the crown down.<span
+                        class="hero-ref"
+                        data-ref="6"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 6"
+                    ></span>
+                    A tree standing in mud, its roots eaten away, dies at last
+                    in the name of drought. This is
+                    <em class="sci">a seca</em>.
+                </p>
+            </div>
+        </section>
+
+        <!-- Popup for the hero dot-citations (kept outside .hero-copy so it is never blended) -->
+        <div
+            class="hero-ref-card"
+            id="heroRefCard"
+            role="dialog"
+            aria-label="Reference"
+        ></div>
+
+        <div
+            class="ref-card"
+            id="refCard"
+            role="dialog"
+            aria-label="Source reference"
+        >
+            <div class="rc-kicker"></div>
+            <div class="rc-title"></div>
+            <div class="rc-meta"></div>
+            <a class="rc-link" href="#" target="_blank" rel="noopener"
+                >Open source ↗</a
+            >
+        </div>
+
+        <div class="container">
+            <section class="hero-section">
+                <div class="hero-left">
+                    <div class="continue-actions">
+                        <a class="continue-btn" href="index.html"
+                            ><span class="arrow" aria-hidden="true">←</span>
+                            Continue exploring Field Guide</a
+                        >
+                    </div>
+                    <h1>a <em>seca</em></h1>
+                    <div class="h1-zh">
+                        Dieback · the montado's invisible epidemic
+                    </div>
+                    <div class="description">
+                        Since the 1980s, cork and holm oaks across
+                        3.1&nbsp;million hectares of Iberian montado have
+                        thinned, browned and died — a syndrome the Portuguese
+                        call
+                        <span class="sci">a&nbsp;seca</span>. The cause is not
+                        in the canopy but in the soil: a microscopic water
+                        mould, <span class="sci">Phytophthora cinnamomi</span>,
+                        rotting the fine roots where no one looks.<sup
+                            class="ref"
+                            data-ref="idphy"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </div>
+                    <div class="etym">
+                        <span class="sci">Phytophthora</span> — from the Greek,
+                        “the plant destroyer.”<br />
+                        <span class="sci">cinnamomi</span> — for the cinnamon
+                        (<span class="sci">Cinnamomum</span>) on which
+                        R.&nbsp;D.&nbsp;Rands first described it, Sumatra,
+                        1922.<sup
+                            class="ref"
+                            data-ref="rands"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </div>
+                </div>
+                <div class="hero-right">
+                    <figure class="wc-figure">
+                        <div class="wc-slot">
+                            <img
+                                id="heroImg"
+                                src="images/phytophthora-cinnamomi-4.webp"
+                                alt="Phytophthora cinnamomi asexual phase, watercolour after a micrograph"
+                                onerror="
+                                    this.style.display = 'none';
+                                    document.getElementById(
+                                        'heroSvg',
+                                    ).style.display = 'block';
+                                "
+                            />
+                            <svg
+                                id="heroSvg"
+                                style="display: none"
+                                viewBox="0 0 480 380"
+                                xmlns="http://www.w3.org/2000/svg"
+                                role="img"
+                                aria-label="Phytophthora cinnamomi, stylised"
+                            >
+                                <rect width="480" height="380" fill="#faf9f7" />
+                                <g
+                                    fill="none"
+                                    stroke="var(--pathogen)"
+                                    stroke-width="2.6"
+                                    opacity=".92"
+                                >
+                                    <path
+                                        d="M50,190 C130,150 180,220 260,185 C320,158 360,215 430,188"
+                                        stroke-width="3.4"
+                                    />
+                                    <path
+                                        d="M74,190 C110,255 165,245 210,290 C245,325 295,300 350,325"
+                                    />
+                                    <path
+                                        d="M150,200 C160,140 205,118 182,66"
+                                    />
+                                    <path
+                                        d="M262,185 C286,128 342,140 356,92"
+                                    />
+                                </g>
+                                <g fill="var(--pathogen)" opacity=".85">
+                                    <ellipse
+                                        cx="182"
+                                        cy="60"
+                                        rx="17"
+                                        ry="25"
+                                        transform="rotate(-18 182 60)"
+                                    />
+                                    <ellipse
+                                        cx="359"
+                                        cy="86"
+                                        rx="16"
+                                        ry="24"
+                                        transform="rotate(12 359 86)"
+                                    />
+                                    <ellipse
+                                        cx="350"
+                                        cy="330"
+                                        rx="15"
+                                        ry="23"
+                                    />
+                                </g>
+                                <g
+                                    fill="none"
+                                    stroke="var(--pathogen)"
+                                    stroke-width="3.4"
+                                >
+                                    <circle cx="80" cy="190" r="18" />
+                                    <circle cx="220" cy="292" r="16" />
+                                </g>
+                                <g fill="var(--pathogen)" opacity=".16">
+                                    <circle cx="80" cy="190" r="18" />
+                                    <circle cx="220" cy="292" r="16" />
+                                </g>
+                            </svg>
+                        </div>
+                        <figcaption class="wc-caption">
+                            <em>Phytophthora cinnamomi</em> asexual phase:
+                            typical coralloid mycelia and botryose hyphal
+                            swellings.<sup
+                                class="ref"
+                                data-ref="watercolour"
+                                role="button"
+                                tabindex="0"
+                                aria-label="source"
+                            ></sup>
+                        </figcaption>
+                    </figure>
+                </div>
+            </section>
+
+            <hr />
+
+            <section class="content-block">
+                <div class="caption-text wide">
+                    Crowns thin, leaves yellow, and whole trees can die within a
+                    single season — once recorded simply as
+                    <span class="sci">sudden death</span>. But by the time the
+                    canopy shows it, the feeder roots are already gone.<sup
+                        class="ref"
+                        data-ref="idphy"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
+                    The decline is oldest and heaviest in the Alentejo, where
+                    the research site sits.
+                </div>
+            </section>
+
+            <figure class="section-photos">
+                <div class="photo-grid3">
+                    <div class="ph">
+                        <img
+                            src="https://idtools.org/phytophthora/images/1.-P.-cinnamomi-Cork_Oak_Portugal.jpg"
+                            alt="Cork oak decline in the Alentejo, Portugal (1)"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                            onerror="
+                                this.style.display = 'none';
+                                this.parentNode.querySelector(
+                                    '.ph-fallback',
+                                ).style.display = 'flex';
+                            "
+                        />
+                        <a
+                            class="ph-fallback"
+                            href="https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043"
+                            target="_blank"
+                            rel="noopener"
+                            >Photo hosted by IDphy — open ↗</a
+                        >
+                    </div>
+                    <div class="ph">
+                        <img
+                            src="https://idtools.org/phytophthora/images/2.-P.-cinnamomi-Cork-Oak_Portugal.jpg"
+                            alt="Cork oak decline in the Alentejo, Portugal (2)"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                            onerror="
+                                this.style.display = 'none';
+                                this.parentNode.querySelector(
+                                    '.ph-fallback',
+                                ).style.display = 'flex';
+                            "
+                        />
+                        <a
+                            class="ph-fallback"
+                            href="https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043"
+                            target="_blank"
+                            rel="noopener"
+                            >Photo hosted by IDphy — open ↗</a
+                        >
+                    </div>
+                    <div class="ph">
+                        <img
+                            src="https://idtools.org/phytophthora/images/3.-P.-cinnamomi-Cork-Oak.Portugal.jpg"
+                            alt="Cork oak decline in the Alentejo, Portugal (3)"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                            onerror="
+                                this.style.display = 'none';
+                                this.parentNode.querySelector(
+                                    '.ph-fallback',
+                                ).style.display = 'flex';
+                            "
+                        />
+                        <a
+                            class="ph-fallback"
+                            href="https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043"
+                            target="_blank"
+                            rel="noopener"
+                            >Photo hosted by IDphy — open ↗</a
+                        >
+                    </div>
+                </div>
+                <figcaption class="credit">
+                    <span class="sci">Quercus suber</span> (cork oak) declining
+                    under <span class="sci">Phytophthora cinnamomi</span> in the
+                    Alentejo, Portugal — the montado this project studies.
+                    <b
+                        >Photographs: Alfredo Cravador &amp; Dina Neves,
+                        Universidade do Algarve–FCT.</b
+                    >
+                    Via IDphy.<sup
+                        class="ref"
+                        data-ref="cravador"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
+                </figcaption>
+            </figure>
+
+            <hr />
+
+            <section class="content-block">
+                <div class="caption-text">
+                    In warm, moist soil the pathogen needs only days to complete
+                    a turn — and each turn multiplies the inoculum.
+
+                    <p style="margin-top: 1.1em">
+                        It grows between about 9&nbsp;°C and 30&nbsp;°C, fastest
+                        near 27&nbsp;°C — so the cycle races through a mild, wet
+                        Mediterranean spring.<sup
+                            class="ref"
+                            data-ref="idphy"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                        No film of water in the soil, no swimming zoospores. The
+                        disease is confined to the moist. It is
+                        <span class="sci">heterothallic</span>: sex needs two
+                        mating types. Where only one is present, as across much
+                        of Iberia, it persists and spreads clonally — by
+                        chlamydospores and swimming zoospores.<sup
+                            class="ref"
+                            data-ref="idphy"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </p>
+                </div>
+
+                <figure>
+                    <div class="ph micro">
+                        <img
+                            src="https://idtools.org/phytophthora/images/P_cinnamomi_P6490_asexualWE.jpg"
+                            alt="Asexual structures of Phytophthora cinnamomi: sporangia, coralloid mycelia, hyphal swellings, chlamydospore"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                            onerror="
+                                this.style.display = 'none';
+                                this.parentNode.querySelector(
+                                    '.ph-fallback',
+                                ).style.display = 'flex';
+                            "
+                        />
+                        <a
+                            class="ph-fallback"
+                            href="https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043"
+                            target="_blank"
+                            rel="noopener"
+                            >Micrograph hosted by IDphy — open ↗</a
+                        >
+                    </div>
+                    <figcaption class="credit">
+                        Asexual phase (specimen&nbsp;P6490): (a–d) persistent
+                        sporangia, (e) coralloid mycelia, (f–g) hyphal
+                        swellings, (h) chlamydospore.
+                        <b>Photographs: Gloria Abad, USDA-APHIS-PPQ.</b> Via
+                        IDphy.<sup
+                            class="ref"
+                            data-ref="abad"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </figcaption>
+                </figure>
+            </section>
+
+            <section>
+                <div class="caption-text wide" style="margin-top: 6px">
+                    The canopy is the last place the disease appears. A tree can
+                    wilt and die in a single dry spell only because,
+                    underground, a girdling collar lesion and the loss of its
+                    fine roots have already cut off its water.<sup
+                        class="ref"
+                        data-ref="scanu"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
+                </div>
+                <figure style="margin-top: 22px">
+                    <div class="photo-pair">
+                        <div class="ph">
+                            <img
+                                src="https://idtools.org/phytophthora/images/P2_P.cinnamomi_W.jpg"
+                                alt="Sudden wilting and dieback of a mature cork oak"
+                                loading="lazy"
+                                referrerpolicy="no-referrer"
+                                onerror="
+                                    this.style.display = 'none';
+                                    this.parentNode.querySelector(
+                                        '.ph-fallback',
+                                    ).style.display = 'flex';
+                                "
+                            />
+                            <a
+                                class="ph-fallback"
+                                href="https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043"
+                                target="_blank"
+                                rel="noopener"
+                                >Photo hosted by IDphy — open ↗</a
+                            >
+                        </div>
+                        <div class="ph">
+                            <img
+                                src="https://idtools.org/phytophthora/images/P3_P.cinnamomi_W.jpg"
+                                alt="Girdling collar-rot lesion and loss of fine roots"
+                                loading="lazy"
+                                referrerpolicy="no-referrer"
+                                onerror="
+                                    this.style.display = 'none';
+                                    this.parentNode.querySelector(
+                                        '.ph-fallback',
+                                    ).style.display = 'flex';
+                                "
+                            />
+                            <a
+                                class="ph-fallback"
+                                href="https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043"
+                                target="_blank"
+                                rel="noopener"
+                                >Photo hosted by IDphy — open ↗</a
+                            >
+                        </div>
+                    </div>
+                    <figcaption class="credit">
+                        Left: a mature
+                        <span class="sci">Quercus suber</span> wilting and
+                        dying. Right: the cause underground — a girdling
+                        collar-rot lesion and extensive loss of lateral and fine
+                        roots. Sardinia, Italy.
+                        <b
+                            >Photographs: Bruno Scanu &amp; Antonio
+                            Franceschini, Università degli Studi di Sassari.</b
+                        >
+                        Via IDphy.<sup
+                            class="ref"
+                            data-ref="scanu"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </figcaption>
+                </figure>
+            </section>
+
+            <hr />
+
+            <section class="cascade">
+                <div class="caption-text wide" style="margin-top: 6px">
+                    The pathogen and the drought are not two problems but one
+                    loop. As extremes sharpen — see
+                    <a href="global.html" style="color: var(--accent)"
+                        >Global&nbsp;Change</a
+                    >
+                    — the loop turns faster.
+                </div>
+                <div class="cascade-grid">
+                    <div class="phase wet">
+                        <div class="s">Winter — wet</div>
+                        <b>The pathogen multiplies</b>
+                        <p>
+                            Films of water let sporangia form and zoospores
+                            swim; inoculum builds in the soil.
+                        </p>
+                    </div>
+                    <div class="phase dry">
+                        <div class="s">Summer — dry</div>
+                        <b>The tree runs out</b>
+                        <p>
+                            With its fine roots destroyed, a drought-stressed
+                            oak can no longer draw water. It dies where it
+                            stands.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <hr />
+
+            <section class="defenders">
+                <div class="caption-text wide" style="margin-top: 6px">
+                    The same rhizosphere the pathogen invades is home to
+                    bacteria that fight it. In
+                    <span class="sci">suppressive soils</span>, communities of
+                    <span class="sci">Pseudomonas</span>,
+                    <span class="sci">Bacillus</span> and
+                    <span class="sci">Streptomyces</span> hold
+                    <span class="sci">Phytophthora</span> in check — the
+                    montado's microbial immune system, and the organisms you met
+                    in the
+                    <a href="index.html" style="color: var(--accent)"
+                        >Field&nbsp;Guide</a
+                    >.
+                </div>
+
+                <div class="arsenal">
+                    <div class="card" tabindex="0">
+                        <img
+                            class="microbe"
+                            src="images/pseudomonas-fluorescens-0.webp"
+                            alt="Pseudomonas fluorescens"
+                        />
+                        <h3>Pseudomonas</h3>
+                        <div class="role">Antibiosis · Iron warfare</div>
+                        <ul>
+                            <li>
+                                <b>DAPG</b> &amp; <b>phenazines</b> — antifungal
+                                antibiotics
+                            </li>
+                            <li>
+                                <b>Siderophores</b> lock up iron, starving the
+                                pathogen
+                            </li>
+                            <li>
+                                <b>Volatiles</b> — 2-undecanone, HCN, ammonia
+                            </li>
+                        </ul>
+                        <p class="kicker">
+                            One strain deformed the pathogen's mycelium and
+                            ruptured its membranes.
+                        </p>
+                    </div>
+
+                    <div class="card" tabindex="0">
+                        <img
+                            class="microbe"
+                            src="images/bacillus-subtilis-0.webp"
+                            alt="Bacillus subtilis"
+                        />
+                        <h3>Bacillus</h3>
+                        <div class="role">Membrane attack · Endurance</div>
+                        <ul>
+                            <li>
+                                <b>Lipopeptides</b> — iturin, surfactin,
+                                fengycin
+                            </li>
+                            <li>Punch holes in the oomycete's membranes</li>
+                            <li>
+                                <b>Spore-formers</b> outlast drought beside it
+                            </li>
+                        </ul>
+                        <p class="kicker">
+                            By volatiles alone, one strain cut the pathogen's
+                            growth by 76%.
+                        </p>
+                    </div>
+
+                    <div class="card" tabindex="0">
+                        <img
+                            class="microbe"
+                            src="images/streptomyces-griseus-0.webp"
+                            alt="Streptomyces griseus"
+                        />
+                        <h3>Streptomyces</h3>
+                        <div class="role">The soil's pharmacy</div>
+                        <ul>
+                            <li>Antifungal <b>secondary metabolites</b></li>
+                            <li>
+                                Cell-wall enzymes — <b>chitinases</b>,
+                                <b>glucanases</b>
+                            </li>
+                            <li>Filamentous actinobacteria of healthy soil</li>
+                        </ul>
+                        <p class="kicker">
+                            The classic antibiotic-makers — much of medicine's
+                            soil pharmacy began here.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="modes">
+                    <div class="mode">
+                        <div class="n">01</div>
+                        <b>Antibiosis</b
+                        ><span
+                            >Chemical weapons that kill or deform the
+                            pathogen.</span
+                        >
+                    </div>
+                    <div class="mode">
+                        <div class="n">02</div>
+                        <b>Competition</b
+                        ><span>Starving it of iron and rhizosphere space.</span>
+                    </div>
+                    <div class="mode">
+                        <div class="n">03</div>
+                        <b>Volatiles</b
+                        ><span
+                            >Gases that travel far through soil to distant
+                            foes.</span
+                        >
+                    </div>
+                    <div class="mode">
+                        <div class="n">04</div>
+                        <b>Induced resistance</b
+                        ><span>Priming the tree's own defences.</span>
+                    </div>
+                </div>
+            </section>
+
+            <hr />
+
+            <section class="explore-section">
+                <div class="explore-title">Explore Related Elements</div>
+                <div class="explore-scroller">
+                    <div class="explore-grid" id="exploreGrid">
+                        <a
+                            href="phytophthora-cinnamomi.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/phytophthora-cinnamomi-4.webp"
+                                alt="Phytophthora cinnamomi"
+                            />
+                            <span>Phytophthora cinnamomi</span>
+                        </a>
+                        <a
+                            href="pseudomonas-fluorescens.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/pseudomonas-fluorescens-1.webp"
+                                alt="Fluorescent Pseudomonas"
+                            />
+                            <span>Fluorescent Pseudomonas</span>
+                        </a>
+                        <a
+                            href="bacillus-subtilis.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/bacillus-subtilis-1.webp"
+                                alt="Bacillus subtilis"
+                            />
+                            <span>Bacillus subtilis</span>
+                        </a>
+                        <a
+                            href="streptomyces-griseus.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/streptomyces-griseus-13.webp"
+                                alt="Streptomyces griseus"
+                            />
+                            <span>Streptomyces griseus</span>
+                        </a>
+                        <a href="rhizobia.html" class="explore-item">
+                            <img src="images/rhizobia-3.webp" alt="Rhizobia" />
+                            <span>Rhizobia</span>
+                        </a>
+                        <a
+                            href="bacillus-megaterium.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/bacillus-megaterium-2.webp"
+                                alt="Bacillus megaterium"
+                            />
+                            <span>Bacillus megaterium</span>
+                        </a>
+                    </div>
+                    <button
+                        class="explore-arrow"
+                        id="exploreArrow"
+                        aria-label="Scroll right"
+                    >
+                        ›
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <script>
+            // TOP HERO — pinned image + scrolling copy + dot citations
+            (function () {
+                var scroll = document.getElementById("heroScroll");
+                var img = document.getElementById("heroBgImg");
+                var copy = document.getElementById("heroCopy");
+                if (!scroll || !img || !copy) return;
+
+                // Image is sticky at top:0. It releases when the copy's bottom
+                // reaches 1/6 up from the image's bottom edge — i.e. 5H/6 down
+                // from the top, near the image bottom.
+                //   copy.top = H/3
+                //   release at copy-bottom = 5H/6  ⇒  scroll.height = T + H/2
+                function layout() {
+                    var H = img.getBoundingClientRect().height;
+                    if (!H) return;
+                    var T = copy.getBoundingClientRect().height;
+                    copy.style.top = (1 / 3) * H + "px";
+                    scroll.style.height = T + (1 / 2) * H + "px";
+                }
+
+                if (img.complete && img.naturalWidth) layout();
+                img.addEventListener("load", layout);
+                window.addEventListener("load", layout);
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(layout);
+                }
+                var lt;
+                window.addEventListener("resize", function () {
+                    clearTimeout(lt);
+                    lt = setTimeout(layout, 120);
+                });
+                layout();
+
+                var HERO_REFS = {
+                    1: [
+                        {
+                            t: "González, M., Romero, M.-Á., García, L.-V., Gómez-Aparicio, L., & Serrano, M.-S. (2020). Unravelling the role of drought as predisposing factor for Quercus suber decline caused by Phytophthora cinnamomi. European Journal of Plant Pathology, 156(4), 1015–1021.",
+                            url: "https://doi.org/10.1007/s10658-020-01951-9",
+                        },
+                    ],
+                    2: [
+                        {
+                            t: "Santos, C., Nelson, C. D., Zhebentyayeva, T., Machado, H., Gomes-Laranjo, J., et al. (2017). First interspecific genetic linkage map for Castanea sativa × Castanea crenata revealed QTLs for resistance to Phytophthora cinnamomi. PLOS ONE, 12(9), e0184381.",
+                            url: "https://doi.org/10.1371/journal.pone.0184381",
+                        },
+                        {
+                            t: "Valverde, A., González-Tirante, M., Medina-Sierra, M., Rivas, R., Santa-Regina, I., & Igual, J. M. (2017). Culturable bacterial diversity from the chestnut (Castanea sativa Mill.) phyllosphere and antagonism against the fungi causing the chestnut blight and ink diseases. AIMS Microbiology, 3(2), 293–314.",
+                            url: "https://doi.org/10.3934/microbiol.2017.2.293",
+                        },
+                    ],
+                    3: [
+                        {
+                            t: "Brasier, C. M. (1996). Phytophthora cinnamomi and oak decline in southern Europe: environmental constraints including climate change. Annals of Forest Science, 53(2–3), 347–358.",
+                            url: "https://doi.org/10.1051/forest:19960217",
+                        },
+                        {
+                            t: "Ferreira, P., Chahed, A., Estevinho, L. M., Seixas, N., Costa, R., & Choupina, A. (2023). Post-transcriptional gene silencing of glucanase inhibitor protein in Phytophthora cinnamomi. Plants, 12(22), 3821.",
+                            url: "https://doi.org/10.3390/plants12223821",
+                        },
+                    ],
+                    4: [
+                        {
+                            t: "Brasier, C. M. (1992). Oak tree mortality in Iberia. Nature, 360, 539.",
+                            url: "https://doi.org/10.1038/360539a0",
+                        },
+                        {
+                            t: "Brasier, C. M., Robredo, F., & Ferraz, J. F. P. (1993). Evidence for Phytophthora cinnamomi involvement in Iberian oak decline. Plant Pathology, 42(1), 140–145.",
+                            url: "https://doi.org/10.1111/j.1365-3059.1993.tb01482.x",
+                        },
+                        {
+                            t: "Cardillo, E., Abad, E., & Meyer, S. (2021). Iberian oak decline caused by Phytophthora cinnamomi: a spatiotemporal analysis incorporating the effect of host heterogeneities at landscape scale. Forest Pathology, 51(2), e12667.",
+                            url: "https://doi.org/10.1111/efp.12667",
+                        },
+                    ],
+                    5: [
+                        {
+                            t: "Cardillo, E., Abad, E., & Meyer, S. (2021). Forest Pathology, 51(2), e12667.",
+                            url: "https://doi.org/10.1111/efp.12667",
+                        },
+                        {
+                            t: "Camilo-Alves, C., Clara, M. I. E., & Ribeiro, N. M. C. A. (2013). Decline of Mediterranean oak trees and its association with Phytophthora cinnamomi: a review. European Journal of Forest Research, 132(3), 411–432.",
+                            url: "https://doi.org/10.1007/s10342-013-0688-z",
+                        },
+                    ],
+                    6: [
+                        {
+                            t: "Brasier, C. M. (1996). Annals of Forest Science, 53(2–3), 347–358.",
+                            url: "https://doi.org/10.1051/forest:19960217",
+                        },
+                        {
+                            t: "Morcillo, M., Sales, E., Ponce, L., Guillén, A., Segura, J., & Arrillaga, I. (2020). Effect of elicitors on holm oak somatic embryo development and efficacy inducing tolerance to Phytophthora cinnamomi. Scientific Reports, 10, 15166.",
+                            url: "https://doi.org/10.1038/s41598-020-71985-w",
+                        },
+                    ],
+                };
+
+                var hcard = document.getElementById("heroRefCard");
+                var currentDot = null;
+
+                function esc(s) {
+                    return s
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;");
+                }
+
+                function build(n) {
+                    var cites = HERO_REFS[n];
+                    if (!cites) return;
+                    var html =
+                        '<div class="hrc-kicker">Reference ' + n + "</div>";
+                    cites.forEach(function (c) {
+                        html +=
+                            '<div class="hrc-cite">' +
+                            esc(c.t) +
+                            '<br><a href="' +
+                            c.url +
+                            '" target="_blank" rel="noopener">' +
+                            esc(c.url.replace(/^https?:\/\//, "")) +
+                            " ↗</a></div>";
+                    });
+                    hcard.innerHTML = html;
+                }
+
+                function place(dot) {
+                    var rect = dot.getBoundingClientRect();
+                    var cw = hcard.offsetWidth,
+                        ch = hcard.offsetHeight;
+                    var left = rect.left;
+                    var top = rect.bottom + 8;
+                    if (left + cw > window.innerWidth - 12)
+                        left = window.innerWidth - cw - 12;
+                    if (left < 12) left = 12;
+                    if (top + ch > window.innerHeight - 12)
+                        top = rect.top - ch - 8;
+                    hcard.style.left = left + "px";
+                    hcard.style.top = Math.max(12, top) + "px";
+                }
+
+                function openDot(dot) {
+                    build(dot.dataset.ref);
+                    hcard.classList.add("open");
+                    place(dot);
+                    currentDot = dot;
+                }
+                function closeDot() {
+                    hcard.classList.remove("open");
+                    currentDot = null;
+                }
+
+                copy.querySelectorAll(".hero-ref").forEach(function (dot) {
+                    dot.addEventListener("click", function (e) {
+                        e.stopPropagation();
+                        if (currentDot === dot) closeDot();
+                        else openDot(dot);
+                    });
+                    dot.addEventListener("keydown", function (e) {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (currentDot === dot) closeDot();
+                            else openDot(dot);
+                        }
+                    });
+                });
+                hcard.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                });
+                document.addEventListener("click", closeDot);
+                document.addEventListener("keydown", function (e) {
+                    if (e.key === "Escape") closeDot();
+                });
+                window.addEventListener("resize", function () {
+                    if (currentDot) place(currentDot);
+                });
+            })();
+
+            var REFS = {
+                idphy: {
+                    n: 1,
+                    title: "Phytophthora cinnamomi — IDphy fact sheet",
+                    meta: "Abad ZG, Burgess TI, Redford AJ, Bienapfl JC et al. (2023). IDphy: molecular and morphological identification of Phytophthora based on the types. USDA-APHIS-PPQ.",
+                    url: "https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043",
+                },
+                rands: {
+                    n: 3,
+                    title: "Original description of P. cinnamomi (Rands, 1922)",
+                    meta: "Rands RD. 1922. Streepkanker van Kaneel, veroorzaakt door Phytophthora cinnamomi n. sp. Meded. Inst. voor Plantenziekt 54: 1–54.",
+                    url: "https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043",
+                },
+                cravador: {
+                    n: 4,
+                    title: "Cork-oak decline in the Alentejo (photographs)",
+                    meta: "Photos: Alfredo Cravador & Dina Neves, Universidade do Algarve–FCT, Portugal. Via IDphy (USDA-APHIS-PPQ).",
+                    url: "https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043",
+                },
+                scanu: {
+                    n: 5,
+                    title: "Quercus suber dieback & collar rot, Sardinia (photographs)",
+                    meta: "Photos: Bruno Scanu & Antonio Franceschini, Università degli Studi di Sassari, Italy. Via IDphy (USDA-APHIS-PPQ).",
+                    url: "https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043",
+                },
+                abad: {
+                    n: 6,
+                    title: "Micrographs of P. cinnamomi (asexual & sexual phases)",
+                    meta: "Photos: Gloria Abad, USDA-APHIS-PPQ. Via IDphy.",
+                    url: "https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043",
+                },
+                watercolour: {
+                    n: 7,
+                    title: "Phytophthora cinnamomi asexual phase — watercolour",
+                    meta: "Watercolour by Zihan Gao, after a micrograph by Gloria Abad (USDA-APHIS-PPQ). Via IDphy.",
+                    url: "https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043",
+                },
+            };
+
+            (function () {
+                var card = document.getElementById("refCard");
+                var current = null;
+
+                // markers render as dots (see sup.ref CSS); no number injected
+
+                function place(sup) {
+                    var rect = sup.getBoundingClientRect();
+                    var cw = card.offsetWidth,
+                        ch = card.offsetHeight;
+                    var left = rect.left;
+                    var top = rect.bottom + 8;
+                    if (left + cw > window.innerWidth - 12)
+                        left = window.innerWidth - cw - 12;
+                    if (left < 12) left = 12;
+                    if (top + ch > window.innerHeight - 12)
+                        top = rect.top - ch - 8;
+                    card.style.left = left + "px";
+                    card.style.top = Math.max(12, top) + "px";
+                }
+
+                function open(sup) {
+                    var r = REFS[sup.dataset.ref];
+                    if (!r) return;
+                    card.querySelector(".rc-kicker").textContent =
+                        "Reference " + r.n;
+                    card.querySelector(".rc-title").textContent = r.title;
+                    card.querySelector(".rc-meta").textContent = r.meta;
+                    var a = card.querySelector(".rc-link");
+                    a.href = r.url;
+                    card.classList.add("open");
+                    place(sup);
+                    current = sup;
+                }
+
+                function close() {
+                    card.classList.remove("open");
+                    current = null;
+                }
+
+                document.querySelectorAll("sup.ref").forEach(function (sup) {
+                    sup.addEventListener("click", function (e) {
+                        e.stopPropagation();
+                        if (current === sup) {
+                            close();
+                        } else {
+                            open(sup);
+                        }
+                    });
+                    sup.addEventListener("keydown", function (e) {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (current === sup) {
+                                close();
+                            } else {
+                                open(sup);
+                            }
+                        }
+                    });
+                });
+
+                card.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                });
+                document.addEventListener("click", close);
+                document.addEventListener("keydown", function (e) {
+                    if (e.key === "Escape") close();
+                });
+                window.addEventListener("scroll", close, true);
+                window.addEventListener("resize", close);
+            })();
+
+            (function () {
+                var grid = document.getElementById("exploreGrid");
+                var arrow = document.getElementById("exploreArrow");
+                if (grid && arrow) {
+                    arrow.addEventListener("click", function () {
+                        grid.scrollBy({ left: 240, behavior: "smooth" });
+                    });
+                }
+            })();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="black-translucent"
+        />
+        <meta charset="UTF-8" />
+        <title>index</title>
+        <style>
+            /* ==================== 字体设置 ==================== */
+            :root {
+                /* ✏️ 全站字体：Mac/iOS 显示真·Helvetica，Windows 自动回退到 Arial */
+                --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                /* ✏️ 投影颜色（偏蓝紫的冷调，而非纯灰）。
+                   三个数字是 R,G,B：想更蓝紫→拉高第三个(B)、压低前两个；
+                   想更接近中性灰→把三个值拉近。透明度由 JS 的 --sh-alpha 控制，互不影响。 */
+                --sh-rgb: 72, 60, 100;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                background: #ffffff; /* ✏️ 背景色 */
+                font-family: var(--font-main); /* ✏️ 全局字体 */
+                overflow: hidden;
+                width: 100vw;
+                height: 100vh;
+            }
+            .item {
+                position: absolute;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                transition: z-index 0s;
+            }
+            .item img {
+                max-width: 100%;
+                display: block;
+                transition: none !important;
+                transform: scale(
+                    var(--img-scale, 1)
+                ) !important; /* ✏️ 由 JS 驱动的缩放，围绕中心 */
+                transform-origin: center center;
+                /* ✏️ 跟随图片形状的投影：drop-shadow 沿不透明像素的真实轮廓生成，
+                   配合下移和模糊，看起来像浮在纸面上方。
+                   颜色取自 --sh-rgb（偏蓝紫），透明度/位移/模糊由下方 JS 常量控制 */
+                filter: drop-shadow(
+                    var(--sh-x, 0px) var(--sh-y, 16px) var(--sh-blur, 16px)
+                        rgba(var(--sh-rgb, 0, 0, 0), var(--sh-alpha, 0.28))
+                );
+            }
+
+            /* ==================== 标签文字组 ==================== */
+            /* 🌟 关键：.label-group 不再放进 .item，而是由 JS 直接挂在 <body> 顶层，
+               每帧跟随对应图片定位（见下方 tick 里的"标签定位"段）。
+               这样它所在的层叠上下文就是根节点，身下整张画面（所有图片+大字+白底）
+               才会成为它的混合背景，difference 才能真正逐像素取反。
+               取反放在"组"这一层（mix-blend-mode 加在 .label-group 上），
+               白/灰文字先合成成一张图，再整体与背景做差值，淡入时也不会闪白。 */
+            .label-group {
+                position: fixed; /* 视口坐标，配合 JS 每帧定位 */
+                transform: translateX(-50%); /* 以图片中心水平对齐 */
+                z-index: 5000; /* 浮在所有漂浮图片之上 */
+                mix-blend-mode: difference; /* 🌟 取反就在这里发生 */
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px; /* ✏️ 主标签与类型小字之间的间距 */
+                opacity: 0;
+                transition: opacity 0.4s;
+                pointer-events: none;
+                white-space: nowrap;
+            }
+            .label-group.show {
+                opacity: 1; /* JS 在 hover 时加上 .show 显示 */
+                pointer-events: auto;
+                cursor: pointer;
+            }
+            .label {
+                font-family: var(--font-main); /* ✏️ 标签字体 */
+                font-size: 20px; /* ✏️ 标签字号 */
+                /* 源色：纯白 → difference 后白底变黑、黑底变白、橙底变蓝，自动适应 */
+                color: #ffffff;
+                letter-spacing: 0.1em;
+                white-space: nowrap;
+            }
+
+            .label-type {
+                font-family: var(--font-main); /* ✏️ 类型小字字体 */
+                font-size: 12px; /* ✏️ 类型小字字号 */
+                /* 较暗的源色 → 取反后在白底上呈中灰，保持比主标签更弱的次级层次。
+                   想更醒目 → 调亮接近 #fff；想更淡 → 调暗接近 #444 */
+                color: #888888;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+
+            .item.hovered {
+                z-index: 999 !important;
+            }
+
+            /* ==================== 科普名片样式 ==================== */
+            #card-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.05);
+                z-index: 1000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.5s ease;
+            }
+            #card-overlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+            .info-card {
+                background: #ffffff;
+                width: 900px; /* ✏️ 名片宽度 */
+                height: 440px; /* ✏️ 名片高度（已缩小） */
+                border-radius: 0; /* ✏️ 直角（去掉圆角） */
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06);
+                display: flex;
+                padding: 40px 60px 40px 40px;
+                gap: 40px;
+                transform: translateY(20px);
+                transition: transform 0.5s ease;
+                position: relative;
+            }
+            #card-overlay.active .info-card {
+                transform: translateY(0);
+            }
+            .card-left {
+                width: 350px; /* ✏️ 左侧图片区宽度 */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+            }
+            .card-right {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                opacity: 0;
+                transform: translateX(10px);
+                transition:
+                    opacity 0.5s ease 0.2s,
+                    transform 0.5s ease 0.2s;
+            }
+            #card-overlay.active .card-right {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            .card-title {
+                font-family: var(--font-main); /* ✏️ 名片标题字体 */
+                font-size: 30px; /* ✏️ 名片标题字号（已放大） */
+                color: #222;
+                line-height: 1;
+                text-align: left;
+                font-weight: 400; /* ✏️ 字重：100极细 / 400正常 / 700加粗 */
+                letter-spacing: 0em; /* ✏️ 字间距：em单位相对字号，0为默认 */
+                margin-bottom: 40px;
+            }
+            .card-desc {
+                font-family: var(--font-main); /* ✏️ 名片正文字体 */
+                font-size: 16px; /* ✏️ 名片正文字号（已放大） */
+                color: #000000;
+                line-height: 1.5;
+                text-align: left;
+                font-weight: 400; /* ✏️ 字重：100极细 / 400正常 / 700加粗 */
+                letter-spacing: 0em; /* ✏️ 字间距：em单位相对字号，0为默认 */
+                margin-bottom: 40px; /* 给按钮留出向下的间距 */
+            }
+
+            /* 🌟 "进入"按钮的精致样式 */
+            .enter-btn {
+                align-self: flex-start;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 11px 26px;
+                background: #333333;
+                color: #ffffff;
+                font-size: 15px; /* ✏️ 按钮字号（已放大） */
+                font-family: var(--font-main); /* ✏️ 按钮字体 */
+                font-weight: 500;
+                letter-spacing: 0.05em;
+                text-decoration: none;
+                border-radius: 30px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                cursor: pointer;
+                transition:
+                    background 0.3s,
+                    transform 0.2s,
+                    box-shadow 0.3s;
+            }
+            .enter-btn:hover {
+                background: #555555;
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+                transform: translateY(-1px);
+            }
+            .enter-btn:active {
+                transform: translateY(1px);
+            }
+
+            .close-tip {
+                position: absolute;
+                bottom: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 12px;
+                color: #aaa;
+                letter-spacing: 0.1em;
+            }
+
+            /* ==================== 背景大字 ==================== */
+            /* ⚠️ 必须在 HTML 里紧跟 #card-overlay 之后，~ 选择器才生效 */
+            .bg-text {
+                position: fixed;
+                bottom: 0.7em; /* ✏️ 底部轻微截断；改 0 则完整显示 */
+                left: 0.3em; /* ✏️ 微调左侧对齐 */
+                z-index: 0; /* 在所有漂浮 .item（z-index 1+）之下 */
+                font-family: var(--font-main);
+                font-size: 11vw; /* ✏️ 字号，vw 单位保持响应式 */
+                font-weight: 400; /* ✏️ 字重 */
+                color: #000000; /* ✏️ 极浅灰，退到背景不抢焦点 */
+                line-height: 1; /* ✏️ 行高，两行紧凑贴合 */
+                letter-spacing: 0em; /* ✏️ 轻微收紧字距 */
+                pointer-events: none;
+                user-select: none;
+                opacity: 1;
+                transition: opacity 0.5s ease;
+            }
+            /* 名片打开时大字淡出，利用 CSS 通用兄弟选择器，无需额外 JS */
+            #card-overlay.active ~ .bg-text {
+                opacity: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="site-nav"></div>
+        <script src="nav.js"></script>
+        <div id="card-overlay">
+            <div class="info-card" id="info-card-body">
+                <div class="card-left" id="card-target-box"></div>
+                <div class="card-right">
+                    <div class="card-title" id="card-title"></div>
+                    <div class="card-desc" id="card-desc"></div>
+                    <a
+                        class="enter-btn"
+                        id="card-enter-btn"
+                        href="#"
+                        target="_blank"
+                        >Enter the page</a
+                    >
+                </div>
+                <div class="close-tip">Click anywhere to return</div>
+            </div>
+        </div>
+
+        <!-- ✏️ 背景大字：必须紧跟 #card-overlay，CSS ~ 选择器依赖 DOM 顺序 -->
+        <!-- ✏️ 修改文字内容：替换下面两行 div 里的文字即可 -->
+        <div class="bg-text" id="bg-text">
+            <div>Field</div>
+            <div>Guide</div>
+        </div>
+
+        <script>
+            const ITEMS = [
+                {
+                    src: "images/rhizobia-0.webp",
+                    label: "rhizobia",
+                    type: "Bacterium",
+                    w: 170,
+                    desc: "It lives in the roots of the legume grasses beneath the cork oaks. It turns nitrogen the plants can't use straight from the air into nutrients, keeping the montado fertile year after year without any fertilizer.",
+                    link: "rhizobia.html",
+                },
+                {
+                    src: "images/streptomyces-griseus-0.webp",
+                    label: "Streptomyces griseus",
+                    type: "Bacterium",
+                    w: 150,
+                    desc: "That earthy scent rising from the montado soil after the first autumn rain comes largely from it. It has another claim too: streptomycin, humanity's first drug against tuberculosis, came from this bacterium.",
+                    link: "streptomyces-griseus.html",
+                },
+                {
+                    src: "images/bacillus-megaterium-0.webp",
+                    label: "Bacillus megaterium",
+                    type: "Bacterium",
+                    w: 170,
+                    desc: "The montado's soil is poor and acidic, and phosphorus often stays locked in minerals where plants can't reach it. This is the one that unlocks it, dissolving phosphorus so even sparse plants can take root.",
+                    link: "bacillus-megaterium.html",
+                },
+                {
+                    src: "images/bacillus-subtilis-0.webp",
+                    label: "Bacillus subtilis",
+                    type: "Bacterium",
+                    w: 110,
+                    desc: "It can form a tough spore to wait out the driest summer, then wake again when the rain returns. Farmers use it against crop diseases, and it is also a probiotic.",
+                    link: "bacillus-subtilis.html",
+                },
+                {
+                    src: "images/bryobacter-aggregatus-0.webp",
+                    label: "Bryobacter aggregatus",
+                    type: "Bacterium",
+                    w: 160,
+                    desc: "The montado is known for being dry, yet it has its damp corners too: stream edges, watering troughs, shaded mossy rocks. This is where it lives, slowly breaking down moss and litter, keeping the carbon balance of these small worlds.",
+                    link: "bryobacter-aggregatus.html",
+                },
+                {
+                    src: "images/phytophthora-cinnamomi-0.webp",
+                    label: "Phytophthora cinnamomi",
+                    type: "Oomycete",
+                    w: 140,
+                    desc: "The montado's most dangerous underground enemy. It rots the roots of oaks, and over a few years once-leafy cork oaks slowly wither and die. This wood-pasture, alive for centuries, is now under threat because of it.",
+                    link: "phytophthora-cinnamomi.html",
+                },
+                {
+                    src: "images/pseudomonas-fluorescens-0.webp",
+                    label: "Pseudomonas fluorescens",
+                    type: "Bacterium",
+                    w: 180,
+                    desc: "It gathers around the roots of oaks and grasses, releasing antibiotics and competing for ground with pathogens like Phytophthora cinnamomi. Scientists are wondering whether it might help protect the montado's ailing oaks.",
+                    link: "pseudomonas-fluorescens.html",
+                },
+                {
+                    src: "images/variscite.webp",
+                    label: "Variscite (AlPO₄·2H₂O)",
+                    type: "Mineral",
+                    w: 200,
+                    desc: "In the montado's acidic soil, phosphorus often binds with aluminum into this mineral and stays firmly locked away, beyond the plants' reach. Only phosphorus-dissolving microbes can release it again for the plants to use.",
+                    link: "variscite.html",
+                },
+                {
+                    src: "images/H2PO4.webp",
+                    label: "Dihydrogen Phosphate (H₂PO₄⁻)",
+                    type: "Ion",
+                    w: 170,
+                    desc: "The form of phosphorus that roots can take up directly. Microbes work to turn the phosphorus locked in minerals into this form bit by bit, so the oaks and grasses can finally absorb it and grow leaves, flowers, and acorns.",
+                    link: "dihydrogen-phosphate.html",
+                },
+                {
+                    src: "images/N2.webp",
+                    label: "Nitrogen Gas (N₂)",
+                    type: "Molecule",
+                    w: 100,
+                    desc: "The most abundant gas in the air, and yet plants can't use it. Under the wide montado sky, only microbes like rhizobia can turn it into nutrients the plants can actually absorb.",
+                    link: "nitrogen-gas.html",
+                },
+                {
+                    src: "images/NH3.webp",
+                    label: "Ammonia (NH₃)",
+                    type: "Molecule",
+                    w: 100,
+                    desc: "The first fruit of nitrogen fixation. Microbes turn nitrogen from the air into ammonia, and plants use it to build amino acids and proteins. This is where the montado's nutrient cycle begins.",
+                    link: "ammonia.html",
+                },
+                {
+                    src: "images/nitrogen-cycle.webp",
+                    label: "The Nitrogen Cycle",
+                    type: "Biogeochemical cycle",
+                    w: 110,
+                    desc: "Nitrogen moves endlessly among the air, soil, plants, and livestock: fixed, taken up, broken down, and returned to the sky. The montado is scarcely fertilized, and it is this invisible cycle that keeps it fertile year after year.",
+                    link: "nitrogen-cycle.html",
+                },
+                {
+                    src: "images/phosphorus-cycle.webp",
+                    label: "The Phosphorus Cycle",
+                    type: "Biogeochemical cycle",
+                    w: 110,
+                    desc: "Phosphorus has no gaseous form and can only turn over slowly within the soil, which makes it especially precious. It is locked into minerals, released by microbes, taken up by plants, and returned to the soil as they die back. The montado's vitality lies in this quiet cycle.",
+                    link: "phosphorus-cycle.html",
+                },
+                {
+                    src: "images/carbon-cycle.webp",
+                    label: "The Carbon Cycle",
+                    type: "Biogeochemical cycle",
+                    w: 110,
+                    desc: "The oaks take carbon from the air into wood, cork, and acorns; as the leaves decay, carbon returns to the soil and the air. With its long-lived oaks and deep soil, the montado has become an important place of carbon storage in the Mediterranean.",
+                    link: "carbon-cycle.html",
+                },
+                {
+                    src: "images/yellow-serradella.webp",
+                    label: "Yellow Serradella (Ornithopus compressus)",
+                    type: "Plant",
+                    w: 120,
+                    desc: "A small annual legume of the montado understory, with curved pods shaped like a bird's claw. Tough against drought and poor soil, it fixes nitrogen with rhizobia in its roots, blooms with little yellow flowers in spring, and feeds the sheep and black pigs.",
+                    link: "yellow-serradella.html",
+                },
+                {
+                    src: "images/subterranean-clover-0.webp",
+                    label: "Subterranean Clover (Trifolium subterraneum)",
+                    type: "Plant",
+                    w: 150,
+                    desc: "It has a clever habit: after flowering, it buries its seeds in the soil, escaping the summer drought and the grazers. That makes it especially suited to the montado, one of the most important legumes in its rotational pastures.",
+                    link: "subterranean-clover.html",
+                },
+                {
+                    src: "images/lignin-hemicellulose.webp",
+                    label: "Lignin and Hemicellulose",
+                    type: "Organic compound",
+                    w: 240,
+                    desc: "They give the oak's wood and cork, and the stems of the grasses, their stiffness and strength. When the plants die, it is the actinomycetes and Bryobacter in the soil that slowly break them down into humus, returning them to this land.",
+                    link: "lignin-hemicellulose.html",
+                },
+                {
+                    src: "images/bradyrhizobium-0.webp",
+                    label: "Bradyrhizobium",
+                    type: "Bacterium",
+                    w: 150,
+                    desc: "The slow one in the rhizobia family. It grows slowly and fixes nitrogen without hurry, living in the root nodules of the montado's understory legumes, replenishing this poor soil season after season.",
+                    link: "bradyrhizobium.html",
+                },
+                {
+                    src: "images/rhizobium-leguminosarum-0.webp",
+                    label: "Rhizobium leguminosarum",
+                    type: "Bacterium",
+                    w: 135,
+                    desc: "It was first found in the roots of peas, and in the montado it now lives in the nodules of subterranean clover and yellow serradella. It turns nitrogen from the air into nutrients, and the green pasture beneath the sheep and black pigs depends on it.",
+                    link: "rhizobium-leguminosarum.html",
+                },
+                {
+                    src: "images/oak-leaves-acorns.webp",
+                    label: "Oak Leaves and Acorns",
+                    type: "Plant material",
+                    w: 150,
+                    desc: "Two things the cork oak and holm oak give to this land. Leaves fall and feed the soil; acorns fall and feed the Iberian black pigs foraging among the trees, giving rise to the famous acorn-cured ham.",
+                    link: "oak-leaves-acorns.html",
+                },
+                {
+                    src: "images/C6H12O6.webp",
+                    label: "Glucose (C6H12O6)",
+                    type: "Organic compound",
+                    w: 200,
+                    desc: "Sunlight, packed into a sugar. The cork oak makes glucose from carbon dioxide and water, then turns it into wood, cork, and acorns. The part that falls into the soil becomes food for microbes.",
+                    link: "glucose.html",
+                },
+                {
+                    src: "images/CO2.webp",
+                    label: "Carbon Dioxide (CO2)",
+                    type: "Molecule",
+                    w: 130,
+                    desc: "The montado breathes in and out each day. By day, the oaks take carbon dioxide from the air into themselves; as leaves decay and creatures breathe, it returns to the sky. In the end, this woodland takes in more than it gives back.",
+                    link: "carbon-dioxide.html",
+                },
+                {
+                    src: "images/friedelin.webp",
+                    label: "Friedelin",
+                    type: "Organic compound",
+                    w: 220,
+                    desc: "A molecule hidden inside cork. It makes cork water-repellent, stable, and durable, and helps the cork oak endure the summer sun and wildfire. There is a little of it in every wine bottle stopper.",
+                    link: "friedelin.html",
+                },
+            ];
+
+            const globalMouse = { x: -1000, y: -1000 };
+            window.addEventListener("mousemove", (e) => {
+                globalMouse.x = e.clientX;
+                globalMouse.y = e.clientY;
+            });
+
+            let clickedActive = null;
+
+            /* ==================== 选中放大参数（可调） ==================== */
+            const ACTIVE_SCALE = 1.5; // ✏️ 选中后放大到原来的倍数
+            const SCALE_EASE = 0.12; // ✏️ 缓动缩放系数（先快后慢，与飞入动作的 0.12 同步；越大越快）
+
+            /* ==================== 标签定位参数（可调） ==================== */
+            const LABEL_GAP = 8; // ✏️ 标签与图片底边的垂直间距(px)
+
+            /* ==================== 漂浮投影参数（可调） ==================== */
+            // 投影颜色（偏蓝紫）在 CSS 的 :root --sh-rgb 里调；这里只控制透明度/位移/模糊。
+            const SHADOW_Y = 16; // ✏️ 投影基础下移距离(px)，越大越像悬空
+            const SHADOW_BLUR = 10; // ✏️ 投影基础模糊(px)，越大越柔和
+            const SHADOW_ALPHA = 0.2; // ✏️ 投影深浅(0~1)
+            const SHADOW_FLOAT = 5; // ✏️ 漂浮呼吸幅度(px)：>0 投影随起伏轻微胀缩；设 0 则静止、最省性能
+
+            /* ==================== 有机漂动参数（可调） ==================== */
+            const FLOAT_SPEED = 0.03; // ✏️ 基础漂动速度
+            const WANDER_TURN = 0.0008; // ✏️ 方向游走强度：越大转向越频繁、路径越蜿蜒
+            const SPEED_VARY = 0.3; // ✏️ 速度起伏幅度(0~1)：越大忽快忽慢越明显
+            const SWING = 0.2; // ✏️ 左右飘忽幅度（原有的横向摆动）
+
+            const overlay = document.getElementById("card-overlay");
+            const targetBox = document.getElementById("card-target-box");
+            const enterBtn = document.getElementById("card-enter-btn");
+            const cardBody = document.getElementById("info-card-body");
+
+            cardBody.addEventListener("click", (e) => {
+                e.stopPropagation();
+            });
+
+            const state = ITEMS.map((item, index) => {
+                const el = document.createElement("div");
+                el.className = "item";
+                el.style.zIndex = index + 1;
+
+                const img = document.createElement("img");
+                img.src = item.src;
+                img.style.width = item.w + "px";
+                img.draggable = false;
+                // 初始化投影变量（即便关闭呼吸，也保证有一份静态投影）
+                img.style.setProperty("--sh-y", SHADOW_Y + "px");
+                img.style.setProperty("--sh-blur", SHADOW_BLUR + "px");
+                img.style.setProperty("--sh-alpha", SHADOW_ALPHA);
+
+                el.appendChild(img);
+                document.body.appendChild(el);
+
+                // ==================== 标签文字组 ====================
+                // 🌟 直接挂到 <body> 顶层（不再放进 .item），由 tick 每帧跟随图片定位。
+                // 只有这样，标签所在的层叠上下文才是根节点，difference 才能与整张画面取反。
+                const labelGroup = document.createElement("div");
+                labelGroup.className = "label-group";
+                labelGroup.setAttribute("role", "link");
+                labelGroup.setAttribute("tabindex", "0");
+                labelGroup.setAttribute("aria-label", `Open ${item.label}`);
+
+                const label = document.createElement("div");
+                label.className = "label";
+                label.textContent = item.label;
+
+                const typeEl = document.createElement("div");
+                typeEl.className = "label-type";
+                typeEl.textContent = item.type;
+
+                labelGroup.appendChild(label);
+                labelGroup.appendChild(typeEl);
+                document.body.appendChild(labelGroup);
+
+                labelGroup.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    window.location.href = item.link;
+                });
+
+                labelGroup.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        window.location.href = item.link;
+                    }
+                });
+
+                const W = window.innerWidth,
+                    H = window.innerHeight;
+                const x = Math.random() * (W - item.w - 40) + 20;
+                const y = Math.random() * (H - 120) + 20;
+
+                const obj = {
+                    el,
+                    img, // ← 存下图片引用，用于精准对齐
+                    labelEl: labelGroup, // ← 顶层标签组引用，每帧跟随定位
+                    item,
+                    x,
+                    y,
+                    heading: Math.random() * Math.PI * 2, // 当前前进方向（会随时间游走）
+                    speed: 0.3 + Math.random() * 0.3, // 基础速度
+                    // —— 有机漂动随机种子：每张图各不相同，避免整齐划一 ——
+                    wf1: 0.1 + Math.random() * 0.2, // 方向游走频率 1
+                    wf2: 0.04 + Math.random() * 0.1, // 方向游走频率 2
+                    wp1: Math.random() * Math.PI * 2, // 方向游走相位 1
+                    wp2: Math.random() * Math.PI * 2, // 方向游走相位 2
+                    spf1: 0.08 + Math.random() * 0.15, // 速度起伏频率 1
+                    spf2: 0.03 + Math.random() * 0.08, // 速度起伏频率 2
+                    spp1: Math.random() * Math.PI * 2, // 速度起伏相位 1
+                    spp2: Math.random() * Math.PI * 2, // 速度起伏相位 2
+                    hovered: false,
+                    phase: Math.random() * Math.PI * 2,
+                    zIndex: index + 1,
+                    scale: 1, // 当前缩放，缓动逼近目标
+                };
+
+                el.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    if (clickedActive) return;
+
+                    clickedActive = obj;
+
+                    document.getElementById("card-title").textContent =
+                        item.label;
+                    document.getElementById("card-desc").textContent =
+                        item.desc;
+
+                    // 统一跳转逻辑
+                    enterBtn.textContent = "Enter the page";
+                    enterBtn.href = item.link;
+                    enterBtn.setAttribute("target", "_top");
+                    enterBtn.onclick = null;
+
+                    overlay.classList.add("active");
+                    el.classList.remove("hovered");
+                });
+
+                return obj;
+            });
+
+            overlay.addEventListener("click", () => {
+                if (!clickedActive) return;
+                overlay.classList.remove("active");
+                clickedActive = null;
+            });
+
+            let last = null;
+            function tick(now) {
+                if (!last) last = now;
+                const dt = Math.min(now - last, 50);
+                last = now;
+                const W = window.innerWidth,
+                    H = window.innerHeight;
+
+                let currentActive = null;
+                if (!clickedActive) {
+                    let candidates = [];
+                    state.forEach((s) => {
+                        const rect = s.el.getBoundingClientRect();
+                        const isInside =
+                            globalMouse.x >= rect.left &&
+                            globalMouse.x <= rect.right &&
+                            globalMouse.y >= rect.top &&
+                            globalMouse.y <= rect.bottom;
+                        const labelRect = s.labelEl.getBoundingClientRect();
+                        const isInsideLabel =
+                            s.labelEl.classList.contains("show") &&
+                            globalMouse.x >= labelRect.left &&
+                            globalMouse.x <= labelRect.right &&
+                            globalMouse.y >= labelRect.top &&
+                            globalMouse.y <= labelRect.bottom;
+                        if (isInside || isInsideLabel) candidates.push(s);
+                    });
+                    if (candidates.length > 0) {
+                        currentActive = candidates.reduce(
+                            (max, s) => (s.zIndex > max.zIndex ? s : max),
+                            candidates[0],
+                        );
+                    }
+                }
+
+                const targetRect = targetBox.getBoundingClientRect();
+                const targetX = targetRect.left + targetRect.width / 2;
+                const targetY = targetRect.top + targetRect.height / 2;
+
+                state.forEach((s) => {
+                    s.phase += dt * 0.002;
+
+                    // 缓动缩放：选中的图片缓动放大到 ACTIVE_SCALE 倍（先快后慢），
+                    // 其余缓动回到 1 倍，与飞入左框的动作同步
+                    const targetScale = s === clickedActive ? ACTIVE_SCALE : 1;
+                    s.scale += (targetScale - s.scale) * SCALE_EASE;
+                    s.img.style.setProperty("--img-scale", s.scale.toFixed(3));
+
+                    // 漂浮呼吸：用各自相位做缓慢起伏，投影随之变大变虚，强化悬浮感
+                    if (SHADOW_FLOAT > 0) {
+                        const lift = (Math.sin(s.phase * 0.8) + 1) / 2; // 0~1
+                        s.img.style.setProperty(
+                            "--sh-y",
+                            (SHADOW_Y + lift * SHADOW_FLOAT).toFixed(1) + "px",
+                        );
+                        s.img.style.setProperty(
+                            "--sh-blur",
+                            (SHADOW_BLUR + lift * SHADOW_FLOAT).toFixed(1) +
+                                "px",
+                        );
+                        s.img.style.setProperty(
+                            "--sh-alpha",
+                            (SHADOW_ALPHA - lift * 0.06).toFixed(3),
+                        );
+                    }
+
+                    if (s === clickedActive) {
+                        // 名片打开状态：让图片中心精准落在左框中心
+                        const elRect = s.el.getBoundingClientRect();
+                        const imgRect = s.img.getBoundingClientRect();
+                        // 图片中心相对于 .item 容器左上角的偏移（与宽高、标签长短无关）
+                        const offsetX =
+                            imgRect.left + imgRect.width / 2 - elRect.left;
+                        const offsetY =
+                            imgRect.top + imgRect.height / 2 - elRect.top;
+
+                        const tx = targetX - offsetX;
+                        const ty = targetY - offsetY;
+
+                        s.x += (tx - s.x) * 0.12;
+                        s.y += (ty - s.y) * 0.12;
+
+                        s.el.style.zIndex = 1001;
+                    } else if (clickedActive) {
+                        // 背景被冻结：其他微生物在原地微颤
+                        s.x += Math.sin(s.phase * 1.0) * 0.15;
+                        s.y += Math.cos(s.phase * 0.8) * 0.15;
+                        s.el.style.zIndex = s.zIndex;
+                    } else {
+                        // 正常游荡状态
+                        if (s === currentActive) {
+                            // 🌟 核心：鼠标悬停时，扣留基础速度，转为优雅的"水中原地悬浮画圈摆动"
+                            if (!s.hovered) {
+                                s.hovered = true;
+                                s.el.classList.add("hovered");
+                            }
+                            s.x += Math.sin(s.phase * 1.5) * 0.35;
+                            s.y += Math.cos(s.phase * 1.2) * 0.35;
+                        } else {
+                            if (s.hovered) {
+                                s.hovered = false;
+                                s.el.classList.remove("hovered");
+                            }
+                            // —— 有机自由漂动 ——
+                            const t = now * 0.001; // 秒
+
+                            // 1) 方向游走：朝向随时间缓慢、随机地偏转，整体路径上下左右都飘
+                            s.heading +=
+                                (Math.sin(t * s.wf1 + s.wp1) +
+                                    0.5 * Math.sin(t * s.wf2 + s.wp2)) *
+                                WANDER_TURN *
+                                dt;
+
+                            // 2) 速度忽快忽慢：基础速度上叠加缓慢起伏
+                            const speedFactor =
+                                1 +
+                                SPEED_VARY *
+                                    0.5 *
+                                    (Math.sin(t * s.spf1 + s.spp1) +
+                                        Math.sin(t * s.spf2 + s.spp2));
+                            const sp =
+                                s.speed *
+                                Math.max(0.1, speedFactor) *
+                                FLOAT_SPEED *
+                                dt;
+
+                            s.x += Math.cos(s.heading) * sp;
+                            s.y += Math.sin(s.heading) * sp;
+
+                            // 3) 保留左右飘忽（垂直于前进方向的横向摆动）
+                            const swing = Math.sin(s.phase * 1.5) * SWING;
+                            s.x += -Math.sin(s.heading) * swing;
+                            s.y += Math.cos(s.heading) * swing;
+
+                            const buffer = 250;
+                            if (s.x < -buffer) s.x = W;
+                            if (s.x > W) s.x = -buffer;
+                            if (s.y < -buffer) s.y = H;
+                            if (s.y > H) s.y = -buffer;
+                        }
+                        s.el.style.zIndex = s.zIndex;
+                    }
+
+                    s.el.style.left = s.x + "px";
+                    s.el.style.top = s.y + "px";
+                });
+
+                // ==================== 标签定位 + 显隐（独立一遍，集中读取布局） ====================
+                // 上一遍已写完所有图片位置，这里统一读取图片外接框，把顶层标签置于其正下方居中。
+                // 显示条件：当前 hover 的那张、且没有打开名片。
+                state.forEach((s) => {
+                    const show = s === currentActive && !clickedActive;
+                    s.labelEl.classList.toggle("show", show);
+
+                    const r = s.img.getBoundingClientRect();
+                    s.labelEl.style.left = r.left + r.width / 2 + "px";
+                    s.labelEl.style.top = r.bottom + LABEL_GAP + "px";
+                });
+
+                requestAnimationFrame(tick);
+            }
+
+            requestAnimationFrame(tick);
+        </script>
+    </body>
+</html>

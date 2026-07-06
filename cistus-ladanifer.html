@@ -1,0 +1,1522 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script>
+            // Detail pages always open full-page: if loaded inside the index.html
+            // container iframe, jump to the top window so scrolling works and the
+            // FIELD GUIDE bar doesn't appear at the bottom.
+            if (window.top !== window.self) {
+                window.top.location.replace(window.location.href);
+            }
+        </script>
+        <title>Cistus ladanifer · The Microscopic Montado</title>
+
+        <!-- Syne Mono for the top-hero copy, consistent with the rest of the site -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Syne+Mono&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            :root {
+                --bg: #ffffff;
+                --ink: #111111;
+                --text: #444444;
+                --muted: #888888;
+                --line: #e2e2e2;
+                --accent: #777;
+                --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                --font-display: var(--font-main);
+                --font-body: var(--font-main);
+                --font-mono: var(--font-main);
+                --deco: "Syne Mono", "Courier New", monospace;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: var(--font-body);
+                background-color: var(--bg);
+                color: var(--text);
+                line-height: 1.6;
+                position: relative;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            a {
+                color: inherit;
+            }
+            .sci,
+            em {
+                font-style: italic;
+            }
+
+            /* ============ Full-page faint soil texture ============ */
+            .page-bg {
+                position: absolute;
+                inset: 0;
+                z-index: -1;
+                pointer-events: none;
+                background-image: url("images/soil-background.webp");
+                background-repeat: repeat-y;
+                background-position: top center;
+                background-size: 100% auto;
+            }
+            @media (max-width: 1024px) {
+                .page-bg {
+                    background-size: 160% auto;
+                }
+            }
+            @media (max-width: 600px) {
+                .page-bg {
+                    background-size: 230% auto;
+                }
+            }
+
+            /* ============ Top hero: pinned image + scrolling copy ============ */
+            .hero-scroll {
+                position: relative;
+                width: 100%;
+            }
+            .hero-bg-sticky {
+                position: sticky;
+                top: 0;
+                width: 100%;
+                line-height: 0;
+                /* dark fallback so the white copy stays readable if the photo is missing */
+                background: radial-gradient(
+                    120% 120% at 68% 12%,
+                    #3a2f1e 0%,
+                    #241d12 46%,
+                    #100c07 100%
+                );
+                overflow: hidden;
+            }
+            .hero-bg-sticky img {
+                display: block;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16 / 10; /* reserve height pre-load */
+                object-fit: cover;
+            }
+            /* soft darkening under the copy column for contrast on any photo */
+            .hero-bg-sticky::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                background: linear-gradient(
+                    100deg,
+                    transparent 30%,
+                    rgba(0, 0, 0, 0.28) 62%,
+                    rgba(0, 0, 0, 0.44) 100%
+                );
+            }
+
+            .hero-copy {
+                position: absolute;
+                top: 22vw;
+                right: 0;
+                width: 40%;
+                padding-right: clamp(20px, 4vw, 64px);
+                padding-left: 24px;
+                color: #ffffff;
+                z-index: 2;
+            }
+            .hero-copy .hero-eyebrow {
+                font-family: var(--deco);
+                font-size: 12px;
+                letter-spacing: 0.24em;
+                text-transform: uppercase;
+                opacity: 0.9;
+                margin-bottom: 20px;
+            }
+            .hero-copy p {
+                font-family: var(--deco);
+                font-size: clamp(13px, 1.3vw, 17px);
+                line-height: 1.72;
+                margin: 0 0 1.3em;
+                text-align: left;
+            }
+            .hero-copy p:last-child {
+                margin-bottom: 0;
+            }
+
+            .hero-scroll-hint {
+                position: absolute;
+                left: 24px;
+                top: 0;
+                transform: translateY(calc(-100% - 12px));
+                color: #ffffff;
+                pointer-events: none;
+            }
+            .hero-scroll-hint svg {
+                display: block;
+                width: 26px;
+                height: 26px;
+                animation: heroHintFloat 1.8s ease-in-out infinite;
+            }
+            @keyframes heroHintFloat {
+                0%,
+                100% {
+                    transform: translateY(3px);
+                    opacity: 0.5;
+                }
+                50% {
+                    transform: translateY(-3px);
+                    opacity: 1;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .hero-scroll-hint svg {
+                    animation: none;
+                    opacity: 0.75;
+                }
+            }
+            @media (max-width: 1024px) {
+                .hero-copy {
+                    width: 56%;
+                }
+            }
+            @media (max-width: 600px) {
+                .hero-copy {
+                    width: 100%;
+                    padding-left: 20px;
+                    padding-right: 20px;
+                }
+                .hero-copy p {
+                    font-size: 14px;
+                }
+                .hero-scroll-hint {
+                    left: 20px;
+                }
+            }
+
+            /* ============ Citation dots ============ */
+            .hero-ref,
+            sup.ref {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: currentColor;
+                vertical-align: super;
+                position: relative;
+                top: -0.15em;
+                margin-left: 3px;
+                cursor: pointer;
+                user-select: none;
+            }
+            sup.ref {
+                background: var(--accent);
+                transition: background 0.15s;
+            }
+            sup.ref:hover,
+            sup.ref:focus-visible {
+                background: var(--ink);
+            }
+            .hero-ref::after,
+            sup.ref::after {
+                content: "";
+                position: absolute;
+                inset: -8px;
+                border-radius: 50%;
+            }
+            .hero-ref:focus-visible {
+                outline: 2px solid currentColor;
+                outline-offset: 3px;
+            }
+
+            .hero-ref-card,
+            .ref-card {
+                position: fixed;
+                z-index: 1000;
+                display: none;
+                max-width: 340px;
+                width: max-content;
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 16px 18px;
+                box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+            }
+            .hero-ref-card.open,
+            .ref-card.open {
+                display: block;
+            }
+            .rc-kicker {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--accent);
+                margin-bottom: 8px;
+            }
+            .rc-title {
+                font-size: 14px;
+                color: var(--ink);
+                font-weight: 600;
+                line-height: 1.35;
+                margin-bottom: 7px;
+            }
+            .rc-meta {
+                font-size: 12px;
+                color: #666;
+                line-height: 1.55;
+                margin-bottom: 12px;
+            }
+            a.rc-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 12px;
+                color: var(--accent);
+                text-decoration: none;
+                border-top: 1px solid var(--line);
+                padding-top: 10px;
+                width: 100%;
+                word-break: break-word;
+            }
+            a.rc-link:hover {
+                text-decoration: underline;
+            }
+
+            /* ============ Container & general blocks ============ */
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 96px 20px 60px;
+                position: relative;
+            }
+            hr {
+                border: none;
+                border-top: 1px solid var(--line);
+                margin: 50px 0;
+            }
+
+            /* continue / back button */
+            .continue-actions {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-bottom: 26px;
+            }
+            .continue-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 16px;
+                border: 1px solid var(--line);
+                border-radius: 22px;
+                background: #fff;
+                font-size: 12px;
+                letter-spacing: 0.04em;
+                color: #555;
+                text-decoration: none;
+                white-space: nowrap;
+                transition:
+                    box-shadow 0.2s,
+                    transform 0.2s,
+                    border-color 0.2s,
+                    color 0.2s;
+            }
+            .continue-btn:hover {
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+                transform: translateY(-1px);
+                border-color: var(--accent);
+                color: var(--ink);
+            }
+            .continue-btn .arrow {
+                transition: transform 0.2s;
+            }
+            .continue-btn:hover .arrow {
+                transform: translateX(-3px);
+            }
+
+            /* hero-section: title + watercolour */
+            .hero-section {
+                display: grid;
+                grid-template-columns: 1.7fr 1fr;
+                gap: 2cm;
+                align-items: start;
+                margin-top: 20px;
+            }
+            .hero-left h1 {
+                font-family: var(--font-display);
+                font-size: 54px;
+                font-weight: 700;
+                font-style: italic;
+                color: var(--ink);
+                letter-spacing: 0.02em;
+                margin-bottom: 8px;
+                line-height: 1.05;
+            }
+            .hero-left .h1-sub {
+                font-family: var(--font-body);
+                font-size: 15px;
+                font-style: normal;
+                color: var(--muted);
+                letter-spacing: 0.04em;
+                margin-bottom: 28px;
+            }
+            .hero-left .description {
+                font-size: 15px;
+                color: #555;
+                text-align: justify;
+                max-width: none;
+            }
+            .hero-left .etym {
+                font-family: var(--font-display);
+                font-style: italic;
+                color: var(--muted);
+                font-size: 15px;
+                margin-top: 18px;
+                line-height: 1.6;
+            }
+
+            .hero-right {
+                position: relative;
+            }
+            .hero-right .wc-figure {
+                margin: 0;
+                width: 100%;
+            }
+            .hero-right .wc-slot {
+                width: 100%;
+                background: transparent;
+                display: block;
+            }
+            .hero-right .wc-slot svg,
+            .hero-right .wc-slot img {
+                width: 100%;
+                height: auto;
+                display: block;
+                mix-blend-mode: multiply;
+            }
+            .hero-right .wc-caption {
+                width: 100%;
+                margin-top: 10px;
+                font-family: var(--font-mono);
+                font-size: 12px;
+                color: var(--muted);
+                line-height: 1.5;
+            }
+
+            /* metadata facts (was the "data strip") */
+            .facts {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px 30px;
+                margin: 44px 0 0;
+            }
+            @media (max-width: 760px) {
+                .facts {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+            .fact {
+                border-top: 1px solid var(--ink);
+                padding-top: 12px;
+            }
+            .fact .fl {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                letter-spacing: 0.02em;
+                color: var(--muted);
+                text-transform: uppercase;
+                display: block;
+                margin-bottom: 8px;
+            }
+            .fact .fv {
+                font-family: var(--font-display);
+                font-weight: 300;
+                font-size: 19px;
+                color: var(--ink);
+                line-height: 1.25;
+                display: block;
+            }
+
+            /* section headings + copy blocks */
+            .sec-head {
+                font-family: var(--font-display);
+                font-weight: 300;
+                font-size: 30px;
+                color: var(--ink);
+                line-height: 1.15;
+                letter-spacing: 0.02em;
+                margin-bottom: 6px;
+            }
+            .sec-kicker {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--accent);
+                margin-bottom: 14px;
+            }
+
+            .content-block {
+                display: grid;
+                grid-template-columns: 1fr 1.2fr;
+                gap: 60px;
+                align-items: start;
+                margin: 50px 0;
+            }
+            .caption-text {
+                font-size: 15px;
+                color: #555;
+                max-width: 520px;
+                padding-top: 4px;
+            }
+            .caption-text.wide {
+                max-width: none;
+                width: 100%;
+            }
+            .caption-text p + p {
+                margin-top: 1.1em;
+            }
+
+            /* figures & photos */
+            figure {
+                margin: 0;
+            }
+            .section-photos {
+                margin: 30px 0 0;
+            }
+            .ph {
+                position: relative;
+                overflow: hidden;
+                background: #f4f2ee;
+                display: block;
+            }
+            .ph img {
+                display: block;
+            }
+            .ph-fallback {
+                display: none;
+                width: 100%;
+                height: 100%;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                font-family: var(--font-mono);
+                font-size: 11px;
+                color: var(--muted);
+                text-decoration: none;
+                padding: 14px;
+                aspect-ratio: 16 / 10;
+                line-height: 1.6;
+            }
+            .ph-fallback:hover {
+                color: var(--accent);
+            }
+            .ph.single {
+                aspect-ratio: 16 / 10;
+            }
+            .ph.single img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .credit {
+                font-family: var(--font-mono);
+                font-size: 10.5px;
+                color: var(--muted);
+                letter-spacing: 0.01em;
+                line-height: 1.6;
+                margin-top: 8px;
+            }
+            .credit b {
+                color: #666;
+                font-weight: 600;
+            }
+
+            /* the "lean crew" grid (adapts the reference .modes) */
+            .crew {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+                margin-top: 30px;
+            }
+            @media (max-width: 860px) {
+                .crew {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+            .crew-item {
+                border: 1px solid var(--line);
+                padding: 20px 18px;
+            }
+            .crew-item .n {
+                font-family: var(--font-mono);
+                font-size: 11px;
+                color: var(--accent);
+            }
+            .crew-item b {
+                display: block;
+                font-family: var(--font-display);
+                font-style: italic;
+                font-weight: 400;
+                font-size: 17px;
+                color: var(--ink);
+                margin: 8px 0 6px;
+            }
+            .crew-item span {
+                font-size: 12.5px;
+                color: #666;
+                line-height: 1.5;
+                display: block;
+            }
+
+            /* thesis / pull quote */
+            .thesis {
+                margin: 46px auto;
+                max-width: 640px;
+                text-align: center;
+            }
+            .thesis p {
+                font-family: var(--font-display);
+                font-weight: 300;
+                font-style: italic;
+                font-size: 26px;
+                color: var(--ink);
+                line-height: 1.34;
+                letter-spacing: 0.01em;
+            }
+            .thesis .attr {
+                font-family: var(--font-mono);
+                font-style: normal;
+                font-size: 12px;
+                color: var(--muted);
+                letter-spacing: 0.02em;
+                margin-top: 18px;
+                line-height: 1.7;
+            }
+
+            /* explore scroller */
+            .explore-title {
+                text-align: center;
+                font-size: 14px;
+                color: var(--muted);
+                letter-spacing: 0.1em;
+                margin-bottom: 30px;
+            }
+            .explore-scroller {
+                position: relative;
+            }
+            .explore-grid {
+                display: flex;
+                justify-content: flex-start;
+                gap: 44px;
+                overflow-x: auto;
+                padding: 4px 50px 14px;
+                scroll-behavior: smooth;
+                scrollbar-width: none;
+            }
+            .explore-grid::-webkit-scrollbar {
+                display: none;
+            }
+            @media (min-width: 760px) {
+                .explore-grid {
+                    justify-content: center;
+                }
+            }
+            .explore-item {
+                flex: 0 0 auto;
+                width: 120px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-decoration: none;
+                color: #666;
+                text-align: center;
+                transition:
+                    transform 0.2s,
+                    color 0.2s;
+            }
+            .explore-item .thumb {
+                width: 78px;
+                height: 96px;
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0.82;
+                transition: opacity 0.2s;
+            }
+            .explore-item .thumb img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
+            .explore-item .thumb .dot-fallback {
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                border: 1px solid var(--line);
+                background: #f4f2ee;
+            }
+            .explore-item span {
+                font-size: 11px;
+                line-height: 1.4;
+            }
+            .explore-item span i {
+                font-style: italic;
+            }
+            .explore-item:hover {
+                transform: translateY(-4px);
+                color: var(--ink);
+            }
+            .explore-item:hover .thumb {
+                opacity: 1;
+            }
+            .explore-arrow {
+                position: absolute;
+                top: 38%;
+                right: 0;
+                transform: translateY(-50%);
+                width: 34px;
+                height: 34px;
+                border: 1px solid var(--line);
+                border-radius: 50%;
+                background: #fff;
+                color: #555;
+                font-size: 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: box-shadow 0.2s;
+            }
+            .explore-arrow:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            footer {
+                border-top: 1px solid var(--line);
+                text-align: center;
+                font-family: var(--font-mono);
+                font-size: 11px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--muted);
+                padding: 40px 24px;
+                margin-top: 20px;
+            }
+
+            @media (max-width: 760px) {
+                .hero-section,
+                .content-block {
+                    grid-template-columns: 1fr;
+                    gap: 30px;
+                }
+                .hero-left h1 {
+                    font-size: 40px;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                * {
+                    transition: none !important;
+                    scroll-behavior: auto !important;
+                }
+            }
+            :focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: 3px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Full-page faint soil texture, behind all content -->
+        <div class="page-bg" aria-hidden="true"></div>
+
+        <!-- Shared navigation -->
+        <div id="site-nav"></div>
+        <script src="nav.js"></script>
+
+        <!-- ============ Top hero: pinned image + scrolling copy ============ -->
+        <section class="hero-scroll" id="heroScroll">
+            <div class="hero-bg-sticky" id="heroBgSticky">
+                <img
+                    id="heroBgImg"
+                    src="images/cistus-ladanifer-pseudomonas-fluorescens.webp"
+                    alt="Cistus ladanifer (esteva) spreading across a montado turning wild, Alentejo"
+                    onerror="this.style.visibility='hidden'"
+                />
+            </div>
+
+            <div class="hero-copy" id="heroCopy">
+                <div class="hero-scroll-hint" aria-hidden="true">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <polyline points="6 15 12 9 18 15"></polyline>
+                    </svg>
+                </div>
+                <div class="hero-eyebrow">Field Guide · No. 17</div>
+                <p>
+                    Farmers read it as a warning. When the pasture thins and the
+                    montado begins to go wild, the <em>esteva</em> moves in —
+                    resinous, unpalatable, impossible to ignore. Sheep won't
+                    touch it; even cattle leave it alone.
+                </p>
+                <p>
+                    Yet the same plant secretes <em>labdanum</em>, a resin the
+                    perfume houses can't do without<span
+                        class="hero-ref"
+                        data-ref="1"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 1"
+                    ></span>
+                    — and underground, it runs a quiet chemistry with a lean crew
+                    of bacteria that pry nutrients from poor, acidic soil.
+                </p>
+            </div>
+        </section>
+
+        <!-- popups (kept outside .hero-copy so they are never blended) -->
+        <div
+            class="hero-ref-card"
+            id="heroRefCard"
+            role="dialog"
+            aria-label="Reference"
+        ></div>
+        <div
+            class="ref-card"
+            id="refCard"
+            role="dialog"
+            aria-label="Source reference"
+        >
+            <div class="rc-kicker"></div>
+            <div class="rc-title"></div>
+            <div class="rc-meta"></div>
+            <a class="rc-link" href="#" target="_blank" rel="noopener"
+                >Open source ↗</a
+            >
+        </div>
+
+        <div class="container">
+            <!-- ============ Hero section: title + watercolour ============ -->
+            <section class="hero-section">
+                <div class="hero-left">
+                    <div class="continue-actions">
+                        <a class="continue-btn" href="index.html"
+                            ><span class="arrow" aria-hidden="true">←</span>
+                            Continue exploring Field Guide</a
+                        >
+                    </div>
+                    <h1>Cistus&nbsp;ladanifer</h1>
+                    <div class="h1-sub">
+                        Gum rockrose · <span class="sci">esteva</span> (PT) /
+                        <span class="sci">jara pringosa</span> (ES)
+                    </div>
+                    <div class="description">
+                        The shrub that marks a montado turning wild — and the
+                        resin the perfume houses can't do without. It is no
+                        legume and fixes no nitrogen; instead it cultivates a
+                        lean, specialised rhizosphere, and on ruined mine soils
+                        it quietly helps hold a landscape's poisons still.<sup
+                            class="ref"
+                            data-ref="2"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </div>
+                    <div class="etym">
+                        <span class="sci">Cistus</span> — from the Greek
+                        <span class="sci">kísthos</span>, the old name for the
+                        rockrose.<br />
+                        <span class="sci">ladanifer</span> — "bearing
+                        <span class="sci">ladanum</span>," the sticky resin its
+                        leaves exude.
+                    </div>
+                </div>
+
+                <div class="hero-right">
+                    <figure class="wc-figure">
+                        <div class="wc-slot">
+                            <img
+                                id="heroImg"
+                                src="images/cistus-ladanifer-4.webp"
+                                alt="Cistus ladanifer flower, watercolour — white petals with crimson basal blotches"
+                                onerror="
+                                    this.style.display = 'none';
+                                    document.getElementById('heroSvg').style.display = 'block';
+                                "
+                            />
+                            <svg
+                                id="heroSvg"
+                                style="display: none"
+                                viewBox="0 0 460 380"
+                                xmlns="http://www.w3.org/2000/svg"
+                                role="img"
+                                aria-label="Cistus ladanifer flower, stylised"
+                            >
+                                <rect width="460" height="380" fill="#faf9f7" />
+                                <g
+                                    fill="none"
+                                    stroke="var(--accent)"
+                                    stroke-width="2.2"
+                                    opacity="0.9"
+                                >
+                                    <path d="M230,300 C226,250 222,210 230,175" />
+                                    <path d="M230,240 C205,232 188,214 182,196" />
+                                    <path d="M230,258 C256,250 274,232 280,214" />
+                                </g>
+                                <g stroke="var(--accent)" stroke-width="2.2">
+                                    <path
+                                        d="M230,175 C185,120 150,120 150,150 C150,182 195,182 230,175 Z"
+                                        fill="#ffffff"
+                                    />
+                                    <path
+                                        d="M230,175 C275,120 310,120 310,150 C310,182 265,182 230,175 Z"
+                                        fill="#ffffff"
+                                    />
+                                    <path
+                                        d="M230,175 C168,150 138,178 155,205 C172,232 210,208 230,175 Z"
+                                        fill="#ffffff"
+                                    />
+                                    <path
+                                        d="M230,175 C292,150 322,178 305,205 C288,232 250,208 230,175 Z"
+                                        fill="#ffffff"
+                                    />
+                                    <path
+                                        d="M230,175 C210,108 250,108 230,175 Z"
+                                        fill="#ffffff"
+                                    />
+                                </g>
+                                <g fill="var(--accent)" opacity="0.55">
+                                    <path d="M205,168 C214,150 224,150 226,170 Z" />
+                                    <path d="M255,168 C246,150 236,150 234,170 Z" />
+                                    <path d="M212,190 C218,205 226,205 227,183 Z" />
+                                    <path d="M248,190 C242,205 234,205 233,183 Z" />
+                                    <path d="M198,180 C210,178 222,180 224,176 Z" />
+                                </g>
+                                <circle
+                                    cx="230"
+                                    cy="176"
+                                    r="12"
+                                    fill="#e9dcc0"
+                                    stroke="var(--accent)"
+                                    stroke-width="1.6"
+                                />
+                            </svg>
+                        </div>
+                        <figcaption class="wc-caption">
+                            <em>Cistus ladanifer</em> in flower — white petals
+                            with a crimson basal blotch.<sup
+                                class="ref"
+                                data-ref="watercolour"
+                                role="button"
+                                tabindex="0"
+                                aria-label="source"
+                            ></sup>
+                        </figcaption>
+                    </figure>
+                </div>
+            </section>
+
+            <!-- metadata facts -->
+            <section class="facts" aria-label="Field data">
+                <div class="fact">
+                    <span class="fl">Family</span>
+                    <span class="fv">Cistaceae</span>
+                </div>
+                <div class="fact">
+                    <span class="fl">Habit</span>
+                    <span class="fv">Resinous evergreen shrub</span>
+                </div>
+                <div class="fact">
+                    <span class="fl">Root symbiosis</span>
+                    <span class="fv">Ectomycorrhizal</span>
+                </div>
+                <div class="fact">
+                    <span class="fl">Nitrogen</span>
+                    <span class="fv">None — not a legume</span>
+                </div>
+                <div class="fact">
+                    <span class="fl">Soil</span>
+                    <span class="fv">Acidic · poor · calcifuge</span>
+                </div>
+                <div class="fact">
+                    <span class="fl">Signature</span>
+                    <span class="fv">Labdanum resin</span>
+                </div>
+            </section>
+
+            <hr />
+
+            <!-- 01 — Above ground -->
+            <section class="content-block">
+                <div>
+                    <div class="sec-kicker">01 — Above ground</div>
+                    <h2 class="sec-head">
+                        A shrub nobody grazes, everybody uses
+                    </h2>
+                </div>
+                <div class="caption-text">
+                    <p>
+                        Across the Alentejo it is common knowledge that esteva
+                        appears where grazing has failed. Yet the same plant
+                        secretes <em>labdanum</em> — a sticky, sweet resin of
+                        terpenes and flavonoids exuded by its leaves<sup
+                            class="ref"
+                            data-ref="1"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                        — which the perfume industry prizes as a fixative that
+                        holds a scent in place. The British cosmetics maker Lush
+                        is among the buyers sourcing it from Alentejo farmers.
+                    </p>
+                </div>
+            </section>
+
+            <figure class="section-photos">
+                <div class="ph single">
+                    <img
+                        src="images/cistus-ladanifer-flower.webp"
+                        alt="Cistus ladanifer in flower — white petals with a crimson basal blotch"
+                        loading="lazy"
+                        onerror="
+                            this.style.display='none';
+                            this.parentNode.querySelector('.ph-fallback').style.display='flex';
+                        "
+                    />
+                    <a class="ph-fallback" href="index.html"
+                        >[ image slot ] Cistus ladanifer in flower — white petals, crimson basal blotch</a
+                    >
+                </div>
+                <figcaption class="credit">
+                    The flower most farmers know before they know the name.
+                    <b>Credit: add field photo / CC-BY source ↗</b>
+                </figcaption>
+            </figure>
+
+            <hr />
+
+            <!-- 02 — Fire & policy -->
+            <section class="content-block">
+                <div>
+                    <div class="sec-kicker">02 — Fire &amp; policy</div>
+                    <h2 class="sec-head">Resin, fire, and a subsidy rule</h2>
+                </div>
+                <div class="caption-text">
+                    <p>
+                        That resin is also why esteva burns. In fire-prone
+                        country its oils turn the shrub into tinder — but the same
+                        fire is part of its life cycle: its hard-coated seeds are
+                        cued to germinate by the heat of a passing burn.
+                    </p>
+                    <p>
+                        There is a bureaucratic edge to this too. Under EU support
+                        rules, plots carrying too much scrub can lose eligibility
+                        for funding, so farmers clear the estevas off — a quiet
+                        collision between fire ecology and agricultural policy.
+                    </p>
+                </div>
+            </section>
+
+            <div class="thesis">
+                <p>
+                    "It's a species that appears when the montado gets a bit wild
+                    and the pasture isn't good."
+                </p>
+                <div class="attr">
+                    — interview with Eva &amp; Vicente, montado farmers
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- 03 — Below ground -->
+            <section class="content-block">
+                <div>
+                    <div class="sec-kicker">03 — Below ground</div>
+                    <h2 class="sec-head">
+                        The interesting montado is microbial
+                    </h2>
+                </div>
+                <div class="caption-text">
+                    <p>
+                        Below the resin and the flowers, esteva is doing quiet
+                        chemistry with bacteria. It is not a legume; it fixes no
+                        nitrogen. Instead it cultivates a lean, specialised
+                        rhizosphere. Screens of wild populations recover mostly
+                        phosphate-solubilising and siderophore-producing bacteria
+                        — organisms that pry nutrients out of poor, acidic soil —
+                        and find surprisingly low diversity: a tight crew rather
+                        than a crowd.<sup
+                            class="ref"
+                            data-ref="2"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </p>
+                    <p>
+                        Two bacteria were first described to science from this
+                        very rhizosphere: <em>Bacillus terrae</em><sup
+                            class="ref"
+                            data-ref="3"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                        and <em>Delftia rhizosphaerae</em><sup
+                            class="ref"
+                            data-ref="4"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>, both named from the soil around esteva roots in
+                        Iberia. The plant is also ectomycorrhizal — and here a
+                        bacterium plays matchmaker: <em>Pseudomonas fluorescens</em>
+                        acts as a "mycorrhiza helper," improving the fungus's
+                        colonisation of the roots. In these acidic Cistus soils
+                        the community is dominated by Proteobacteria, Acidobacteria
+                        and Actinobacteria.<sup
+                            class="ref"
+                            data-ref="5"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </p>
+                </div>
+            </section>
+
+            <div class="crew">
+                <div class="crew-item">
+                    <div class="n">01</div>
+                    <b>Phosphate-solubilisers</b>
+                    <span>Pry locked phosphorus out of poor, acidic ground.</span>
+                </div>
+                <div class="crew-item">
+                    <div class="n">02</div>
+                    <b>Siderophore-producers</b>
+                    <span>Scavenge scarce iron for the plant.</span>
+                </div>
+                <div class="crew-item">
+                    <div class="n">03</div>
+                    <b>Bacillus terrae · Delftia</b>
+                    <span>Type strains first named from esteva roots.</span>
+                </div>
+                <div class="crew-item">
+                    <div class="n">04</div>
+                    <b>Pseudomonas fluorescens</b>
+                    <span>Mycorrhiza helper — the fungal matchmaker.</span>
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- 04 — A real case -->
+            <section class="content-block">
+                <div>
+                    <div class="sec-kicker">04 — A real case</div>
+                    <h2 class="sec-head">
+                        The poisoned mines of the pyrite belt
+                    </h2>
+                </div>
+                <div class="caption-text">
+                    <p>
+                        The clearest story sits an hour south of the cork-oak
+                        country, in the Iberian Pyrite Belt. At the abandoned
+                        <strong>São Domingos</strong> and
+                        <strong>Aljustrel</strong> mines — soils loaded with
+                        copper, lead, zinc and arsenic, baked by 40&nbsp;°C
+                        summers — esteva is one of the few plants that colonises
+                        the waste on its own. It behaves as an <em>excluder</em>:
+                        it holds the metals down in its roots and rhizosphere
+                        instead of passing them up to the leaves.<sup
+                            class="ref"
+                            data-ref="6"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </p>
+                    <p>
+                        And that containment is not the plant's work alone.
+                        Phytostabilisation of this kind — locking pollutants in
+                        place rather than spreading them — depends on the
+                        rhizosphere microbiota working alongside the roots.<sup
+                            class="ref"
+                            data-ref="7"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                        The same lean bacterial crew that helps esteva feed on a
+                        poor pasture is, on a ruined mine, helping to hold a
+                        landscape's poisons still.
+                    </p>
+                </div>
+            </section>
+
+            <figure class="section-photos">
+                <div class="ph single">
+                    <img
+                        src="images/cistus-ladanifer-sao-domingos.webp"
+                        alt="Esteva colonising the red tailings of São Domingos mine, Alentejo"
+                        loading="lazy"
+                        onerror="
+                            this.style.display='none';
+                            this.parentNode.querySelector('.ph-fallback').style.display='flex';
+                        "
+                    />
+                    <a class="ph-fallback" href="index.html"
+                        >[ image slot ] Esteva on the red tailings of São Domingos mine, Alentejo</a
+                    >
+                </div>
+                <figcaption class="credit">
+                    São Domingos, Mértola — one of the oldest mine scars in the
+                    Alentejo, slowly greening from the roots up.
+                    <b>Credit: add photo / CC-BY source ↗</b>
+                </figcaption>
+            </figure>
+
+            <hr />
+
+            <!-- closing thesis -->
+            <div class="thesis">
+                <p>
+                    The shrub farmers clear for a subsidy is, underground, doing
+                    slow remediation work — with a bacterial crew that overlaps
+                    with the rest of this guide.
+                </p>
+            </div>
+
+            <hr />
+
+            <!-- explore -->
+            <section class="explore-section">
+                <div class="explore-title">Explore Related Elements</div>
+                <div class="explore-scroller">
+                    <div class="explore-grid" id="exploreGrid">
+                        <a href="rhizobia.html" class="explore-item">
+                            <span class="thumb"
+                                ><img
+                                    src="images/rhizobia-3.webp"
+                                    alt="Rhizobia"
+                                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
+                            /></span>
+                            <span>Rhizobia</span>
+                        </a>
+                        <a
+                            href="pseudomonas-fluorescens.html"
+                            class="explore-item"
+                        >
+                            <span class="thumb"
+                                ><img
+                                    src="images/pseudomonas-fluorescens-1.webp"
+                                    alt="Pseudomonas fluorescens"
+                                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
+                            /></span>
+                            <span><i>Pseudomonas</i></span>
+                        </a>
+                        <a href="bacillus-subtilis.html" class="explore-item">
+                            <span class="thumb"
+                                ><img
+                                    src="images/bacillus-subtilis-1.webp"
+                                    alt="Bacillus"
+                                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
+                            /></span>
+                            <span><i>Bacillus</i></span>
+                        </a>
+                        <a href="bryobacter-aggregatus.html" class="explore-item">
+                            <span class="thumb"
+                                ><img
+                                    src="images/bryobacter-aggregatus-0.webp"
+                                    alt="Acidobacteria"
+                                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
+                            /></span>
+                            <span>Acidobacteria</span>
+                        </a>
+                        <a
+                            href="phytophthora-cinnamomi.html"
+                            class="explore-item"
+                        >
+                            <span class="thumb"
+                                ><img
+                                    src="images/phytophthora-cinnamomi-4.webp"
+                                    alt="Phytophthora cinnamomi"
+                                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
+                            /></span>
+                            <span><i>Phytophthora</i></span>
+                        </a>
+                        <a href="index.html" class="explore-item">
+                            <span class="thumb"
+                                ><span class="dot-fallback"></span
+                            ></span>
+                            <span>← All 23 organisms</span>
+                        </a>
+                    </div>
+                    <button
+                        class="explore-arrow"
+                        id="exploreArrow"
+                        aria-label="Scroll right"
+                    >
+                        ›
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            The Microscopic Montado · in collaboration with RS3
+        </footer>
+
+        <script>
+            /* ---------- shared reference data ---------- */
+            var REFS = {
+                1: {
+                    n: 1,
+                    title:
+                        "Valorisation of Cistus ladanifer L. biomass as a source of bioactive compounds",
+                    meta:
+                        "MSc thesis, Instituto Politécnico de Bragança (IPB). Labdanum resin composition & uses.",
+                    url:
+                        "https://bibliotecadigital.ipb.pt/bitstreams/84aaf8cc-f73b-4fc1-97a7-ae1fa0050079/download",
+                },
+                2: {
+                    n: 2,
+                    title:
+                        "Screening for PGPR to improve growth of Cistus ladanifer seedlings for reforestation of degraded Mediterranean ecosystems",
+                    meta:
+                        "Plant and Soil (Springer), 2006. Phosphate-solubilising & siderophore-producing isolates; low rhizosphere diversity.",
+                    url: "https://link.springer.com/article/10.1007/s11104-006-9055-x",
+                },
+                3: {
+                    n: 3,
+                    title:
+                        "Bacillus terrae sp. nov. isolated from Cistus ladanifer rhizosphere soil",
+                    meta: "Int. J. Syst. Evol. Microbiol., 2017 (strain RA9ᵀ, Spain).",
+                    url:
+                        "https://www.microbiologyresearch.org/content/journal/ijsem/10.1099/ijsem.0.001742",
+                },
+                4: {
+                    n: 4,
+                    title:
+                        "Delftia rhizosphaerae sp. nov. isolated from the rhizosphere of Cistus ladanifer",
+                    meta: "Int. J. Syst. Evol. Microbiol., 2017 (strain RA6ᵀ).",
+                    url:
+                        "https://www.microbiologyresearch.org/content/journal/ijsem/10.1099/ijsem.0.001892",
+                },
+                5: {
+                    n: 5,
+                    title:
+                        "Soil microbiota impact on Boletus edulis mycelium — mycorrhiza helper bacteria & dominant phyla",
+                    meta:
+                        "ScienceDirect, 2023. Pseudomonas fluorescens promotes Boletus mycorrhization on C. ladanifer; Proteobacteria / Acidobacteria / Actinobacteria dominate acidic Cistus soils.",
+                    url: "https://www.sciencedirect.com/science/article/pii/S0929139322004061",
+                },
+                6: {
+                    n: 6,
+                    title:
+                        "Potentially Toxic Elements' Contamination of Soils in the Portuguese Iberian Pyrite Belt & Remediation Actions: A Review",
+                    meta:
+                        "Environments (MDPI), 2022. C. ladanifer spontaneously colonises Aljustrel / São Domingos; excluder behaviour, low leaf/soil ratios for Cu, Pb, Zn.",
+                    url: "https://www.mdpi.com/2076-3298/9/1/11",
+                },
+                7: {
+                    n: 7,
+                    title:
+                        "Using Mediterranean Native Plants for the Phytoremediation of Mining Sites: An Overview",
+                    meta:
+                        "Plants (MDPI), 2023. Phytostabilisation immobilises pollutants in the rhizosphere via roots + associated microbiota; Cistus spp. tolerant to As, Cu, Fe, Pb, Zn.",
+                    url: "https://www.mdpi.com/2223-7747/12/22/3823",
+                },
+                watercolour: {
+                    n: "—",
+                    title: "Cistus ladanifer flower — watercolour",
+                    meta: "Watercolour by Zihan Gao, from field observation, Alentejo.",
+                    url: "index.html",
+                },
+            };
+
+            function escHtml(s) {
+                return String(s)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+            }
+
+            /* ---------- generic popup placement ---------- */
+            function placeCard(card, anchor) {
+                var rect = anchor.getBoundingClientRect();
+                var cw = card.offsetWidth,
+                    ch = card.offsetHeight;
+                var left = rect.left;
+                var top = rect.bottom + 8;
+                if (left + cw > window.innerWidth - 12)
+                    left = window.innerWidth - cw - 12;
+                if (left < 12) left = 12;
+                if (top + ch > window.innerHeight - 12) top = rect.top - ch - 8;
+                card.style.left = left + "px";
+                card.style.top = Math.max(12, top) + "px";
+            }
+
+            /* ---------- TOP HERO: pinned image + scrolling copy ---------- */
+            (function () {
+                var scroll = document.getElementById("heroScroll");
+                var img = document.getElementById("heroBgImg");
+                var copy = document.getElementById("heroCopy");
+                if (!scroll || !img || !copy) return;
+
+                function layout() {
+                    var H = img.getBoundingClientRect().height;
+                    if (!H) return;
+                    var T = copy.getBoundingClientRect().height;
+                    copy.style.top = (1 / 3) * H + "px";
+                    // 高度取“图片高度”与“文案高度+半图”中的较大者：
+                    // 当文案较短（T < H/2）时旧算法会让容器高度小于图片高度，
+                    // 导致下方正文叠到大图上。用 Math.max 保证正文始终从图片底部之下开始。
+                    scroll.style.height = Math.max(H, T + (1 / 2) * H) + "px";
+                }
+
+                if (img.complete && img.naturalWidth) layout();
+                img.addEventListener("load", layout);
+                img.addEventListener("error", layout);
+                window.addEventListener("load", layout);
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(layout);
+                }
+                var lt;
+                window.addEventListener("resize", function () {
+                    clearTimeout(lt);
+                    lt = setTimeout(layout, 120);
+                });
+                layout();
+
+                /* hero dot-citations → white card (never blended) */
+                var hcard = document.getElementById("heroRefCard");
+                var currentDot = null;
+
+                function buildHero(n) {
+                    var r = REFS[n];
+                    if (!r) return;
+                    hcard.innerHTML =
+                        '<div class="rc-kicker">Reference ' +
+                        escHtml(r.n) +
+                        "</div>" +
+                        '<div class="rc-title">' +
+                        escHtml(r.title) +
+                        "</div>" +
+                        '<div class="rc-meta">' +
+                        escHtml(r.meta) +
+                        "</div>" +
+                        '<a class="rc-link" href="' +
+                        r.url +
+                        '" target="_blank" rel="noopener">Open source ↗</a>';
+                }
+                function openDot(dot) {
+                    buildHero(dot.dataset.ref);
+                    hcard.classList.add("open");
+                    placeCard(hcard, dot);
+                    currentDot = dot;
+                }
+                function closeDot() {
+                    hcard.classList.remove("open");
+                    currentDot = null;
+                }
+                copy.querySelectorAll(".hero-ref").forEach(function (dot) {
+                    dot.addEventListener("click", function (e) {
+                        e.stopPropagation();
+                        currentDot === dot ? closeDot() : openDot(dot);
+                    });
+                    dot.addEventListener("keydown", function (e) {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            currentDot === dot ? closeDot() : openDot(dot);
+                        }
+                    });
+                });
+                hcard.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                });
+                document.addEventListener("click", closeDot);
+                document.addEventListener("keydown", function (e) {
+                    if (e.key === "Escape") closeDot();
+                });
+                window.addEventListener("resize", function () {
+                    if (currentDot) placeCard(hcard, currentDot);
+                });
+            })();
+
+            /* ---------- BODY dot-citations → ref card ---------- */
+            (function () {
+                var card = document.getElementById("refCard");
+                var current = null;
+
+                function open(sup) {
+                    var r = REFS[sup.dataset.ref];
+                    if (!r) return;
+                    card.querySelector(".rc-kicker").textContent =
+                        "Reference " + r.n;
+                    card.querySelector(".rc-title").textContent = r.title;
+                    card.querySelector(".rc-meta").textContent = r.meta;
+                    card.querySelector(".rc-link").href = r.url;
+                    card.classList.add("open");
+                    placeCard(card, sup);
+                    current = sup;
+                }
+                function close() {
+                    card.classList.remove("open");
+                    current = null;
+                }
+                document.querySelectorAll("sup.ref").forEach(function (sup) {
+                    sup.addEventListener("click", function (e) {
+                        e.stopPropagation();
+                        current === sup ? close() : open(sup);
+                    });
+                    sup.addEventListener("keydown", function (e) {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            current === sup ? close() : open(sup);
+                        }
+                    });
+                });
+                card.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                });
+                document.addEventListener("click", close);
+                document.addEventListener("keydown", function (e) {
+                    if (e.key === "Escape") close();
+                });
+                window.addEventListener("scroll", close, true);
+                window.addEventListener("resize", close);
+            })();
+
+            /* ---------- explore scroller ---------- */
+            (function () {
+                var grid = document.getElementById("exploreGrid");
+                var arrow = document.getElementById("exploreArrow");
+                if (grid && arrow) {
+                    arrow.addEventListener("click", function () {
+                        grid.scrollBy({ left: 260, behavior: "smooth" });
+                    });
+                }
+            })();
+        </script>
+    </body>
+</html>

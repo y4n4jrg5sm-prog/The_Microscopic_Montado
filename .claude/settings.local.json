@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -)",
+      "Bash(pkill -f \"http.server 8123\")",
+      "Bash(pkill -f serve.py)",
+      "Bash(rm -f .claude/serve.py)",
+      "Bash(cp \"Phytophthora_cinnamomi.html\" \"/private/tmp/claude-501/-Users-gaozihan-Desktop-The-Microscopic-Montado/ffadacec-aa8d-4d8c-91c0-81ae7778540d/scratchpad/Phytophthora_backup.html\")",
+      "Bash(cp \"Phytophthora_cinnamomi.html\" /tmp/Phytophthora_backup.html)",
+      "Bash(grep -rn 'Phytophthora cinnamomi\\\\.html\\\\|Phytophthora%20cinnamomi\\\\.html' index.html event_map.html pages/*.html)",
+      "Bash(grep -rn 'Phytophthora_cinnamomi\\\\.html' index.html event_map.html pages/*.html)",
+      "Bash(awk '/\\\\.panel__close \\\\{/,/\\\\}/' research_site.html)"
+    ]
+  }
+}

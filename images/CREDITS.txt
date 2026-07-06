@@ -1,0 +1,150 @@
+CREDITS — image sources for images/*.webp
+All images from Wikimedia Commons, used under the stated Creative Commons / public-domain licences.
+Retrieved 2026-07-06 via Special:FilePath. Landscape/habitat selections are representative, not species-specific.
+==============================================================================
+
+images/pseudomonas-fluorescens-uv.webp
+  Source file : File:Pseudomonas fluorescens on TY agar (UV light).JPG
+  Author      : Ninjatacoshell
+  Licence     : CC BY-SA 3.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/3.0
+  File page   : https://commons.wikimedia.org/wiki/File:Pseudomonas_fluorescens_on_TY_agar_(UV_light).JPG
+
+images/pseudomonas-fluorescens-white.webp
+  Source file : File:Pseudomonas fluorescens on TY agar (white light).JPG
+  Author      : Ninjatacoshell
+  Licence     : CC BY-SA 3.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/3.0
+  File page   : https://commons.wikimedia.org/wiki/File:Pseudomonas_fluorescens_on_TY_agar_(white_light).JPG
+
+images/bacillus-subtilis-sem.webp
+  Source file : File:Bacillus subtilis R0179.jpg
+  Author      : Jacinthecote
+  Licence     : CC BY-SA 3.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/3.0
+  File page   : https://commons.wikimedia.org/wiki/File:Bacillus_subtilis_R0179.jpg
+
+images/bacillus-subtilis-spore.webp
+  Source file : File:Sporulation in Bacillus subtilis.jpg
+  Author      : Daniellemaclean144
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Sporulation_in_Bacillus_subtilis.jpg
+
+images/bacillus-megaterium-cells.webp
+  Source file : File:Bacillus megaterium bacteria.jpg
+  Author      : Department of Health and Human Services
+  Licence     : Public domain
+  File page   : https://commons.wikimedia.org/wiki/File:Bacillus_megaterium_bacteria.jpg
+
+images/pseudomonas-fluorescens-hero.webp
+  Source file : File:Silhouette of Cork oak tree (Quercus suber) at dusk, Ponte de Sor, Portugal (approx. GPS location) julesvernex2.jpg
+  Author      : Jules Verne Times Two
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Silhouette_of_Cork_oak_tree_(Quercus_suber)_at_dusk,_Ponte_de_Sor,_Portugal_(approx._GPS_location)_julesvernex2.jpg
+
+images/bacillus-subtilis-hero.webp
+  Source file : File:Sobreiro (Quercus suber) (27933585849).jpg
+  Author      : _morgado
+  Licence     : CC BY 2.0
+  Licence URL : https://creativecommons.org/licenses/by/2.0
+  File page   : https://commons.wikimedia.org/wiki/File:Sobreiro_(Quercus_suber)_(27933585849).jpg
+
+images/bacillus-megaterium-hero.webp
+  Source file : File:Cork Oaks Southern Portugal.jpg
+  Author      : KirjavaKinkytail
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Cork_Oaks_Southern_Portugal.jpg
+
+images/bacillus-megaterium-cork.webp
+  Source file : File:Cork oak December 2015-1.jpg
+  Author      : Alvesgaspar
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Cork_oak_December_2015-1.jpg
+
+images/streptomyces-griseus-hero.webp
+  Source file : File:Korkeichenwald bei Evora01.jpg
+  Author      : User:Nikater
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Korkeichenwald_bei_Evora01.jpg
+
+images/streptomyces-griseus-plate.webp
+  Source file : File:Streptomyces sp. myrophorea on agar.jpg
+  Author      : Youngbohemian
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Streptomyces_sp._myrophorea_on_agar.jpg
+
+images/streptomyces-griseus-hyphae.webp
+  Source file : File:Fig4 SEM pictures of S. avermitilis at 10000-magnification.webp
+  Author      : Guo, J., Ma, R., Su, B. et al. Raising the avermectins production in Streptomyces avermitilis by utilizing nanosecond pulsed electric fields (nsPEFs). Sci Rep 6, 25949 (2016). https://doi.org/10.1038/srep25949
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Fig4_SEM_pictures_of_S._avermitilis_at_10000-magnification.webp
+
+images/bradyrhizobium-hero.webp
+  Source file : File:Via Algarviana footpath near Pincho, Bensafrim, Portugal (PPL1-Corrected) julesvernex2.jpg
+  Author      : Jules Verne Times Two
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Via_Algarviana_footpath_near_Pincho,_Bensafrim,_Portugal_(PPL1-Corrected)_julesvernex2.jpg
+
+images/bradyrhizobium-nodules.webp
+  Source file : File:Root Nodule on White Clover showing pink Leghaemoglobin.JPG
+  Author      : Rosser1954
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Root_Nodule_on_White_Clover_showing_pink_Leghaemoglobin.JPG
+
+images/bradyrhizobium-broom.webp
+  Source file : File:Ginsterblüte im Sonnenschein.tif
+  Author      : Fabian Dreßen
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Ginsterbl%C3%BCte_im_Sonnenschein.tif
+
+images/rhizobium-leguminosarum-hero.webp
+  Source file : File:Grassland countryside, Vale da Azinheira, 25 June 2016.JPG
+  Author      : Kolforn
+  Licence     : CC BY 3.0
+  Licence URL : https://creativecommons.org/licenses/by/3.0
+  File page   : https://commons.wikimedia.org/wiki/File:Grassland_countryside,_Vale_da_Azinheira,_25_June_2016.JPG
+
+images/rhizobium-leguminosarum-clover.webp
+  Source file : File:Trifolium subterraneum close-up.jpg
+  Author      : Hallo3800
+  Licence     : CC0
+  Licence URL : http://creativecommons.org/publicdomain/zero/1.0/deed.en
+  File page   : https://commons.wikimedia.org/wiki/File:Trifolium_subterraneum_close-up.jpg
+
+images/rhizobium-leguminosarum-nodules.webp
+  Source file : File:Vicia faba Rhizobium root nodule.jpg
+  Author      : Whitney Cranshaw, Colorado State University, Bugwood.org
+  Licence     : CC BY 3.0 us
+  Licence URL : https://creativecommons.org/licenses/by/3.0/us/deed.en
+  File page   : https://commons.wikimedia.org/wiki/File:Vicia_faba_Rhizobium_root_nodule.jpg
+
+images/bryobacter-aggregatus-hero.webp
+  Source file : File:Under the shady cork oak (26541729412).jpg
+  Author      : Barry Caruth from London, United Kingdom
+  Licence     : CC BY-SA 2.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/2.0
+  File page   : https://commons.wikimedia.org/wiki/File:Under_the_shady_cork_oak_(26541729412).jpg
+
+images/bryobacter-aggregatus-moss.webp
+  Source file : File:Sphagnum capillifolium.jpg
+  Author      : Javier martinlo
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Sphagnum_capillifolium.jpg
+
+images/bryobacter-aggregatus-soil.webp
+  Source file : File:Flora do Boquilobo.jpg
+  Author      : Carla Marques da Silva
+  Licence     : CC BY-SA 4.0
+  Licence URL : https://creativecommons.org/licenses/by-sa/4.0
+  File page   : https://commons.wikimedia.org/wiki/File:Flora_do_Boquilobo.jpg

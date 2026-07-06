@@ -1,0 +1,1714 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rhizobia · The Microscopic Montado</title>
+
+        <!--
+          THE MICROSCOPIC MONTADO / RHIZOBIA
+          nitrogen-fixing bacteria of the montado pasture
+
+          Shares the detail-page design system used by Phytophthora_cinnamomi.html:
+          Helvetica throughout · gold accent · shared nav via <div id="site-nav"></div> + ../nav.js.
+
+          Only project/local assets are used here. No generated or hotlinked images.
+          Sources are stored in REFS at the bottom. Drop a ref marker
+          inline and the citation number + pop-up card are generated automatically.
+        -->
+
+        <style>
+            :root {
+                --bg: #ffffff;
+                --ink: #111111;
+                --text: #444444;
+                --muted: #888888;
+                --line: #e2e2e2;
+                --accent: #a06f21;
+                --bar: #000000;
+                --green: #6f9d73;
+                --green-dark: #3f7355;
+                --nitrogen: #7aa7cc;
+                --ammonia: #d6a84a;
+
+                --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                --font-display: var(--font-main);
+                --font-body: var(--font-main);
+                --font-mono: var(--font-main);
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                font-family: var(--font-body);
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.6;
+                position: relative; /* positioning context for .page-bg */
+            }
+
+            a {
+                color: inherit;
+            }
+
+            .sci {
+                font-style: italic;
+            }
+
+            /* Body copy face for the top hero */
+            @font-face {
+                font-family: "Syne Mono";
+                src: url("fonts/SyneMono-Regular.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            /* Top hero — pinned full-bleed image + scrolling inverted copy.
+               NB: .hero-scroll has NO z-index, so it does not isolate the blend. */
+            .hero-scroll {
+                position: relative;
+                width: 100%;
+            }
+            .hero-bg-sticky {
+                position: sticky;
+                top: 0;
+                width: 100%;
+                line-height: 0;
+            }
+            .hero-bg-sticky img {
+                display: block;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 2560 / 1600; /* reserve correct height pre-load */
+            }
+
+            .hero-copy {
+                position: absolute;
+                top: 20.8vw; /* pre-JS estimate ≈ 1/3 down the image (H/3 for 2560×1600); JS sets exact px */
+                left: 0;
+                width: 40%; /* left two-fifths on desktop */
+                padding-left: clamp(20px, 4vw, 64px);
+                padding-right: 24px;
+                color: #ffffff; /* solid white copy */
+            }
+            .hero-copy p {
+                font-family: "Syne Mono", var(--font-mono);
+                font-size: clamp(13px, 1.3vw, 17px);
+                line-height: 1.72;
+                margin: 0 0 1.3em;
+                text-align: left;
+            }
+            .hero-copy p:last-child {
+                margin-bottom: 0;
+            }
+            .hero-copy em,
+            .hero-copy .sci {
+                font-style: italic;
+            }
+
+            /* Upward scroll hint — sits just above the copy's top line.
+               Absolutely positioned so it does NOT push the text start down,
+               and does NOT add to the copy height (T) used by the scroll math.
+               It rides up with the copy as the page scrolls. */
+            .hero-scroll-hint {
+                position: absolute;
+                left: clamp(20px, 4vw, 64px); /* aligns with .hero-copy padding-left */
+                top: 0;
+                transform: translateY(calc(-100% - 12px));
+                color: #ffffff;
+                pointer-events: none;
+            }
+            .hero-scroll-hint svg {
+                display: block;
+                width: 26px;
+                height: 26px;
+                animation: heroHintFloat 1.8s ease-in-out infinite;
+            }
+            @keyframes heroHintFloat {
+                0%,
+                100% {
+                    transform: translateY(3px);
+                    opacity: 0.5;
+                }
+                50% {
+                    transform: translateY(-3px);
+                    opacity: 1;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .hero-scroll-hint svg {
+                    animation: none;
+                    opacity: 0.75;
+                }
+            }
+            @media (max-width: 600px) {
+                .hero-scroll-hint {
+                    left: 20px; /* match mobile padding-left */
+                }
+            }
+
+            /* Citation dots — upper-right of the preceding word */
+            .hero-ref {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: currentColor;
+                vertical-align: super;
+                position: relative;
+                top: -0.15em;
+                margin-left: 3px;
+                cursor: pointer;
+            }
+            .hero-ref::after {
+                content: "";
+                position: absolute;
+                inset: -9px;
+                border-radius: 50%;
+            }
+            .hero-ref:focus-visible {
+                outline: 2px solid currentColor;
+                outline-offset: 3px;
+            }
+
+            /* Popup for the dots — a normal, readable card (never blended) */
+            .hero-ref-card {
+                position: fixed;
+                z-index: 1000;
+                display: none;
+                max-width: 360px;
+                width: max-content;
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 16px 18px;
+                box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+            }
+            .hero-ref-card.open {
+                display: block;
+            }
+            .hero-ref-card .hrc-kicker {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--accent);
+                margin-bottom: 10px;
+            }
+            .hero-ref-card .hrc-cite {
+                font-family: var(--font-main);
+                font-size: 12px;
+                color: #555;
+                line-height: 1.55;
+                border-top: 1px solid var(--line);
+                margin-top: 10px;
+                padding-top: 10px;
+            }
+            .hero-ref-card .hrc-cite:first-of-type {
+                border-top: none;
+                margin-top: 0;
+                padding-top: 0;
+            }
+            .hero-ref-card .hrc-cite a {
+                display: inline-block;
+                margin-top: 5px;
+                font-size: 12px;
+                color: var(--accent);
+                text-decoration: none;
+                word-break: break-all;
+            }
+            .hero-ref-card .hrc-cite a:hover {
+                text-decoration: underline;
+            }
+
+            @media (max-width: 1024px) {
+                .hero-copy {
+                    width: 56%;
+                }
+            }
+            @media (max-width: 600px) {
+                .hero-copy {
+                    width: 100%;
+                    padding-left: 20px;
+                    padding-right: 20px;
+                }
+                .hero-copy p {
+                    font-size: 14px;
+                }
+            }
+
+            /* ============ Full-page soil background ============
+               A single layer covering the whole page height, sitting above the
+               white body background but behind all content (z-index:-1). Same
+               source and behaviour as the a-seca (Phytophthora cinnamomi) page. */
+            .page-bg {
+                position: absolute;
+                inset: 0; /* fills body's full height */
+                z-index: -1;
+                pointer-events: none;
+                background-image: url("images/soil-background.webp");
+                background-repeat: repeat-y;
+                background-position: top center;
+                background-size: 100% auto; /* desktop: edge to edge */
+            }
+            @media (max-width: 1024px) {
+                .page-bg {
+                    background-size: 160% auto; /* iPad: zoom in, crop sides */
+                }
+            }
+            @media (max-width: 600px) {
+                .page-bg {
+                    background-size: 230% auto; /* phone: zoom in more */
+                }
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 96px 20px 60px;
+            }
+
+            hr {
+                border: none;
+                border-top: 1px solid var(--line);
+                margin: 50px 0;
+            }
+
+            sup.ref {
+                color: var(--accent);
+                cursor: pointer;
+                font-size: 0.62em;
+                line-height: 0;
+                padding: 0 1px;
+                text-decoration: underline;
+                text-underline-offset: 2px;
+                vertical-align: super;
+            }
+
+            sup.ref::before {
+                content: "[";
+            }
+
+            sup.ref::after {
+                content: "]";
+            }
+
+            .ref-card {
+                position: fixed;
+                z-index: 999;
+                display: none;
+                max-width: 330px;
+                width: max-content;
+                background: #fff;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 16px 18px;
+                box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16);
+            }
+
+            .ref-card.open {
+                display: block;
+            }
+
+            .ref-card .rc-kicker {
+                font-size: 10px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--accent);
+                margin-bottom: 8px;
+            }
+
+            .ref-card .rc-title {
+                font-size: 14px;
+                color: var(--ink);
+                font-weight: 600;
+                line-height: 1.35;
+                margin-bottom: 7px;
+            }
+
+            .ref-card .rc-meta {
+                font-size: 12px;
+                color: #666;
+                line-height: 1.55;
+                margin-bottom: 12px;
+            }
+
+            .ref-card a.rc-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 12px;
+                color: var(--accent);
+                text-decoration: none;
+                border-top: 1px solid var(--line);
+                padding-top: 10px;
+                width: 100%;
+            }
+
+            .hero-section {
+                display: grid;
+                grid-template-columns: 1fr 1.2fr;
+                gap: 60px;
+                align-items: start;
+                margin-top: 20px;
+            }
+
+            .continue-actions {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-bottom: 26px;
+            }
+
+            .continue-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 16px;
+                border: 1px solid var(--line);
+                border-radius: 22px;
+                background: #fff;
+                color: #555;
+                font-size: 12px;
+                letter-spacing: 0.04em;
+                text-decoration: none;
+                white-space: nowrap;
+                transition:
+                    box-shadow 0.2s,
+                    transform 0.2s,
+                    border-color 0.2s,
+                    color 0.2s;
+            }
+
+            .continue-btn:hover {
+                box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+                transform: translateY(-1px);
+                border-color: var(--accent);
+                color: var(--ink);
+            }
+
+            .hero-left h1 {
+                font-family: var(--font-display);
+                font-size: 54px;
+                font-weight: 700;
+                color: var(--ink);
+                letter-spacing: 0.03em;
+                margin-bottom: 8px;
+                line-height: 1.05;
+            }
+
+            .hero-left .h1-zh {
+                font-size: 15px;
+                color: var(--muted);
+                letter-spacing: 0.04em;
+                margin-bottom: 28px;
+            }
+
+            .hero-left .description {
+                font-size: 15px;
+                color: #555;
+                text-align: justify;
+                max-width: 480px;
+            }
+
+            .hero-left .etym {
+                color: var(--muted);
+                font-size: 15px;
+                margin-top: 18px;
+                line-height: 1.6;
+            }
+
+            .hero-right {
+                position: relative;
+            }
+
+            .hero-right .hero-plate {
+                min-height: 420px;
+                background: transparent;
+                display: grid;
+                place-items: center;
+            }
+
+            .hero-right img {
+                max-width: 78%;
+                max-height: 440px;
+                object-fit: contain;
+                filter: drop-shadow(0 20px 24px rgba(56, 48, 35, 0.16));
+            }
+
+            .sec-head {
+                font-family: var(--font-display);
+                font-weight: 300;
+                font-size: 30px;
+                color: var(--ink);
+                line-height: 1.1;
+                letter-spacing: 0.02em;
+                margin-bottom: 6px;
+            }
+
+            .content-block {
+                display: grid;
+                grid-template-columns: 1fr 1.2fr;
+                gap: 60px;
+                align-items: start;
+                margin: 50px 0;
+            }
+
+            .caption-text {
+                font-size: 15px;
+                color: #555;
+                max-width: 480px;
+                padding-top: 4px;
+            }
+
+            .image-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+
+            .image-card {
+                min-height: 190px;
+                border: 1px solid var(--line);
+                background: #faf9f7;
+                padding: 18px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            .image-card img {
+                width: 100%;
+                height: 120px;
+                object-fit: contain;
+                filter: drop-shadow(0 10px 13px rgba(56, 48, 35, 0.12));
+            }
+
+            .image-card.web-photo {
+                min-height: 260px;
+                padding: 0;
+                overflow: hidden;
+                background: #fff;
+            }
+
+            .image-card.web-photo img {
+                height: 190px;
+                object-fit: cover;
+                filter: none;
+            }
+
+            .image-card.web-photo.map img {
+                object-fit: contain;
+                background: #f6efe2;
+                padding: 10px;
+            }
+
+            .image-card span {
+                color: #666;
+                font-size: 11px;
+                line-height: 1.4;
+                margin-top: 12px;
+                text-align: center;
+            }
+
+            .image-card.web-photo span {
+                padding: 0 14px 14px;
+                text-align: left;
+            }
+
+            .field-section {
+                display: grid;
+                grid-template-columns: 0.9fr 1.35fr;
+                gap: 32px;
+                align-items: stretch;
+                margin: 54px 0;
+                padding: 30px 0;
+                border-top: 1px solid var(--line);
+                border-bottom: 1px solid var(--line);
+            }
+
+            .field-copy {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                gap: 28px;
+                color: #555;
+                font-size: 15px;
+            }
+
+            .field-copy .kicker,
+            .map-copy .kicker {
+                color: var(--accent);
+                font-size: 12px;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                margin-bottom: 12px;
+            }
+
+            .field-copy h2,
+            .map-copy h2 {
+                color: var(--ink);
+                font-weight: 300;
+                font-size: clamp(32px, 4vw, 56px);
+                line-height: 1.04;
+                margin-bottom: 18px;
+            }
+
+            .field-points {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .field-point {
+                border-top: 1px solid var(--ink);
+                padding-top: 12px;
+            }
+
+            .field-point b {
+                display: block;
+                color: var(--ink);
+                font-size: 13px;
+                margin-bottom: 4px;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+            }
+
+            .field-point span {
+                color: var(--muted);
+                font-size: 12px;
+                line-height: 1.55;
+            }
+
+            .field-photo,
+            .map-panel {
+                position: relative;
+                overflow: hidden;
+                border: 1px solid var(--line);
+                background: #f8f7f4;
+            }
+
+            .field-photo {
+                min-height: 460px;
+            }
+
+            .field-photo img,
+            .map-panel img {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+
+            .field-photo img {
+                object-fit: cover;
+            }
+
+            .photo-caption,
+            .map-label {
+                position: absolute;
+                left: 16px;
+                right: 16px;
+                bottom: 14px;
+                background: rgba(255, 255, 255, 0.9);
+                color: #444;
+                padding: 10px 12px;
+                font-size: 12px;
+                line-height: 1.45;
+            }
+
+            .map-section {
+                display: grid;
+                grid-template-columns: 1.2fr 0.8fr;
+                gap: 18px;
+                align-items: stretch;
+                margin: 54px 0;
+            }
+
+            .map-panel.satellite {
+                min-height: 460px;
+            }
+
+            .map-panel.satellite img {
+                object-fit: cover;
+            }
+
+            .map-side {
+                display: grid;
+                grid-template-rows: auto 1fr;
+                gap: 18px;
+            }
+
+            .map-copy {
+                border-top: 1px solid var(--ink);
+                padding-top: 18px;
+                color: #555;
+                font-size: 15px;
+                line-height: 1.68;
+            }
+
+            .map-panel.basemap {
+                min-height: 250px;
+                background: #fff;
+            }
+
+            .map-panel.basemap img {
+                object-fit: contain;
+                padding: 18px;
+            }
+
+            .note-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                margin-top: 38px;
+            }
+
+            .note-card {
+                border: 1px solid var(--line);
+                padding: 24px 22px;
+                min-height: 230px;
+            }
+
+            .note-card .k {
+                color: var(--accent);
+                font-size: 11px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                margin-bottom: 12px;
+            }
+
+            .note-card h3 {
+                color: var(--ink);
+                font-weight: 300;
+                font-size: 22px;
+                line-height: 1.18;
+                margin-bottom: 14px;
+            }
+
+            .note-card p {
+                color: #555;
+                font-size: 14px;
+                line-height: 1.65;
+            }
+
+            .poem-section {
+                margin: 60px 0;
+                display: flex;
+                justify-content: center;
+            }
+
+            .poem-text {
+                font-size: 14px;
+                color: #555;
+                line-height: 1.9;
+                white-space: pre-line;
+                max-width: 440px;
+                text-align: left;
+            }
+
+            .refs-footer {
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .refs-footer .sec-head {
+                font-size: 20px;
+                text-align: center;
+                margin-bottom: 22px;
+            }
+
+            .refs-list {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+                display: grid;
+                gap: 14px;
+            }
+
+            .refs-list li {
+                display: grid;
+                grid-template-columns: 26px 1fr;
+                gap: 10px;
+                font-size: 12.5px;
+                color: #666;
+                line-height: 1.55;
+                border-top: 1px solid var(--line);
+                padding-top: 12px;
+            }
+
+            .refs-list li .rn {
+                color: var(--accent);
+                font-size: 12px;
+            }
+
+            .refs-list li .rt {
+                color: var(--ink);
+                font-weight: 600;
+            }
+
+            .refs-list a {
+                color: var(--accent);
+                text-decoration: none;
+            }
+
+            .explore-title {
+                text-align: center;
+                font-size: 14px;
+                color: var(--muted);
+                letter-spacing: 0.1em;
+                margin-bottom: 30px;
+            }
+
+            .explore-scroller {
+                position: relative;
+            }
+
+            .explore-grid {
+                display: flex;
+                justify-content: flex-start;
+                gap: 44px;
+                overflow-x: auto;
+                padding: 4px 50px 14px;
+                scroll-behavior: smooth;
+                scrollbar-width: none;
+            }
+
+            .explore-grid::-webkit-scrollbar {
+                display: none;
+            }
+
+            @media (min-width: 760px) {
+                .explore-grid {
+                    justify-content: center;
+                }
+            }
+
+            .explore-item {
+                flex: 0 0 auto;
+                width: 110px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-decoration: none;
+                color: #666;
+                text-align: center;
+                transition:
+                    transform 0.2s,
+                    color 0.2s;
+            }
+
+            .explore-item img {
+                width: 70px;
+                height: 90px;
+                object-fit: contain;
+                margin-bottom: 12px;
+                opacity: 0.78;
+                transition: opacity 0.2s;
+            }
+
+            .explore-item span {
+                font-size: 11px;
+                line-height: 1.4;
+            }
+
+            .explore-item:hover {
+                transform: translateY(-4px);
+                color: var(--ink);
+            }
+
+            .explore-arrow {
+                position: absolute;
+                top: 40%;
+                right: 0;
+                transform: translateY(-50%);
+                width: 34px;
+                height: 34px;
+                border: 1px solid var(--line);
+                border-radius: 50%;
+                background: #fff;
+                color: #555;
+                font-size: 16px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: box-shadow 0.2s;
+            }
+
+            @media (max-width: 860px) {
+                .hero-section,
+                .content-block,
+                .field-section,
+                .map-section {
+                    grid-template-columns: 1fr;
+                    gap: 30px;
+                }
+
+                .hero-left h1 {
+                    font-size: 40px;
+                }
+
+                .image-grid,
+                .note-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                * {
+                    transition: none !important;
+                    scroll-behavior: auto !important;
+                    animation: none !important;
+                }
+            }
+
+            :focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: 3px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Full-page faint soil texture, behind all content -->
+        <div class="page-bg" aria-hidden="true"></div>
+
+        <div id="site-nav"></div>
+        <script src="nav.js"></script>
+
+        <!-- ============ Top hero: pinned image + scrolling inverted copy ============ -->
+        <section class="hero-scroll" id="heroScroll">
+            <div class="hero-bg-sticky" id="heroBgSticky">
+                <img
+                    id="heroBgImg"
+                    src="images/rhizobia-root.webp"
+                    alt="Root nodules of a pasture legume in the montado, home to nitrogen-fixing rhizobia"
+                />
+            </div>
+
+            <div class="hero-copy" id="heroCopy">
+                <div class="hero-scroll-hint" aria-hidden="true">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <polyline points="6 15 12 9 18 15"></polyline>
+                    </svg>
+                </div>
+                <p>
+                    In the montado the soil is poor in nitrogen,<span
+                        class="hero-ref"
+                        data-ref="1"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 1"
+                    ></span>
+                    and the pasture between the oaks turns green anyway. Cut
+                    into the root of a clover or a lupin growing there and
+                    nothing dark runs out; instead you find small swellings
+                    along the root, and if you open one it is red inside.<span
+                        class="hero-ref"
+                        data-ref="2"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 2"
+                    ></span>
+                    The maker of that greenness lies underground, and what it
+                    trades is not moisture but air.
+                </p>
+                <p>
+                    The story begins before anyone understood it. For as long as
+                    there has been farming, people knew that beans, clovers and
+                    lupins left the ground richer than they found it, and sowed
+                    them to feed the soil without knowing why. The reason was
+                    named late. In 1888 the Dutch microbiologist Martinus
+                    Beijerinck drew the cause out of a root nodule and grew it
+                    in glass: a bacterium, later called
+                    <em class="sci">Rhizobium</em>, able to take nitrogen
+                    straight from the air.<span
+                        class="hero-ref"
+                        data-ref="3"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 3"
+                    ></span>
+                    The red was stranger still. It is leghemoglobin, close kin
+                    to the pigment that reddens our own blood, made by the plant
+                    to hold oxygen away from an enzyme that oxygen would
+                    destroy.<span
+                        class="hero-ref"
+                        data-ref="4"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 4"
+                    ></span>
+                </p>
+                <p>
+                    The gift runs upward through everything above it. Nitrogen
+                    is the element plants can least easily find, though the air
+                    is four-fifths nitrogen they cannot use, locked in a bond
+                    that human industry can break only with great heat and
+                    pressure.<span
+                        class="hero-ref"
+                        data-ref="5"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 5"
+                    ></span>
+                    In the legumes of the understory — serradella, subterranean
+                    clover, wild lupins<span
+                        class="hero-ref"
+                        data-ref="6"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 6"
+                    ></span>
+                    — <em class="sci">Rhizobium</em> breaks it cold, turning
+                    unreachable air into the nitrogen that greens the pasture,
+                    fattens the stock, and, as it dies back each year, enriches
+                    the soil the cork oaks stand in. Across the same
+                    agro-silvo-pastoral system of some 3.1 million
+                    hectares,<span
+                        class="hero-ref"
+                        data-ref="7"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 7"
+                    ></span>
+                    this fertilising is done quietly, for free, by cells too
+                    small to see.
+                </p>
+                <p>
+                    Its making works from the bottom up. A root hair curls
+                    around a single passing cell; the bacterium slips inside and
+                    travels down a thread the plant builds to receive it; around
+                    it the root swells into a nodule and floods red, shielding
+                    the enzyme within.<span
+                        class="hero-ref"
+                        data-ref="8"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 8"
+                    ></span>
+                    There, in the dark, it pulls that bond apart at the
+                    temperature of the soil<span
+                        class="hero-ref"
+                        data-ref="5"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 5"
+                    ></span>
+                    and hands the plant nitrogen it could never have reached
+                    alone. A plant that appears to give nothing away, rooted in
+                    poor ground, is feeding a whole woodland out of thin air.
+                    This is the other colour beneath the montado: not the black
+                    of the ink, but the red of the nodule.
+                </p>
+            </div>
+        </section>
+
+        <!-- Popup for the hero dot-citations (kept outside .hero-copy so it is never blended) -->
+        <div
+            class="hero-ref-card"
+            id="heroRefCard"
+            role="dialog"
+            aria-label="Reference"
+        ></div>
+
+        <div
+            class="ref-card"
+            id="refCard"
+            role="dialog"
+            aria-label="Source reference"
+        >
+            <div class="rc-kicker"></div>
+            <div class="rc-title"></div>
+            <div class="rc-meta"></div>
+            <a class="rc-link" href="#" target="_blank" rel="noopener"
+                >Open source ↗</a
+            >
+        </div>
+
+        <div class="container">
+            <section class="hero-section">
+                <div class="hero-left">
+                    <div class="continue-actions">
+                        <a class="continue-btn" href="index.html"
+                            >← Continue exploring Field Guide</a
+                        >
+                    </div>
+                    <h1>rhizobia</h1>
+                    <div class="h1-zh">根瘤菌 · 蒙塔多地下的固氮工人</div>
+                    <div class="description">
+                        In the montado, rhizobia do not live as a headline
+                        species. They live inside the root nodules of pasture
+                        legumes — subterranean clover, serradella, medics and
+                        their companions — converting atmospheric nitrogen into
+                        ammonia that plants can use. The exchange is simple and
+                        profound: the plant pays in sugars, the bacterium pays
+                        in nitrogen.<sup
+                            class="ref"
+                            data-ref="jic"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </div>
+                    <div class="etym">
+                        <span class="sci">Rhizo-</span> means root. The name
+                        points to where the bargain happens: not in the leaf,
+                        not in the acorn, but in small pink rooms underground.
+                    </div>
+                </div>
+                <div class="hero-right">
+                    <div class="hero-plate">
+                        <img
+                            src="images/rhizobia-3.webp"
+                            alt="Rhizobia illustration"
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <hr />
+
+            <section class="content-block">
+                <div class="caption-text">
+                    Montado soils are often thin, acidic, rain-fed and
+                    low-input. The system cannot depend on constant synthetic
+                    nitrogen without changing its economics and ecology. Legumes
+                    solve this in a slower way: they invite rhizobia into
+                    nodules, and the fixed nitrogen later feeds the pasture, the
+                    grasses, the grazing animals, and the oaks through litter
+                    and soil turnover.
+                    <sup
+                        class="ref"
+                        data-ref="sbp"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
+                    <br /><br />
+                    This is why improved Portuguese biodiverse pastures are
+                    designed to be rich in legumes: the seed mix often includes
+                    species such as
+                    <span class="sci">Trifolium subterraneum</span>,
+                    <span class="sci">Ornithopus</span> spp. and annual medics,
+                    with rhizobial inoculation supplying the bacterial
+                    partner.<sup
+                        class="ref"
+                        data-ref="sbp"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
+                </div>
+                <div
+                    class="image-grid"
+                    aria-label="Online source image set for Montado rhizobia"
+                >
+                    <div class="image-card web-photo">
+                        <img
+                            src="images/rhizobia-web/quercus-suber-alentejo.jpg"
+                            alt="Cork oak trees in Alentejo montado"
+                        />
+                        <span>
+                            Alentejo cork-oak montado: the above-ground
+                            structure of the soil story.
+                            <sup
+                                class="ref"
+                                data-ref="imgQuercus"
+                                role="button"
+                                tabindex="0"
+                                aria-label="image source"
+                            ></sup>
+                        </span>
+                    </div>
+                    <div class="image-card web-photo">
+                        <img
+                            src="images/rhizobia-web/vicia-faba-rhizobium-root-nodule.jpg"
+                            alt="Rhizobium root nodule on Vicia faba root"
+                        />
+                        <span>
+                            <span class="sci">Rhizobium</span> nodule on a
+                            legume root: the microscopic process made visible.
+                            <sup
+                                class="ref"
+                                data-ref="imgVicia"
+                                role="button"
+                                tabindex="0"
+                                aria-label="image source"
+                            ></sup>
+                        </span>
+                    </div>
+                    <div class="image-card web-photo">
+                        <img
+                            src="images/rhizobia-web/white-clover-pink-root-nodule.jpg"
+                            alt="Pink leghaemoglobin inside white clover root nodule"
+                        />
+                        <span>
+                            White clover nodules with pink leghaemoglobin, a
+                            sign of active nitrogen fixation.
+                            <sup
+                                class="ref"
+                                data-ref="imgClover"
+                                role="button"
+                                tabindex="0"
+                                aria-label="image source"
+                            ></sup>
+                        </span>
+                    </div>
+                    <div class="image-card web-photo map">
+                        <img
+                            src="images/rhizobia-web/mapa-do-alentejo-em-portugal.png"
+                            alt="Map of Alentejo in Portugal"
+                        />
+                        <span>
+                            Alentejo location map: where Montado pasture, cork
+                            oak and soil microbes overlap.
+                            <sup
+                                class="ref"
+                                data-ref="imgMap"
+                                role="button"
+                                tabindex="0"
+                                aria-label="image source"
+                            ></sup>
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="field-section">
+                <div class="field-copy">
+                    <div>
+                        <p>
+                            Rhizobia are microscopic, but their effect is
+                            landscape-sized. Under the cork oaks, legume roots
+                            make nodules that turn atmospheric nitrogen into
+                            plant-available forms; after grazing and
+                            decomposition, that nitrogen re-enters the montado
+                            as litter, dung, roots and humus.<sup
+                                class="ref"
+                                data-ref="jic"
+                                role="button"
+                                tabindex="0"
+                                aria-label="source"
+                            ></sup>
+                        </p>
+                    </div>
+                </div>
+                <figure class="field-photo">
+                    <img
+                        src="images/rhizobia-web/vicia-faba-rhizobium-root-nodule.jpg"
+                        alt="Close view of Rhizobium root nodule on Vicia faba"
+                    />
+                    <figcaption class="photo-caption">
+                        Root nodule photograph from Forestry Images /
+                        Bugwood.org via Wikimedia Commons.
+                        <sup
+                            class="ref"
+                            data-ref="imgVicia"
+                            role="button"
+                            tabindex="0"
+                            aria-label="image source"
+                        ></sup>
+                    </figcaption>
+                </figure>
+            </section>
+
+            <section class="map-section">
+                <figure class="map-panel satellite">
+                    <img
+                        src="images/rhizobia-web/quercus-suber-alentejo.jpg"
+                        alt="Cork oak montado landscape in Alentejo"
+                    />
+                    <figcaption class="map-label">
+                        Cork oak in Alentejo, Portugal: the visible tree layer
+                        above a pasture-and-soil microbial system.
+                        <sup
+                            class="ref"
+                            data-ref="imgQuercus"
+                            role="button"
+                            tabindex="0"
+                            aria-label="image source"
+                        ></sup>
+                    </figcaption>
+                </figure>
+                <div class="map-side">
+                    <div class="map-copy">
+                        <p>
+                            The same symbiosis can be read at two scales: pink
+                            nodules on a single root, and legume-rich pastures
+                            repeated across the Alentejo. For this page, the map
+                            matters because rhizobia are not just a lab
+                            organism; they are part of a managed landscape.
+                        </p>
+                    </div>
+                    <figure class="map-panel basemap">
+                        <img
+                            src="images/rhizobia-web/mapa-do-alentejo-em-portugal.png"
+                            alt="Map highlighting Alentejo in Portugal"
+                        />
+                        <figcaption class="map-label">
+                            Alentejo highlighted within Portugal.
+                            <sup
+                                class="ref"
+                                data-ref="imgMap"
+                                role="button"
+                                tabindex="0"
+                                aria-label="image source"
+                            ></sup>
+                        </figcaption>
+                    </figure>
+                </div>
+            </section>
+
+            <hr />
+
+            <section>
+                <div class="note-grid">
+                    <article class="note-card">
+                        <div class="k">Montado practice</div>
+                        <h3>Legume-rich pastures are a soil technology.</h3>
+                        <p>
+                            Portuguese sown biodiverse pastures combine many
+                            species and varieties, often with more than half
+                            legume cover early on. The rhizobial partner is part
+                            of the design, not an afterthought.<sup
+                                class="ref"
+                                data-ref="sbp"
+                                role="button"
+                                tabindex="0"
+                                aria-label="source"
+                            ></sup>
+                        </p>
+                    </article>
+                    <article class="note-card">
+                        <div class="k">Dehesa / Montado</div>
+                        <h3>
+                            Subterranean clover belongs to the same landscape
+                            logic.
+                        </h3>
+                        <p>
+                            In southwest Iberian dehesa systems, subterranean
+                            clover is treated as a key pasture legume; seed is
+                            often inoculated with
+                            <span class="sci">Rhizobium</span> and helped with
+                            phosphorus during establishment.<sup
+                                class="ref"
+                                data-ref="trifolium"
+                                role="button"
+                                tabindex="0"
+                                aria-label="source"
+                            ></sup>
+                        </p>
+                    </article>
+                    <article class="note-card">
+                        <div class="k">Research frontier</div>
+                        <h3>
+                            Scientists still try to move this power into
+                            cereals.
+                        </h3>
+                        <p>
+                            Current nitrogen-fixation research treats the
+                            legume-rhizobium nodule as the model: a natural
+                            factory that can meet crop nitrogen demand, and a
+                            prototype for future engineering.<sup
+                                class="ref"
+                                data-ref="jic"
+                                role="button"
+                                tabindex="0"
+                                aria-label="source"
+                            ></sup>
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="poem-section">
+                <div class="poem-text">
+                    A root curls. A bacterium enters. Sugar moves downward,
+                    nitrogen moves up. The pasture is green because something
+                    microscopic made a room inside a root.
+                </div>
+            </section>
+
+            <hr />
+
+            <section class="refs-footer">
+                <div class="sec-head">Sources & reading</div>
+                <ol class="refs-list" id="refsList"></ol>
+            </section>
+
+            <hr />
+
+            <section class="explore-section">
+                <div class="explore-title">Explore Related Elements</div>
+                <div class="explore-scroller">
+                    <div class="explore-grid" id="exploreGrid">
+                        <a href="rhizobia.html" class="explore-item">
+                            <img src="images/rhizobia-3.webp" alt="Rhizobia" />
+                            <span>Rhizobia</span>
+                        </a>
+                        <a
+                            href="bradyrhizobium.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/bradyrhizobium-1.webp"
+                                alt="Bradyrhizobium"
+                            />
+                            <span>Bradyrhizobium</span>
+                        </a>
+                        <a
+                            href="#" onclick="var g=document.getElementById('gpop-trigger');if(g){g.click();}return false;"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/yellow-serradella.webp"
+                                alt="Yellow serradella"
+                            />
+                            <span>Yellow Serradella</span>
+                        </a>
+                        <a
+                            href="#" onclick="var g=document.getElementById('gpop-trigger');if(g){g.click();}return false;"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/地下三叶草.png"
+                                alt="Subterranean clover"
+                            />
+                            <span>Subterranean Clover</span>
+                        </a>
+                        <a
+                            href="#" onclick="var g=document.getElementById('gpop-trigger');if(g){g.click();}return false;"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/H2PO4.png"
+                                alt="Dihydrogen phosphate"
+                            />
+                            <span>Dihydrogen phosphate</span>
+                        </a>
+                        <a
+                            href="phytophthora-cinnamomi.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/肉桂疫霉.png"
+                                alt="Phytophthora cinnamomi"
+                            />
+                            <span>Phytophthora cinnamomi</span>
+                        </a>
+                    </div>
+                    <button
+                        class="explore-arrow"
+                        id="exploreArrow"
+                        aria-label="Scroll right"
+                    >
+                        ›
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <script>
+            // TOP HERO — pinned image + scrolling copy + dot citations
+            (function () {
+                var scroll = document.getElementById("heroScroll");
+                var img = document.getElementById("heroBgImg");
+                var copy = document.getElementById("heroCopy");
+                if (!scroll || !img || !copy) return;
+
+                // Image is sticky at top:0. It releases when the copy's bottom
+                // reaches 1/6 up from the image's bottom edge — i.e. 5H/6 down
+                // from the top, near the image bottom.
+                //   copy.top = H/3
+                //   release at copy-bottom = 5H/6  ⇒  scroll.height = T + H/2
+                function layout() {
+                    var H = img.getBoundingClientRect().height;
+                    if (!H) return;
+                    var T = copy.getBoundingClientRect().height;
+                    copy.style.top = (1 / 3) * H + "px";
+                    scroll.style.height = T + (1 / 2) * H + "px";
+                }
+
+                if (img.complete && img.naturalWidth) layout();
+                img.addEventListener("load", layout);
+                window.addEventListener("load", layout);
+                if (document.fonts && document.fonts.ready) {
+                    document.fonts.ready.then(layout);
+                }
+                var lt;
+                window.addEventListener("resize", function () {
+                    clearTimeout(lt);
+                    lt = setTimeout(layout, 120);
+                });
+                layout();
+
+                var HERO_REFS = {
+                    1: [
+                        {
+                            t: "Moreno, G., & Pulido, F. J. (2009). The functioning, management and persistence of dehesas. In A. Rigueiro-Rodríguez, J. McAdam, & M. R. Mosquera-Losada (Eds.), Agroforestry in Europe: Current Status and Future Prospects (Advances in Agroforestry 6, pp. 127–160). Dordrecht: Springer. (Montado/dehesa soils are poor under a semiarid climate; trees act as ecosystem engineers sustaining grass production.)",
+                            url: "https://doi.org/10.1007/978-1-4020-8272-6_7",
+                        },
+                    ],
+                    2: [
+                        {
+                            t: "Legume Hub. Biological nitrogen fixation in legumes. (Root nodules of pasture legumes; the pink/red interior of an active, nitrogen-fixing nodule.)",
+                            url: "https://legumehub.eu/is_article/biological-nitrogen-fixation-in-legumes/",
+                        },
+                    ],
+                    3: [
+                        {
+                            t: "Beijerinck, M. W. (1888). Die Bacterien der Papilionaceen-Knöllchen. Botanische Zeitung, 46, 725–804. (First isolation and pure culture of the root-nodule bacterium.)",
+                            url: "https://www.biodiversitylibrary.org/item/27440",
+                        },
+                        {
+                            t: "The genus name Rhizobium was established a year later: Frank, A. B. (1889). Über die Pilzsymbiose der Leguminosen. Berichte der Deutschen Botanischen Gesellschaft, 7, 332–346.",
+                            url: "https://doi.org/10.1111/j.1438-8677.1889.tb05711.x",
+                        },
+                    ],
+                    4: [
+                        {
+                            t: "Ott, T., van Dongen, J. T., Günther, C., Krusell, L., Desbrosses, G., Vigeolas, H., Bock, V., Czechowski, T., Geigenberger, P., & Udvardi, M. K. (2005). Symbiotic leghemoglobins are crucial for nitrogen fixation in legume root nodules but not for general plant growth and development. Current Biology, 15(6), 531–535.",
+                            url: "https://doi.org/10.1016/j.cub.2005.01.042",
+                        },
+                    ],
+                    5: [
+                        {
+                            t: "Smil, V. (2001). Enriching the Earth: Fritz Haber, Carl Bosch, and the Transformation of World Food Production. Cambridge, MA: MIT Press. (The strength of the N₂ triple bond, the ~78% nitrogen atmosphere, and the heat and pressure of the Haber–Bosch process; rhizobia break the same bond at soil temperature.)",
+                            url: "https://mitpress.mit.edu/9780262693134/enriching-the-earth/",
+                        },
+                    ],
+                    6: [
+                        {
+                            t: "Proença, V., Aguiar, C., & Domingos, T. (2015). Highly productive sown biodiverse pastures with low invasion risk. Proceedings of the National Academy of Sciences, 112(14), E1695. (Portuguese sown biodiverse permanent pastures rich in legumes — serradella, subterranean clover and other Mediterranean pasture legumes — established on low-fertility soils.)",
+                            url: "https://doi.org/10.1073/pnas.1424707112",
+                        },
+                    ],
+                    7: [
+                        {
+                            t: "Cardillo, E., Abad, E., & Meyer, S. (2021). Iberian oak decline caused by Phytophthora cinnamomi: a spatiotemporal analysis incorporating the effect of host heterogeneities at landscape scale. Forest Pathology, 51(2), e12667. (The agro-silvo-pastoral system of roughly 3.1 million hectares — the same figure and source used on the a seca page.)",
+                            url: "https://doi.org/10.1111/efp.12667",
+                        },
+                        {
+                            t: "Camilo-Alves, C., Clara, M. I. E., & Ribeiro, N. M. C. A. (2013). Decline of Mediterranean oak trees and its association with Phytophthora cinnamomi: a review. European Journal of Forest Research, 132(3), 411–432.",
+                            url: "https://doi.org/10.1007/s10342-013-0688-z",
+                        },
+                    ],
+                    8: [
+                        {
+                            t: "Oldroyd, G. E. D., & Downie, J. A. (2008). Coordinating nodule morphogenesis with rhizobial infection in legumes. Annual Review of Plant Biology, 59, 519–546. (The root-hair curl, the infection thread, and cortical cell division that build the nodule.)",
+                            url: "https://doi.org/10.1146/annurev.arplant.59.032607.092839",
+                        },
+                    ],
+                };
+
+                var hcard = document.getElementById("heroRefCard");
+                var currentDot = null;
+
+                function esc(s) {
+                    return s
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;");
+                }
+
+                function build(n) {
+                    var cites = HERO_REFS[n];
+                    if (!cites) return;
+                    var html =
+                        '<div class="hrc-kicker">Reference ' + n + "</div>";
+                    cites.forEach(function (c) {
+                        html +=
+                            '<div class="hrc-cite">' +
+                            esc(c.t) +
+                            '<br><a href="' +
+                            c.url +
+                            '" target="_blank" rel="noopener">' +
+                            esc(c.url.replace(/^https?:\/\//, "")) +
+                            " ↗</a></div>";
+                    });
+                    hcard.innerHTML = html;
+                }
+
+                function place(dot) {
+                    var rect = dot.getBoundingClientRect();
+                    var cw = hcard.offsetWidth,
+                        ch = hcard.offsetHeight;
+                    var left = rect.left;
+                    var top = rect.bottom + 8;
+                    if (left + cw > window.innerWidth - 12)
+                        left = window.innerWidth - cw - 12;
+                    if (left < 12) left = 12;
+                    if (top + ch > window.innerHeight - 12)
+                        top = rect.top - ch - 8;
+                    hcard.style.left = left + "px";
+                    hcard.style.top = Math.max(12, top) + "px";
+                }
+
+                function openDot(dot) {
+                    build(dot.dataset.ref);
+                    hcard.classList.add("open");
+                    place(dot);
+                    currentDot = dot;
+                }
+                function closeDot() {
+                    hcard.classList.remove("open");
+                    currentDot = null;
+                }
+
+                copy.querySelectorAll(".hero-ref").forEach(function (dot) {
+                    dot.addEventListener("click", function (e) {
+                        e.stopPropagation();
+                        if (currentDot === dot) closeDot();
+                        else openDot(dot);
+                    });
+                    dot.addEventListener("keydown", function (e) {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (currentDot === dot) closeDot();
+                            else openDot(dot);
+                        }
+                    });
+                });
+                hcard.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                });
+                document.addEventListener("click", closeDot);
+                document.addEventListener("keydown", function (e) {
+                    if (e.key === "Escape") closeDot();
+                });
+                window.addEventListener("resize", function () {
+                    if (currentDot) place(currentDot);
+                });
+            })();
+
+            var REFS = {
+                jic: {
+                    title: "Nitrogen Fixation",
+                    meta: "John Innes Centre. Overview of biological nitrogen fixation, rhizobia, root nodules and current research.",
+                    url: "https://www.jic.ac.uk/research-impact/nitrogen-fixation/",
+                },
+                sbp: {
+                    title: "Sown biodiverse pasture",
+                    meta: "Reference overview of Portuguese sown biodiverse pastures rich in legumes, Rhizobium inoculation and nitrogen self-sufficiency.",
+                    url: "https://en.wikipedia.org/wiki/Sown_biodiverse_pasture",
+                },
+                trifolium: {
+                    title: "Trifolium subterraneum subsp. subterraneum",
+                    meta: "Reference page on subterranean clover in Iberian dehesa/pasture systems, including Rhizobium inoculated seed and phosphorus during establishment.",
+                    url: "https://es.wikipedia.org/wiki/Trifolium_subterraneum_subsp._subterraneum",
+                },
+                imgQuercus: {
+                    title: "Image: Quercus suber.Alentejo04.jpg",
+                    meta: "Wikimedia Commons. Cork oak in Alentejo, Portugal. Author: Georges Jansoone. License options include CC BY 2.5, CC BY-SA 3.0 and GFDL.",
+                    url: "https://commons.wikimedia.org/wiki/File:Quercus_suber.Alentejo04.jpg",
+                },
+                imgVicia: {
+                    title: "Image: Vicia faba Rhizobium root nodule.jpg",
+                    meta: "Wikimedia Commons / Forestry Images. Vicia faba Rhizobium root nodule. Author: Whitney Cranshaw, Colorado State University, Bugwood.org. CC BY 3.0 US.",
+                    url: "https://commons.wikimedia.org/wiki/File:Vicia_faba_Rhizobium_root_nodule.jpg",
+                },
+                imgClover: {
+                    title: "Image: Root Nodule on White Clover showing pink Leghaemoglobin.JPG",
+                    meta: "Wikimedia Commons. White clover root nodules showing pink leghaemoglobin. Author: Rosser1954. CC BY-SA 4.0.",
+                    url: "https://commons.wikimedia.org/wiki/File:Root_Nodule_on_White_Clover_showing_pink_Leghaemoglobin.JPG",
+                },
+                imgMap: {
+                    title: "Image: Mapa do Alentejo em Portugal.png",
+                    meta: "Wikimedia Commons. Map highlighting Alentejo in Portugal. CC BY-SA 4.0.",
+                    url: "https://commons.wikimedia.org/wiki/File:Mapa_do_Alentejo_em_Portugal.png",
+                },
+            };
+
+            (function setupRefs() {
+                var keys = [];
+                document
+                    .querySelectorAll("sup.ref[data-ref]")
+                    .forEach(function (el) {
+                        var key = el.getAttribute("data-ref");
+                        if (keys.indexOf(key) === -1) keys.push(key);
+                        el.textContent = keys.indexOf(key) + 1;
+                    });
+
+                var list = document.getElementById("refsList");
+                if (list) {
+                    list.innerHTML = keys
+                        .map(function (key, i) {
+                            var ref = REFS[key];
+                            return (
+                                '<li><span class="rn">[' +
+                                (i + 1) +
+                                ']</span><span><span class="rt">' +
+                                ref.title +
+                                "</span><br />" +
+                                ref.meta +
+                                ' <a href="' +
+                                ref.url +
+                                '" target="_blank" rel="noopener">Open ↗</a></span></li>'
+                            );
+                        })
+                        .join("");
+                }
+
+                var card = document.getElementById("refCard");
+                function openCard(el) {
+                    var key = el.getAttribute("data-ref");
+                    var ref = REFS[key];
+                    if (!ref) return;
+                    card.querySelector(".rc-kicker").textContent =
+                        "source [" + el.textContent + "]";
+                    card.querySelector(".rc-title").textContent = ref.title;
+                    card.querySelector(".rc-meta").textContent = ref.meta;
+                    card.querySelector(".rc-link").href = ref.url;
+                    var r = el.getBoundingClientRect();
+                    card.style.left =
+                        Math.min(r.left, window.innerWidth - 350) + "px";
+                    card.style.top = r.bottom + 12 + "px";
+                    card.classList.add("open");
+                }
+
+                document.querySelectorAll("sup.ref").forEach(function (el) {
+                    el.addEventListener("click", function (event) {
+                        event.stopPropagation();
+                        openCard(el);
+                    });
+                    el.addEventListener("keydown", function (event) {
+                        if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            openCard(el);
+                        }
+                    });
+                });
+                document.addEventListener("click", function () {
+                    card.classList.remove("open");
+                });
+            })();
+
+            (function setupExplore() {
+                var grid = document.getElementById("exploreGrid");
+                var arrow = document.getElementById("exploreArrow");
+                if (grid && arrow) {
+                    arrow.addEventListener("click", function () {
+                        grid.scrollBy({ left: 240, behavior: "smooth" });
+                    });
+                }
+            })();
+        </script>
+    </body>
+</html>
