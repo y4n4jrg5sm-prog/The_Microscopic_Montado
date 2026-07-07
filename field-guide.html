@@ -9,13 +9,11 @@
         <meta charset="UTF-8" />
         <title>index</title>
         <style>
-            /* ==================== 字体设置 ==================== */
+            
             :root {
-                /* ✏️ 全站字体：Mac/iOS 显示真·Helvetica，Windows 自动回退到 Arial */
+                
                 --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
-                /* ✏️ 投影颜色（偏蓝紫的冷调，而非纯灰）。
-                   三个数字是 R,G,B：想更蓝紫→拉高第三个(B)、压低前两个；
-                   想更接近中性灰→把三个值拉近。透明度由 JS 的 --sh-alpha 控制，互不影响。 */
+                
                 --sh-rgb: 72, 60, 100;
             }
 
@@ -25,8 +23,8 @@
                 box-sizing: border-box;
             }
             body {
-                background: #ffffff; /* ✏️ 背景色 */
-                font-family: var(--font-main); /* ✏️ 全局字体 */
+                background: #ffffff; 
+                font-family: var(--font-main); 
                 overflow: hidden;
                 width: 100vw;
                 height: 100vh;
@@ -46,57 +44,48 @@
                 transition: none !important;
                 transform: scale(
                     var(--img-scale, 1)
-                ) !important; /* ✏️ 由 JS 驱动的缩放，围绕中心 */
+                ) !important; 
                 transform-origin: center center;
-                /* ✏️ 跟随图片形状的投影：drop-shadow 沿不透明像素的真实轮廓生成，
-                   配合下移和模糊，看起来像浮在纸面上方。
-                   颜色取自 --sh-rgb（偏蓝紫），透明度/位移/模糊由下方 JS 常量控制 */
+                
                 filter: drop-shadow(
                     var(--sh-x, 0px) var(--sh-y, 16px) var(--sh-blur, 16px)
                         rgba(var(--sh-rgb, 0, 0, 0), var(--sh-alpha, 0.28))
                 );
             }
 
-            /* ==================== 标签文字组 ==================== */
-            /* 🌟 关键：.label-group 不再放进 .item，而是由 JS 直接挂在 <body> 顶层，
-               每帧跟随对应图片定位（见下方 tick 里的"标签定位"段）。
-               这样它所在的层叠上下文就是根节点，身下整张画面（所有图片+大字+白底）
-               才会成为它的混合背景，difference 才能真正逐像素取反。
-               取反放在"组"这一层（mix-blend-mode 加在 .label-group 上），
-               白/灰文字先合成成一张图，再整体与背景做差值，淡入时也不会闪白。 */
+            
             .label-group {
-                position: fixed; /* 视口坐标，配合 JS 每帧定位 */
-                transform: translateX(-50%); /* 以图片中心水平对齐 */
-                z-index: 5000; /* 浮在所有漂浮图片之上 */
-                mix-blend-mode: difference; /* 🌟 取反就在这里发生 */
+                position: fixed; 
+                transform: translateX(-50%); 
+                z-index: 5000; 
+                mix-blend-mode: difference; 
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 5px; /* ✏️ 主标签与类型小字之间的间距 */
+                gap: 5px; 
                 opacity: 0;
                 transition: opacity 0.4s;
                 pointer-events: none;
                 white-space: nowrap;
             }
             .label-group.show {
-                opacity: 1; /* JS 在 hover 时加上 .show 显示 */
+                opacity: 1; 
                 pointer-events: auto;
                 cursor: pointer;
             }
             .label {
-                font-family: var(--font-main); /* ✏️ 标签字体 */
-                font-size: 20px; /* ✏️ 标签字号 */
-                /* 源色：纯白 → difference 后白底变黑、黑底变白、橙底变蓝，自动适应 */
+                font-family: var(--font-main); 
+                font-size: 20px; 
+                
                 color: #ffffff;
                 letter-spacing: 0.1em;
                 white-space: nowrap;
             }
 
             .label-type {
-                font-family: var(--font-main); /* ✏️ 类型小字字体 */
-                font-size: 12px; /* ✏️ 类型小字字号 */
-                /* 较暗的源色 → 取反后在白底上呈中灰，保持比主标签更弱的次级层次。
-                   想更醒目 → 调亮接近 #fff；想更淡 → 调暗接近 #444 */
+                font-family: var(--font-main); 
+                font-size: 12px; 
+                
                 color: #888888;
                 letter-spacing: 0.15em;
                 text-transform: uppercase;
@@ -107,7 +96,6 @@
                 z-index: 999 !important;
             }
 
-            /* ==================== 科普名片样式 ==================== */
             #card-overlay {
                 position: fixed;
                 top: 0;
@@ -129,9 +117,9 @@
             }
             .info-card {
                 background: #ffffff;
-                width: 900px; /* ✏️ 名片宽度 */
-                height: 440px; /* ✏️ 名片高度（已缩小） */
-                border-radius: 0; /* ✏️ 直角（去掉圆角） */
+                width: 900px; 
+                height: 440px; 
+                border-radius: 0; 
                 box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06);
                 display: flex;
                 padding: 40px 60px 40px 40px;
@@ -144,7 +132,7 @@
                 transform: translateY(0);
             }
             .card-left {
-                width: 350px; /* ✏️ 左侧图片区宽度 */
+                width: 350px; 
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -166,27 +154,26 @@
                 transform: translateX(0);
             }
             .card-title {
-                font-family: var(--font-main); /* ✏️ 名片标题字体 */
-                font-size: 30px; /* ✏️ 名片标题字号（已放大） */
+                font-family: var(--font-main); 
+                font-size: 30px; 
                 color: #222;
                 line-height: 1;
                 text-align: left;
-                font-weight: 400; /* ✏️ 字重：100极细 / 400正常 / 700加粗 */
-                letter-spacing: 0em; /* ✏️ 字间距：em单位相对字号，0为默认 */
+                font-weight: 400; 
+                letter-spacing: 0em; 
                 margin-bottom: 40px;
             }
             .card-desc {
-                font-family: var(--font-main); /* ✏️ 名片正文字体 */
-                font-size: 16px; /* ✏️ 名片正文字号（已放大） */
+                font-family: var(--font-main); 
+                font-size: 16px; 
                 color: #000000;
                 line-height: 1.5;
                 text-align: left;
-                font-weight: 400; /* ✏️ 字重：100极细 / 400正常 / 700加粗 */
-                letter-spacing: 0em; /* ✏️ 字间距：em单位相对字号，0为默认 */
-                margin-bottom: 40px; /* 给按钮留出向下的间距 */
+                font-weight: 400; 
+                letter-spacing: 0em; 
+                margin-bottom: 40px; 
             }
 
-            /* 🌟 "进入"按钮的精致样式 */
             .enter-btn {
                 align-self: flex-start;
                 display: inline-flex;
@@ -195,8 +182,8 @@
                 padding: 11px 26px;
                 background: #333333;
                 color: #ffffff;
-                font-size: 15px; /* ✏️ 按钮字号（已放大） */
-                font-family: var(--font-main); /* ✏️ 按钮字体 */
+                font-size: 15px; 
+                font-family: var(--font-main); 
                 font-weight: 500;
                 letter-spacing: 0.05em;
                 text-decoration: none;
@@ -227,25 +214,24 @@
                 letter-spacing: 0.1em;
             }
 
-            /* ==================== 背景大字 ==================== */
-            /* ⚠️ 必须在 HTML 里紧跟 #card-overlay 之后，~ 选择器才生效 */
+            
             .bg-text {
                 position: fixed;
-                bottom: 0.7em; /* ✏️ 底部轻微截断；改 0 则完整显示 */
-                left: 0.3em; /* ✏️ 微调左侧对齐 */
-                z-index: 0; /* 在所有漂浮 .item（z-index 1+）之下 */
+                bottom: 0.7em; 
+                left: 0.3em; 
+                z-index: 0; 
                 font-family: var(--font-main);
-                font-size: 11vw; /* ✏️ 字号，vw 单位保持响应式 */
-                font-weight: 400; /* ✏️ 字重 */
-                color: #000000; /* ✏️ 极浅灰，退到背景不抢焦点 */
-                line-height: 1; /* ✏️ 行高，两行紧凑贴合 */
-                letter-spacing: 0em; /* ✏️ 轻微收紧字距 */
+                font-size: 11vw; 
+                font-weight: 400; 
+                color: #000000; 
+                line-height: 1; 
+                letter-spacing: 0em; 
                 pointer-events: none;
                 user-select: none;
                 opacity: 1;
                 transition: opacity 0.5s ease;
             }
-            /* 名片打开时大字淡出，利用 CSS 通用兄弟选择器，无需额外 JS */
+            
             #card-overlay.active ~ .bg-text {
                 opacity: 0;
             }
@@ -272,8 +258,7 @@
             </div>
         </div>
 
-        <!-- ✏️ 背景大字：必须紧跟 #card-overlay，CSS ~ 选择器依赖 DOM 顺序 -->
-        <!-- ✏️ 修改文字内容：替换下面两行 div 里的文字即可 -->
+        
         <div class="bg-text" id="bg-text">
             <div>Field</div>
             <div>Guide</div>
@@ -475,25 +460,21 @@
 
             let clickedActive = null;
 
-            /* ==================== 选中放大参数（可调） ==================== */
-            const ACTIVE_SCALE = 1.5; // ✏️ 选中后放大到原来的倍数
-            const SCALE_EASE = 0.12; // ✏️ 缓动缩放系数（先快后慢，与飞入动作的 0.12 同步；越大越快）
+            const ACTIVE_SCALE = 1.5; 
+            const SCALE_EASE = 0.12; 
 
-            /* ==================== 标签定位参数（可调） ==================== */
-            const LABEL_GAP = 8; // ✏️ 标签与图片底边的垂直间距(px)
+            const LABEL_GAP = 8; 
 
-            /* ==================== 漂浮投影参数（可调） ==================== */
-            // 投影颜色（偏蓝紫）在 CSS 的 :root --sh-rgb 里调；这里只控制透明度/位移/模糊。
-            const SHADOW_Y = 16; // ✏️ 投影基础下移距离(px)，越大越像悬空
-            const SHADOW_BLUR = 10; // ✏️ 投影基础模糊(px)，越大越柔和
-            const SHADOW_ALPHA = 0.2; // ✏️ 投影深浅(0~1)
-            const SHADOW_FLOAT = 5; // ✏️ 漂浮呼吸幅度(px)：>0 投影随起伏轻微胀缩；设 0 则静止、最省性能
+            
+            const SHADOW_Y = 16; 
+            const SHADOW_BLUR = 10; 
+            const SHADOW_ALPHA = 0.2; 
+            const SHADOW_FLOAT = 5; 
 
-            /* ==================== 有机漂动参数（可调） ==================== */
-            const FLOAT_SPEED = 0.03; // ✏️ 基础漂动速度
-            const WANDER_TURN = 0.0008; // ✏️ 方向游走强度：越大转向越频繁、路径越蜿蜒
-            const SPEED_VARY = 0.3; // ✏️ 速度起伏幅度(0~1)：越大忽快忽慢越明显
-            const SWING = 0.2; // ✏️ 左右飘忽幅度（原有的横向摆动）
+            const FLOAT_SPEED = 0.03; 
+            const WANDER_TURN = 0.0008; 
+            const SPEED_VARY = 0.3; 
+            const SWING = 0.2; 
 
             const overlay = document.getElementById("card-overlay");
             const targetBox = document.getElementById("card-target-box");
@@ -513,7 +494,7 @@
                 img.src = item.src;
                 img.style.width = item.w + "px";
                 img.draggable = false;
-                // 初始化投影变量（即便关闭呼吸，也保证有一份静态投影）
+                
                 img.style.setProperty("--sh-y", SHADOW_Y + "px");
                 img.style.setProperty("--sh-blur", SHADOW_BLUR + "px");
                 img.style.setProperty("--sh-alpha", SHADOW_ALPHA);
@@ -521,9 +502,8 @@
                 el.appendChild(img);
                 document.body.appendChild(el);
 
-                // ==================== 标签文字组 ====================
-                // 🌟 直接挂到 <body> 顶层（不再放进 .item），由 tick 每帧跟随图片定位。
-                // 只有这样，标签所在的层叠上下文才是根节点，difference 才能与整张画面取反。
+                
+                
                 const labelGroup = document.createElement("div");
                 labelGroup.className = "label-group";
                 labelGroup.setAttribute("role", "link");
@@ -561,26 +541,26 @@
 
                 const obj = {
                     el,
-                    img, // ← 存下图片引用，用于精准对齐
-                    labelEl: labelGroup, // ← 顶层标签组引用，每帧跟随定位
+                    img, 
+                    labelEl: labelGroup, 
                     item,
                     x,
                     y,
-                    heading: Math.random() * Math.PI * 2, // 当前前进方向（会随时间游走）
-                    speed: 0.3 + Math.random() * 0.3, // 基础速度
-                    // —— 有机漂动随机种子：每张图各不相同，避免整齐划一 ——
-                    wf1: 0.1 + Math.random() * 0.2, // 方向游走频率 1
-                    wf2: 0.04 + Math.random() * 0.1, // 方向游走频率 2
-                    wp1: Math.random() * Math.PI * 2, // 方向游走相位 1
-                    wp2: Math.random() * Math.PI * 2, // 方向游走相位 2
-                    spf1: 0.08 + Math.random() * 0.15, // 速度起伏频率 1
-                    spf2: 0.03 + Math.random() * 0.08, // 速度起伏频率 2
-                    spp1: Math.random() * Math.PI * 2, // 速度起伏相位 1
-                    spp2: Math.random() * Math.PI * 2, // 速度起伏相位 2
+                    heading: Math.random() * Math.PI * 2, 
+                    speed: 0.3 + Math.random() * 0.3, 
+                    
+                    wf1: 0.1 + Math.random() * 0.2, 
+                    wf2: 0.04 + Math.random() * 0.1, 
+                    wp1: Math.random() * Math.PI * 2, 
+                    wp2: Math.random() * Math.PI * 2, 
+                    spf1: 0.08 + Math.random() * 0.15, 
+                    spf2: 0.03 + Math.random() * 0.08, 
+                    spp1: Math.random() * Math.PI * 2, 
+                    spp2: Math.random() * Math.PI * 2, 
                     hovered: false,
                     phase: Math.random() * Math.PI * 2,
                     zIndex: index + 1,
-                    scale: 1, // 当前缩放，缓动逼近目标
+                    scale: 1, 
                 };
 
                 el.addEventListener("click", (e) => {
@@ -594,7 +574,6 @@
                     document.getElementById("card-desc").textContent =
                         item.desc;
 
-                    // 统一跳转逻辑
                     enterBtn.textContent = "Enter the page";
                     enterBtn.href = item.link;
                     enterBtn.setAttribute("target", "_top");
@@ -655,15 +634,13 @@
                 state.forEach((s) => {
                     s.phase += dt * 0.002;
 
-                    // 缓动缩放：选中的图片缓动放大到 ACTIVE_SCALE 倍（先快后慢），
-                    // 其余缓动回到 1 倍，与飞入左框的动作同步
+                    
                     const targetScale = s === clickedActive ? ACTIVE_SCALE : 1;
                     s.scale += (targetScale - s.scale) * SCALE_EASE;
                     s.img.style.setProperty("--img-scale", s.scale.toFixed(3));
 
-                    // 漂浮呼吸：用各自相位做缓慢起伏，投影随之变大变虚，强化悬浮感
                     if (SHADOW_FLOAT > 0) {
-                        const lift = (Math.sin(s.phase * 0.8) + 1) / 2; // 0~1
+                        const lift = (Math.sin(s.phase * 0.8) + 1) / 2; 
                         s.img.style.setProperty(
                             "--sh-y",
                             (SHADOW_Y + lift * SHADOW_FLOAT).toFixed(1) + "px",
@@ -680,10 +657,10 @@
                     }
 
                     if (s === clickedActive) {
-                        // 名片打开状态：让图片中心精准落在左框中心
+                        
                         const elRect = s.el.getBoundingClientRect();
                         const imgRect = s.img.getBoundingClientRect();
-                        // 图片中心相对于 .item 容器左上角的偏移（与宽高、标签长短无关）
+                        
                         const offsetX =
                             imgRect.left + imgRect.width / 2 - elRect.left;
                         const offsetY =
@@ -697,14 +674,14 @@
 
                         s.el.style.zIndex = 1001;
                     } else if (clickedActive) {
-                        // 背景被冻结：其他微生物在原地微颤
+                        
                         s.x += Math.sin(s.phase * 1.0) * 0.15;
                         s.y += Math.cos(s.phase * 0.8) * 0.15;
                         s.el.style.zIndex = s.zIndex;
                     } else {
-                        // 正常游荡状态
+                        
                         if (s === currentActive) {
-                            // 🌟 核心：鼠标悬停时，扣留基础速度，转为优雅的"水中原地悬浮画圈摆动"
+                            
                             if (!s.hovered) {
                                 s.hovered = true;
                                 s.el.classList.add("hovered");
@@ -716,17 +693,15 @@
                                 s.hovered = false;
                                 s.el.classList.remove("hovered");
                             }
-                            // —— 有机自由漂动 ——
-                            const t = now * 0.001; // 秒
+                            
+                            const t = now * 0.001; 
 
-                            // 1) 方向游走：朝向随时间缓慢、随机地偏转，整体路径上下左右都飘
                             s.heading +=
                                 (Math.sin(t * s.wf1 + s.wp1) +
                                     0.5 * Math.sin(t * s.wf2 + s.wp2)) *
                                 WANDER_TURN *
                                 dt;
 
-                            // 2) 速度忽快忽慢：基础速度上叠加缓慢起伏
                             const speedFactor =
                                 1 +
                                 SPEED_VARY *
@@ -742,7 +717,6 @@
                             s.x += Math.cos(s.heading) * sp;
                             s.y += Math.sin(s.heading) * sp;
 
-                            // 3) 保留左右飘忽（垂直于前进方向的横向摆动）
                             const swing = Math.sin(s.phase * 1.5) * SWING;
                             s.x += -Math.sin(s.heading) * swing;
                             s.y += Math.cos(s.heading) * swing;
@@ -760,9 +734,8 @@
                     s.el.style.top = s.y + "px";
                 });
 
-                // ==================== 标签定位 + 显隐（独立一遍，集中读取布局） ====================
-                // 上一遍已写完所有图片位置，这里统一读取图片外接框，把顶层标签置于其正下方居中。
-                // 显示条件：当前 hover 的那张、且没有打开名片。
+                
+                
                 state.forEach((s) => {
                     const show = s === currentActive && !clickedActive;
                     s.labelEl.classList.toggle("show", show);

@@ -5,49 +5,40 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Montado · The Microscopic Montado</title>
         <style>
-            /* =======================================================================
-     ★ 需要你手动调整的地方都集中在这里（:root）
-     ----------------------------------------------------------------------- */
+            
             :root {
-                /* ① 两个研究点方框在屏幕上的位置（百分比，相对视口）。 */
+                
                 --p1-x: 33%;
                 --p1-y: 55%;
                 --p2-x: 47.4%;
                 --p2-y: 74.5%;
 
-                /* ⑥ 整个地图场景（背景视频 + 两个方框 + 方框文字）的整体位移。
-                   方框始终钉在地图上的同一位置，所以三者一起移动、不会错位。
-                   --scene-x：正=右移；--scene-y：负=上移。改这两个数即可微调。 */
                 --scene-x: 4vw;
                 --scene-y: -20vh;
 
-                /* ② 两段角落视频：并排靠上，略小于半屏。 */
-                --edge: clamp(28px, 5vw, 80px);       /* 视频到页面左右边缘的间距 */
-                --mid: clamp(14px, 2.4vw, 36px);      /* 两个视频之间的间距（比 edge 小）*/
+                --edge: clamp(28px, 5vw, 80px);       
+                --mid: clamp(14px, 2.4vw, 36px);      
                 --panel-w: calc((100vw - 2 * var(--edge) - var(--mid)) / 2);
-                --panel-top: clamp(56px, 9vh, 110px); /* 视频到页面上边缘（比下边缘近）*/
+                --panel-top: clamp(56px, 9vh, 110px); 
                 --cap-gap: 14px;
-                --cap-w: var(--panel-w);              /* 标注宽度 = 视频宽度 */
+                --cap-w: var(--panel-w);              
 
-                /* ③ 动画时长。 */
                 --region-bloom: 2s;
                 --panel-bloom: 1.3s;
 
-                /* ④ 配色 */
                 --ocean: #0b1a2b;
                 --beacon: #f5c453;
                 --core: #fff4dc;
-                --ink: #111111; /* 页面文字：黑色 */
+                --ink: #111111; 
                 --panel-margin: 28px;
 
-                /* ⑤ 研究点方框（同 Global Change / worldwide_map 的标记框）*/
-                --frame-w: 46px; /* 框宽 */
-                --frame-h: 30px; /* 框高 */
-                --frame-thickness: 3px; /* 线粗 */
-                --corner: 10px; /* 每个直角的臂长 */
-                --frame-color: #fff; /* 白 + difference：随底色反相（白底显黑、深底显白，不会在白底消失）*/
-                --frame-breathe: 2s; /* 呼吸一次时长 */
-                --frame-breathe-scale: 0.7; /* 呼吸最小缩放 */
+                --frame-w: 46px; 
+                --frame-h: 30px; 
+                --frame-thickness: 3px; 
+                --corner: 10px; 
+                --frame-color: #fff; 
+                --frame-breathe: 2s; 
+                --frame-breathe-scale: 0.7; 
             }
 
             * {
@@ -70,25 +61,19 @@
                     sans-serif;
             }
 
-            /* ===== 地区图（页面加载时自动从光点坐标放大铺满） ======================
-               现在它同时是「背景视频渐变轮播」的容器：两段视频做兄弟交替淡入淡出，
-               叠在这层之上；当两段视频都还没淡入（轮播间隙）时，露出的就是下面这张
-               底图 montado_basemap.png（= worldwide_map 里 PlateCarree.png 的角色）。 */
             .region {
                 position: fixed;
                 inset: 0;
                 background-color: var(--ocean);
-                background-image: url("images/montado_basemap.png"); /* ← 渐变间隙露出的网页底图 */
+                background-image: url("images/montado_basemap.png"); 
                 background-size: cover;
                 background-position: center;
                 pointer-events: auto;
                 z-index: 10;
-                /* 整个场景（视频 + 两个方框 + 方框文字）一起往右上移；
-                   缩放 1.5 的视频有足够溢出盖住露出的边缘，不会出现黑边。 */
+                
                 transform: translate(var(--scene-x, 0), var(--scene-y, 0));
             }
 
-            /* ===== 背景视频（单个循环播放，以中点为中心放大 1.5 倍）===== */
             .region__video {
                 position: absolute;
                 inset: 0;
@@ -97,14 +82,13 @@
                 object-fit: cover;
                 object-position: 58% 42%;
                 display: block;
-                transform: scale(1.5); /* 以中点为中心放大 */
-                z-index: 0; /* 在底图之上、光点之下 */
+                transform: scale(1.5); 
+                z-index: 0; 
             }
 
-            /* ===== 光点 ============================================================= */
             .beacon {
                 position: absolute;
-                z-index: 2; /* 浮在背景视频之上 */
+                z-index: 2; 
                 width: var(--frame-w);
                 height: var(--frame-h);
                 transform: translate(-50%, -50%);
@@ -112,19 +96,17 @@
                 padding: 0;
                 background: none;
                 cursor: pointer;
-                /* difference 放在 beacon 元素本身才生效（放伪元素上会被 beacon
-                   自己的层叠上下文隔离，导致白框在白底消失）。方框 + 标签整体随底色反相。 */
+                
                 mix-blend-mode: difference;
-                /* 弹出视频时方框淡出、关闭视频时淡入 */
+                
                 transition: opacity 0.45s ease;
             }
-            /* 对应视频弹出时，方框（含下方 Site 文字）隐藏；关闭后再显现 */
+            
             .beacon.is-away {
                 opacity: 0;
                 pointer-events: none;
             }
-            /* 四角直角框（8 段渐变画四个角，四边中空）+ difference 反相 + 呼吸缩放，
-               与 Global Change 页的 .marker-frame 同款。 */
+            
             .beacon::before {
                 content: "";
                 position: absolute;
@@ -150,6 +132,18 @@
                     linear-gradient(var(--frame-color), var(--frame-color))
                         right bottom / var(--frame-thickness) var(--corner)
                         no-repeat;
+                animation: frame-breathe var(--frame-breathe) ease-in-out
+                    infinite;
+            }
+            .beacon::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background:
+                    linear-gradient(var(--frame-color), var(--frame-color))
+                        center / 11px var(--frame-thickness) no-repeat,
+                    linear-gradient(var(--frame-color), var(--frame-color))
+                        center / var(--frame-thickness) 11px no-repeat;
                 animation: frame-breathe var(--frame-breathe) ease-in-out
                     infinite;
             }
@@ -204,7 +198,6 @@
                 outline-offset: 6px;
             }
 
-            /* ===== 两段角落小视频 =================================================== */
             .panel {
                 position: fixed;
                 width: var(--panel-w);
@@ -225,12 +218,12 @@
                 pointer-events: auto;
             }
             .panel--tl {
-                /* 左边的视频 */
+                
                 left: var(--edge);
                 top: var(--panel-top);
             }
             .panel--br {
-                /* 右边的视频 */
+                
                 right: var(--edge);
                 top: var(--panel-top);
             }
@@ -249,7 +242,7 @@
                 border: none;
                 border-radius: 50%;
                 cursor: pointer;
-                color: #ffffff; /* 深色圆底上的关闭符号，保持白色可读 */
+                color: #ffffff; 
                 font-size: 15px;
                 line-height: 0;
                 background: rgba(6, 10, 18, 0.6);
@@ -272,7 +265,6 @@
                 outline-offset: 2px;
             }
 
-            /* ===== 两段视频的文字描述 =============================================== */
             .cap {
                 position: fixed;
                 width: var(--cap-w);
@@ -296,10 +288,10 @@
                 font-weight: 300;
                 font-size: 13px;
                 line-height: 1.65;
-                color: rgba(0, 0, 0, 0.55);
+                color: rgba(0, 0, 0, 0.72);
             }
             .cap--tl {
-                /* 左视频下方的标注，与视频等宽 */
+                
                 left: var(--edge);
                 top: calc(
                     var(--panel-top) + var(--panel-w) * 9 / 16 + var(--cap-gap)
@@ -307,7 +299,7 @@
                 text-align: left;
             }
             .cap--br {
-                /* 右视频下方的标注，与视频等宽 */
+                
                 right: var(--edge);
                 top: calc(
                     var(--panel-top) + var(--panel-w) * 9 / 16 + var(--cap-gap)
@@ -315,7 +307,6 @@
                 text-align: left;
             }
 
-            /* ===== 项目标题 + enter（视频下方、页面底部居中渐显）===== */
             .intro {
                 position: fixed;
                 left: 0;
@@ -355,19 +346,19 @@
                 padding: 11px 22px;
                 border-radius: 999px;
                 text-decoration: none;
-                color: var(--ink);
+                color: #ffffff;
                 font-size: 14px;
                 letter-spacing: 1.5px;
-                background: rgba(255, 255, 255, 0.5);
-                border: 1px solid rgba(0, 0, 0, 0.22);
+                background: #333333;
+                border: 1px solid #333333;
                 backdrop-filter: blur(8px);
                 transition:
                     background 0.2s ease,
                     border-color 0.2s ease;
             }
             .enter:hover {
-                background: rgba(255, 255, 255, 0.78);
-                border-color: rgba(0, 0, 0, 0.4);
+                background: #555555;
+                border-color: #555555;
             }
             .enter .arrow {
                 transition: transform 0.2s ease;
@@ -380,8 +371,6 @@
                 outline-offset: 3px;
             }
 
-            /* ===== 右上角字幕 + 图例（与 Global Change 同系列，字号更小）=====
-               背景视频分 6 个年份阶段，随进度切换；点开任一角落视频后整层模糊。 */
             .rs-overlay {
                 position: fixed;
                 inset: 0;
@@ -487,19 +476,16 @@
                 }
             }
 
-            /* ==================== Montado 引导层（原 introduction 内容，已并入本页） ====================
-               页面加载先显示介绍文字，点 ENTER 淡出露出研究点交互。
-               从 Global 标记点跳转过来（带 ?ox）时自动跳过。 */
             #mont-intro {
                 position: fixed;
                 inset: 0;
-                z-index: 9000; /* 盖住研究点交互(z<=30)，但在顶部导航(9999)之下 */
+                z-index: 9000; 
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: center;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
-                padding: 104px 24px 64px;
+                padding: 148px 24px 112px;
                 font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
                 background-image:
                     linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.55)),
@@ -511,7 +497,7 @@
                 transition: opacity 0.7s ease;
             }
             #mont-intro.mont-hide { opacity: 0; pointer-events: none; }
-            #mont-intro .mont-intro-wrap { max-width: 720px; width: 100%; padding: 0 8px; }
+            #mont-intro .mont-intro-wrap { width: 66.6667vw; max-width: none; margin: auto; padding: 0 8px; }
             #mont-intro .mont-intro-text {
                 font-size: 18px; line-height: 1.8; color: #1a1a1a;
                 letter-spacing: 0.005em; margin-bottom: 36px;
@@ -540,8 +526,13 @@
             #mont-intro .mont-intro-enter:active { transform: translateY(1px); }
             #mont-intro .mont-intro-enter .arrow { transition: transform 0.2s; }
             #mont-intro .mont-intro-enter:hover .arrow { transform: translateX(4px); }
+            @media (max-width: 1024px) {
+                #mont-intro { padding: 128px 16px 92px; }
+                #mont-intro .mont-intro-wrap { width: 100%; max-width: none; padding: 0 4px; }
+            }
             @media (max-width: 600px) {
-                #mont-intro { padding: 88px 18px 48px; }
+                #mont-intro { padding: 108px 12px 76px; }
+                #mont-intro .mont-intro-wrap { width: 100%; padding: 0; }
                 #mont-intro .mont-intro-text { font-size: 16px; line-height: 1.75; margin-bottom: 26px; }
                 #mont-intro .mont-intro-actions { margin-top: 32px; }
                 #mont-intro .mont-intro-enter { font-size: 17px; padding: 15px 28px; }
@@ -553,8 +544,7 @@
         <div id="site-nav"></div>
         <script src="nav.js"></script>
 
-
-        <!-- ==== 引导层：原 introduction 的介绍文字，点 ENTER 进入研究点交互 ==== -->
+        
         <div id="mont-intro">
             <div class="mont-intro-wrap">
                 <p class="mont-intro-text">
@@ -582,6 +572,25 @@
                     microbiology not as a technical detail but as the basis of
                     the landscape's survival.
                 </p>
+                <p class="mont-intro-text">
+                    It is made, first, for the people who work this land — such
+                    as Eva, whose farm is one of my two field sites and is now
+                    threatened by a solar project routed across it — so that the
+                    value beneath their feet becomes something they can see and
+                    argue for. It is made with local partners already defending
+                    the montado (Alexander von Hildebrand's <em>Alentejo
+                    Comvida</em> in Montemor; the ADPM — Association for the
+                    Defence and Preservation of the Montado), and for a wider
+                    public asked to re-value a landscape whose most vital part is
+                    microscopic.
+                </p>
+                <p class="mont-intro-text" style="font-size:14px; color:#333;">
+                    Built on existing research: cork-oak decline and
+                    soil-microbiome studies at the University of Évora, and the
+                    Vale Formoso Erosion Experimental Centre in Mértola
+                    (established 1961), one of Europe's oldest soil-erosion
+                    stations.
+                </p>
                 <div class="mont-intro-actions">
                     <a class="mont-intro-enter" href="global.html">
                         Enter the global view
@@ -595,9 +604,8 @@
             </div>
         </div>
 
-        <!-- 地区图层（页面加载时由 JS 自动触发放大动画） -->
         <div class="region" id="region" aria-hidden="true">
-            <!-- 背景视频：单个循环播放 -->
+            
             <video
                 class="region__video"
                 id="bgVid"
@@ -615,14 +623,13 @@
             </video>
 
             <button class="beacon beacon--p1" id="site1" aria-label="Site 1">
-                <span class="label">Site 1</span>
+                <span class="label">A Cork Oak Farm</span>
             </button>
             <button class="beacon beacon--p2" id="site2" aria-label="Site 2">
-                <span class="label">Site 2</span>
+                <span class="label">A Holm Oak Farm</span>
             </button>
         </div>
 
-        <!-- 两段角落小视频 -->
         <div class="panel panel--tl" id="panel1" aria-hidden="true">
             <video playsinline preload="auto" loop>
                 <source src="videos/clip.mp4" type="video/mp4" />
@@ -640,30 +647,47 @@
             </button>
         </div>
 
-        <!-- 左上视频的文字（在视频下方） -->
+        
         <div class="cap cap--tl" id="cap1">
-            <div class="cap__title">Site 1</div>
+            <div class="cap__title">Site 1 · Herdade de Montalvo — a montado</div>
             <div class="cap__desc">
-                Description for the left video goes here.
-            </div>
-        </div>
-        <!-- Text for the bottom-right video (above the video) -->
-        <div class="cap cap--br" id="cap2">
-            <div class="cap__title">Site 2</div>
-            <div class="cap__desc">
-                Description for the right video goes here.
+                A working cork-oak montado in the Alentejo (EN253, km 14.7).
+                What was pressing on the community here was not the farm itself,
+                but a new mining project planned nearby — one the neighbours
+                were, notably, not resisting. It is a reminder that the
+                montado's future is often decided above the ground, through
+                land-use choices like mining, energy and intensive agriculture,
+                even as much of what this landscape is worth lies unseen, in the
+                soil below.
             </div>
         </div>
 
-        <!-- 项目标题 + enter（视频下方居中，两段视频都点过后渐显）-->
+        <div class="cap cap--br" id="cap2">
+            <div class="cap__title">Site 2 · Eva's montado — near Ferreira do Alentejo</div>
+            <div class="cap__desc">
+                An unnamed holm-oak montado at 38°01′40″N, 8°04′33″W, run by
+                Eva: 200 hectares of oaks, open pasture and a flock of sheep,
+                worked entirely on the rain that falls each year — no
+                irrigation. Eva farms it as one living system, watching how long
+                the sheep graze a patch, because once they strip it bare the
+                soil stops holding its water. Around her, extensive montado is
+                being replaced by super-intensive irrigated olive orchards —
+                heavy soil disturbance, native trees cleared, plantations that
+                exhaust themselves in 15–25 years — and a planned solar project
+                would run power lines across her land. The montado quietly gives
+                water retention, biodiversity and carbon storage, yet its
+                keepers are still barely paid for that value. This is the ground
+                the project speaks from.
+            </div>
+        </div>
+
         <div class="intro" id="intro" aria-hidden="true">
             <h1>The Microscopic Montado</h1>
             <a class="enter" id="enter" href="index.html">
-                Enter <span class="arrow" aria-hidden="true">→</span>
+                ENTER <span class="arrow" aria-hidden="true">→</span>
             </a>
         </div>
 
-        <!-- 右上角：背景视频的年份字幕 + 图例（与 Global Change 同系列）-->
         <div class="rs-overlay" id="rsOverlay">
             <div class="rs-caption">
                 <div class="rs-year" id="rsYear" aria-hidden="true">
@@ -724,20 +748,17 @@
             var cap2 = document.getElementById("cap2");
             var intro = document.getElementById("intro");
 
-            // ── Page load: reveal the region map directly (no zoom-in animation) ──
             (function openRegionOnLoad() {
                 region.classList.add("is-open");
                 region.setAttribute("aria-hidden", "false");
             })();
 
-            // ── 记录两个研究点是否被点开过（决定 intro 是否出现） ────────────
             var opened = { p1: false, p2: false };
             function markOpened(key) {
                 opened[key] = true;
                 if (opened.p1 && opened.p2) intro.classList.add("show");
             }
 
-            // ── 打开角落小视频（从研究点飞出，文字同步淡入） ──────────────────
             function openPanel(panel, beacon, key, caption) {
                 markOpened(key);
                 caption.classList.add("show");
@@ -750,7 +771,6 @@
                 var dx = br.left + br.width / 2 - (pr.left + pr.width / 2);
                 var dy = br.top + br.height / 2 - (pr.top + pr.height / 2);
 
-                // 弹出视频时，隐藏对应方框（含下方文字）
                 beacon.classList.add("is-away");
 
                 panel.style.transition = "none";
@@ -768,12 +788,10 @@
                 if (p && p.catch) p.catch(function () {});
             }
 
-            // ── 关闭角落小视频（收回研究点，文字同步淡出） ────────────────────
             function closePanel(panel, beacon, caption) {
                 if (!panel.classList.contains("is-open")) return;
                 caption.classList.remove("show");
 
-                // 关闭视频时，对应方框（含下方文字）重新显现
                 beacon.classList.remove("is-away");
 
                 var video = panel.querySelector("video");
@@ -802,7 +820,6 @@
                 panel.addEventListener("transitionend", onEnd);
             }
 
-            // 绑定研究点
             site1.addEventListener("click", function () {
                 openPanel(panel1, site1, "p1", cap1);
             });
@@ -810,7 +827,6 @@
                 openPanel(panel2, site2, "p2", cap2);
             });
 
-            // 绑定关闭按钮
             document.querySelectorAll(".panel__close").forEach(function (btn) {
                 btn.addEventListener("click", function (e) {
                     e.stopPropagation();
@@ -820,11 +836,9 @@
                 });
             });
 
-            // ── 背景视频：单个循环播放（无淡入淡出）+ 6 阶段年份字幕 ──
             var bgVid = document.getElementById("bgVid");
             var rsOverlay = document.getElementById("rsOverlay");
 
-            // 6 张图渐变对应的年份，随视频进度切换（扫描揭示同 Global Change）
             var RS_YEARS = [
                 "1995",
                 "1995-2007",
@@ -876,7 +890,6 @@
                 }
             });
 
-            // 点开任一角落视频后，右上角字幕/图例整层模糊
             function rsUpdateBlur() {
                 var any =
                     panel1.classList.contains("is-open") ||
@@ -891,7 +904,7 @@
             (function () {
                 var introEl = document.getElementById("mont-intro");
                 if (!introEl) return;
-                // 从 Global 标记点跳转（带 ?ox/?oy）时，直接跳过引导层
+                
                 var qs = new URLSearchParams(location.search);
                 if (qs.has("ox") || qs.has("oy") || qs.has("skipIntro")) {
                     introEl.parentNode.removeChild(introEl);

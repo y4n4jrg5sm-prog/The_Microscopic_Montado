@@ -38,10 +38,9 @@
                 background-color: var(--bg);
                 color: var(--text);
                 line-height: 1.6;
-                position: relative; /* positioning context for .page-bg */
+                position: relative; 
             }
 
-            /* Body copy face for the top hero */
             @font-face {
                 font-family: "Syne Mono";
                 src: url("fonts/SyneMono-Regular.ttf") format("truetype");
@@ -50,8 +49,6 @@
                 font-display: swap;
             }
 
-            /* Top hero — pinned full-bleed image + scrolling inverted copy.
-               NB: .hero-scroll has NO z-index, so it does not isolate the blend. */
             .hero-scroll {
                 position: relative;
                 width: 100%;
@@ -66,17 +63,17 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 2560 / 1600; /* reserve correct height pre-load */
+                aspect-ratio: 2560 / 1600; 
             }
 
             .hero-copy {
                 position: absolute;
-                top: 20.8vw; /* pre-JS estimate ≈ 1/3 down the image (H/3 for 2560×1600); JS sets exact px */
+                top: 20.8vw; 
                 right: 0;
-                width: 40%; /* right two-fifths on desktop */
+                width: 40%; 
                 padding-right: clamp(20px, 4vw, 64px);
                 padding-left: 24px;
-                color: #ffffff; /* solid white copy */
+                color: #ffffff; 
             }
             .hero-copy p {
                 font-family: "Syne Mono", var(--font-mono);
@@ -93,13 +90,9 @@
                 font-style: italic;
             }
 
-            /* Upward scroll hint — sits just above the copy's top line.
-               Absolutely positioned so it does NOT push the text start down,
-               and does NOT add to the copy height (T) used by the scroll math.
-               It rides up with the copy as the page scrolls. */
             .hero-scroll-hint {
                 position: absolute;
-                left: 24px; /* aligns with .hero-copy padding-left */
+                left: 24px; 
                 top: 0;
                 transform: translateY(calc(-100% - 12px));
                 color: #ffffff;
@@ -130,11 +123,10 @@
             }
             @media (max-width: 600px) {
                 .hero-scroll-hint {
-                    left: 20px; /* match mobile padding-left */
+                    left: 20px; 
                 }
             }
 
-            /* Citation dots — upper-right of the preceding word */
             .hero-ref {
                 display: inline-block;
                 width: 6px;
@@ -158,7 +150,6 @@
                 outline-offset: 3px;
             }
 
-            /* Popup for the dots — a normal, readable card (never blended) */
             .hero-ref-card {
                 position: fixed;
                 z-index: 1000;
@@ -267,7 +258,7 @@
                 content: none;
             }
             sup.ref::after {
-                /* enlarged touch / click target */
+                
                 content: "";
                 position: absolute;
                 inset: -8px;
@@ -506,12 +497,12 @@
                 position: relative;
             }
             .hero-right .wc-figure {
-                margin: 0; /* fills the right column, which is now image-width */
+                margin: 0; 
                 width: 100%;
             }
             .hero-right .wc-slot {
                 width: 100%;
-                background: transparent; /* let the page soil texture show through */
+                background: transparent; 
                 display: block;
             }
             .hero-right .wc-slot svg,
@@ -519,7 +510,7 @@
                 width: 100%;
                 height: auto;
                 display: block;
-                mix-blend-mode: multiply; /* key out the image's white so it prints onto the texture */
+                mix-blend-mode: multiply; 
             }
             .hero-right .wc-caption {
                 width: 100%;
@@ -581,9 +572,20 @@
             .caption-text.wide {
                 max-width: none;
                 width: 100%;
-                grid-column: 1 / -1; /* span the full row when inside a grid */
+                grid-column: 1 / -1; 
             }
 
+            .stats-prose {
+                grid-column: 1 / -1;
+                font-size: 16px;
+                line-height: 1.7;
+                color: var(--text);
+                margin: 0;
+            }
+            .stats-prose b {
+                color: var(--ink);
+                font-weight: 600;
+            }
             .stats {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
@@ -1182,34 +1184,27 @@
                 outline-offset: 3px;
             }
 
-            /* ============ Full-page soil background ============
-               A single layer covering the whole page height, sitting above the
-               white body background but behind all content (z-index:-1). The
-               source is a tall 682×8000 strip, so on desktop it's shown at full
-               page width (edge to edge) at its natural ratio; it's so tall it
-               effectively never needs to repeat. On iPad / phone it's scaled up
-               (and side-cropped) so the faint texture doesn't read as too dense. */
             .page-bg {
                 position: absolute;
-                inset: 0; /* fills body's full height */
+                inset: 0; 
                 z-index: -1;
                 pointer-events: none;
+                opacity: 0.5;
                 background-image: url("images/soil-background.webp");
                 background-repeat: repeat-y;
                 background-position: top center;
-                background-size: 100% auto; /* desktop: edge to edge */
+                background-size: 100% auto; 
             }
             @media (max-width: 1024px) {
                 .page-bg {
-                    background-size: 160% auto; /* iPad: zoom in, crop sides */
+                    background-size: 160% auto; 
                 }
             }
             @media (max-width: 600px) {
                 .page-bg {
-                    background-size: 230% auto; /* phone: zoom in more */
+                    background-size: 230% auto; 
                 }
             }
-
         </style>
     </head>
     <body>
@@ -1218,35 +1213,105 @@
         <div id="site-nav"></div>
         <script src="nav.js"></script>
 
-        <!-- ============ Top hero: pinned image + scrolling copy ============ -->
         <section class="hero-scroll" id="heroScroll">
             <div class="hero-bg-sticky" id="heroBgSticky">
                 <img
                     id="heroBgImg"
-                    src="images/bacillus-subtilis-hero.webp"
+                    src="images/oak-trunk-bacillus-subtilis.webp"
                     alt="Cork oak montado, Alentejo, Portugal — dry summer ground where spore-forming bacteria wait"
                 />
             </div>
             <div class="hero-copy" id="heroCopy">
+                <p><em>Sealed in a spore against the bark, it waits out the whole dry summer, and wakes the hour the rain returns.</em></p>
                 <div class="hero-scroll-hint" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
                         <polyline points="6 15 12 9 18 15"></polyline>
                     </svg>
                 </div>
-<p>The montado summer is a furnace. For months no rain falls; the soil cracks; the fine roots of the oaks and most of the life around them shut down or die. The water mould that kills the trees survives this as a thick-walled spore. So does its enemy.<span class="hero-ref" data-ref="1" role="button" tabindex="0" aria-label="Reference 1"></span></p>
-<p><em class="sci">Bacillus subtilis</em> is built for the dry country. When conditions turn against it, the cell folds a copy of itself into an <em>endospore</em> — a dormant, armoured seed that shrugs off heat, drought and years of waiting, then wakes when the rains return. In a land of long droughts, endurance is a weapon.<span class="hero-ref" data-ref="2" role="button" tabindex="0" aria-label="Reference 2"></span></p>
-<p>Awake, it is a chemist. Along the root it lays down a biofilm and secretes a family of ring-shaped molecules — <em>surfactin</em>, <em>iturin</em>, <em>fengycin</em> — lipopeptides that punch holes in the membranes of <em class="sci">Phytophthora</em> and collapse its hyphae. In cork-oak trials, related bacilli stopped the pathogen's mycelium on contact and let infected seedlings live.<span class="hero-ref" data-ref="3" role="button" tabindex="0" aria-label="Reference 3"></span></p>
-<p>And it talks to the tree. The same lipopeptides that wound the pathogen also trip the oak's alarm, priming defences before the attack. A spore-former that outlasts the drought, a druggist that makes its own antibiotics, a messenger that warns the tree — three lives in one cell too small to see.<span class="hero-ref" data-ref="4" role="button" tabindex="0" aria-label="Reference 4"></span></p>
+                <p>
+                    The montado summer is a furnace. For months no rain falls;
+                    the soil cracks; the fine roots of the oaks and most of the
+                    life around them shut down or die. The water mould that
+                    kills the trees survives this as a thick-walled spore. So
+                    does its enemy.<span
+                        class="hero-ref"
+                        data-ref="1"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 1"
+                    ></span>
+                </p>
+                <p>
+                    <em class="sci">Bacillus subtilis</em> is built for the dry
+                    country. When conditions turn against it, the cell folds a
+                    copy of itself into an <em>endospore</em> — a dormant,
+                    armoured seed that shrugs off heat, drought and years of
+                    waiting, then wakes when the rains return. In a land of long
+                    droughts, endurance is a weapon.<span
+                        class="hero-ref"
+                        data-ref="2"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 2"
+                    ></span>
+                </p>
+                <p>
+                    Awake, it is a chemist. Along the root it lays down a
+                    biofilm and secretes a family of ring-shaped molecules —
+                    <em>surfactin</em>, <em>iturin</em>, <em>fengycin</em> —
+                    lipopeptides that punch holes in the membranes of
+                    <em class="sci">Phytophthora</em> and collapse its hyphae.
+                    In cork-oak trials, related bacilli stopped the pathogen's
+                    mycelium on contact and let infected seedlings live.<span
+                        class="hero-ref"
+                        data-ref="3"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 3"
+                    ></span>
+                </p>
+                <p>
+                    And it talks to the tree. The same lipopeptides that wound
+                    the pathogen also trip the oak's alarm, priming defences
+                    before the attack. A spore-former that outlasts the drought,
+                    a druggist that makes its own antibiotics, a messenger that
+                    warns the tree — three lives in one cell too small to
+                    see.<span
+                        class="hero-ref"
+                        data-ref="4"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 4"
+                    ></span>
+                </p>
             </div>
         </section>
 
-        <div class="hero-ref-card" id="heroRefCard" role="dialog" aria-label="Reference"></div>
-        <div class="ref-card" id="refCard" role="dialog" aria-label="Source reference">
+        <div
+            class="hero-ref-card ref-card"
+            id="heroRefCard"
+            role="dialog"
+            aria-label="Reference"
+        ></div>
+        <div
+            class="ref-card"
+            id="refCard"
+            role="dialog"
+            aria-label="Source reference"
+        >
             <div class="rc-kicker"></div>
             <div class="rc-title"></div>
             <div class="rc-meta"></div>
-            <a class="rc-link" href="#" target="_blank" rel="noopener">Open source ↗</a>
+            <a class="rc-link" href="#" target="_blank" rel="noopener"
+                >Open source ↗</a
+            >
         </div>
 
         <div class="container">
@@ -1255,59 +1320,142 @@
                     <div class="continue-actions">
                         <a class="continue-btn" href="index.html"
                             ><span class="arrow" aria-hidden="true">←</span>
-                            Continue exploring Field Guide</a>
+                            Continue exploring Field Guide</a
+                        >
                     </div>
                     <h1>the <em>spore</em> that waits</h1>
-                    <div class="h1-zh">枯草芽孢杆菌 · 熬过旱季的化学家</div>
-                    <div class="description">A spore-forming bacterium of dry Mediterranean soils, <span class="sci">Bacillus subtilis</span> survives the montado summer as an armoured endospore, then wakes to defend the oak — laying antibiotic lipopeptides along the root and priming the tree's own immunity against <span class="sci">a&nbsp;seca</span>.<sup class="ref" data-ref="ongena" role="button" tabindex="0" aria-label="source"></sup></div>
-                    <div class="etym"><span class="sci">Bacillus</span> — Latin, "little rod."<br /><span class="sci">subtilis</span> — "fine, slender," for the thin rod-shaped cell first described in hay infusions in the nineteenth century.<sup class="ref" data-ref="commons" role="button" tabindex="0" aria-label="source"></sup></div>
+                    <div class="h1-zh">Bacillus subtilis · The chemist that outlasts the dry season</div>
+                    <div class="description">
+                        A spore-forming bacterium of dry Mediterranean soils,
+                        <span class="sci">Bacillus subtilis</span> survives the
+                        montado summer as an armoured endospore, then wakes to
+                        defend the oak — laying antibiotic lipopeptides along
+                        the root and priming the tree's own immunity against
+                        <span class="sci">a&nbsp;seca</span>.<sup
+                            class="ref"
+                            data-ref="ongena"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </div>
+                    <div class="etym">
+                        <span class="sci">Bacillus</span> — Latin, "little
+                        rod."<br /><span class="sci">subtilis</span> — "fine,
+                        slender," for the thin rod-shaped cell first described
+                        in hay infusions in the nineteenth century.<sup
+                            class="ref"
+                            data-ref="commons"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </div>
                 </div>
                 <div class="hero-right">
                     <figure class="wc-figure">
                         <div class="wc-slot">
                             <img
                                 id="heroImg"
-                                src="images/bacillus-subtilis-0.webp"
+                                src="images/bacillus-subtilis-1.webp"
                                 alt="Bacillus subtilis, watercolour — rod-shaped cells, some bearing an endospore"
-                                onerror="this.style.display='none';"
+                                onerror="this.style.display = 'none'"
                             />
                         </div>
-                        <figcaption class="wc-caption"><em>Bacillus subtilis</em>: a Gram-positive rod, motile by flagella, that folds a drought-proof endospore inside itself when starved.<sup class="ref" data-ref="commons" role="button" tabindex="0" aria-label="source"></sup></figcaption>
+                        <figcaption class="wc-caption">
+                            <em>Bacillus subtilis</em>: a Gram-positive rod,
+                            motile by flagella, that folds a drought-proof
+                            endospore inside itself when starved.<sup
+                                class="ref"
+                                data-ref="commons"
+                                role="button"
+                                tabindex="0"
+                                aria-label="source"
+                            ></sup>
+                        </figcaption>
                     </figure>
                 </div>
             </section>
-
 
             <hr />
 
             <section class="content-block">
                 <div class="caption-text wide">
-                    To live in the montado is to live with drought. Cork oak evolved for it; so did
-                    the soil life that keeps the oak alive. <sup class="ref" data-ref="montado" role="button" tabindex="0" aria-label="source"></sup> Where <span class="sci">Pseudomonas</span>
-                    fights with iron and speed, <span class="sci">Bacillus</span> fights with
-                    endurance — the ability to wait out a summer as a spore, and to answer the first
-                    rain already armed.
+                    To live in the montado is to live with drought. Cork oak
+                    evolved for it; so did the soil life that keeps the oak
+                    alive.
+                    <sup
+                        class="ref"
+                        data-ref="montado"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
+                    Where <span class="sci">Pseudomonas</span> fights with iron
+                    and speed, <span class="sci">Bacillus</span> fights with
+                    endurance — the ability to wait out a summer as a spore, and
+                    to answer the first rain already armed.
                 </div>
             </section>
 
             <figure class="section-photos">
                 <div class="photo-pair">
                     <div class="ph">
-                        <img src="images/bacillus-subtilis-sem.webp" alt="Scanning electron micrograph of Bacillus subtilis rods" loading="lazy" referrerpolicy="no-referrer"
-                            onerror="this.style.display='none';this.parentNode.querySelector('.ph-fallback').style.display='flex';" />
-                        <a class="ph-fallback" href="https://commons.wikimedia.org/wiki/File:Bacillus_subtilis_R0179.jpg" target="_blank" rel="noopener">SEM via Wikimedia Commons — open ↗</a>
+                        <img
+                            src="images/bacillus-subtilis-sem.webp"
+                            alt="Scanning electron micrograph of Bacillus subtilis rods"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                            onerror="
+                                this.style.display = 'none';
+                                this.parentNode.querySelector(
+                                    '.ph-fallback',
+                                ).style.display = 'flex';
+                            "
+                        />
+                        <a
+                            class="ph-fallback"
+                            href="https://commons.wikimedia.org/wiki/File:Bacillus_subtilis_R0179.jpg"
+                            target="_blank"
+                            rel="noopener"
+                            >SEM via Wikimedia Commons — open ↗</a
+                        >
                     </div>
                     <div class="ph">
-                        <img src="images/bacillus-subtilis-spore.webp" alt="Endospore formation in Bacillus subtilis" loading="lazy" referrerpolicy="no-referrer"
-                            onerror="this.style.display='none';this.parentNode.querySelector('.ph-fallback').style.display='flex';" />
-                        <a class="ph-fallback" href="https://commons.wikimedia.org/wiki/File:Sporulation_in_Bacillus_subtilis.jpg" target="_blank" rel="noopener">Image via Wikimedia Commons — open ↗</a>
+                        <img
+                            src="images/bacillus-subtilis-spore.webp"
+                            alt="Endospore formation in Bacillus subtilis"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                            onerror="
+                                this.style.display = 'none';
+                                this.parentNode.querySelector(
+                                    '.ph-fallback',
+                                ).style.display = 'flex';
+                            "
+                        />
+                        <a
+                            class="ph-fallback"
+                            href="https://commons.wikimedia.org/wiki/File:Sporulation_in_Bacillus_subtilis.jpg"
+                            target="_blank"
+                            rel="noopener"
+                            >Image via Wikimedia Commons — open ↗</a
+                        >
                     </div>
                 </div>
                 <figcaption class="credit">
-                    Left: <span class="sci">Bacillus subtilis</span> as slender rods under the
-                    scanning electron microscope. Right: sporulation — the cell packaging a
-                    drought-proof endospore inside itself, the survival trick that lets it outlast a
-                    montado summer. <b>Photographs via Wikimedia Commons.</b><sup class="ref" data-ref="commons" role="button" tabindex="0" aria-label="source"></sup>
+                    Left: <span class="sci">Bacillus subtilis</span> as slender
+                    rods under the scanning electron microscope. Right:
+                    sporulation — the cell packaging a drought-proof endospore
+                    inside itself, the survival trick that lets it outlast a
+                    montado summer. <b>Photographs via Wikimedia Commons.</b
+                    ><sup
+                        class="ref"
+                        data-ref="commons"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
                 </figcaption>
             </figure>
 
@@ -1315,65 +1463,103 @@
 
             <section class="content-block">
                 <div class="caption-text">
-                    Bacillus lipopeptides are, in Marc Ongena's phrase, versatile weapons for plant
-                    disease biocontrol — surfactants that dissolve membranes, antifungals that stop
-                    spores, and elicitors that wake the plant.<sup class="ref" data-ref="ongena" role="button" tabindex="0" aria-label="source"></sup>
-                    <p style="margin-top:1.1em">
-                        In cork-oak experiments a related strain, <span class="sci">Bacillus
-                        amyloliquefaciens</span>, inhibited <span class="sci">P.&nbsp;cinnamomi</span>
-                        mycelium by roughly two-thirds in vitro, and when co-inoculated onto
-                        <span class="sci">Quercus suber</span> roots let the infected plantlets
-                        survive.<sup class="ref" data-ref="corkbac" role="button" tabindex="0" aria-label="source"></sup>
+                    Bacillus lipopeptides are, in Marc Ongena's phrase,
+                    versatile weapons for plant disease biocontrol — surfactants
+                    that dissolve membranes, antifungals that stop spores, and
+                    elicitors that wake the plant.<sup
+                        class="ref"
+                        data-ref="ongena"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
+                    <p style="margin-top: 1.1em">
+                        In cork-oak experiments a related strain,
+                        <span class="sci">Bacillus amyloliquefaciens</span>,
+                        inhibited <span class="sci">P.&nbsp;cinnamomi</span>
+                        mycelium by roughly two-thirds in vitro, and when
+                        co-inoculated onto
+                        <span class="sci">Quercus suber</span> roots let the
+                        infected plantlets survive.<sup
+                            class="ref"
+                            data-ref="corkbac"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
                     </p>
                 </div>
                 <div class="modes">
                     <div class="mode">
                         <div class="n">01</div>
-                        <b>Endospores</b><span>An armoured, dormant seed outlasts drought, heat and years of waiting.</span>
+                        <b>Endospores</b
+                        ><span
+                            >An armoured, dormant seed outlasts drought, heat
+                            and years of waiting.</span
+                        >
                     </div>
                     <div class="mode">
                         <div class="n">02</div>
-                        <b>Lipopeptides</b><span>Surfactin, iturin &amp; fengycin punch holes in the oomycete's membranes.</span>
+                        <b>Lipopeptides</b
+                        ><span
+                            >Surfactin, iturin &amp; fengycin punch holes in the
+                            oomycete's membranes.</span
+                        >
                     </div>
                     <div class="mode">
                         <div class="n">03</div>
-                        <b>Biofilm</b><span>A protective film along the root, colonising the ground the pathogen needs.</span>
+                        <b>Biofilm</b
+                        ><span
+                            >A protective film along the root, colonising the
+                            ground the pathogen needs.</span
+                        >
                     </div>
                     <div class="mode">
                         <div class="n">04</div>
-                        <b>Induced resistance</b><span>The same molecules prime the oak's defences before attack.</span>
+                        <b>Induced resistance</b
+                        ><span
+                            >The same molecules prime the oak's defences before
+                            attack.</span
+                        >
                     </div>
                 </div>
             </section>
 
             <section class="content-block">
-                <div class="caption-text wide" style="margin-top:6px">
-                    Because it is safe, sporulating and easy to store, <span class="sci">Bacillus
-                    subtilis</span> is already sold worldwide as a living seed-treatment. In the
-                    montado it points to a gentler idea of forestry — not spraying the wound, but
-                    keeping the soil alive enough to defend itself.<sup class="ref" data-ref="agri" role="button" tabindex="0" aria-label="source"></sup>
+                <div class="caption-text wide" style="margin-top: 6px">
+                    Because it is safe, sporulating and easy to store,
+                    <span class="sci">Bacillus subtilis</span> is already sold
+                    worldwide as a living seed-treatment. In the montado it
+                    points to a gentler idea of forestry — not spraying the
+                    wound, but keeping the soil alive enough to defend
+                    itself.<sup
+                        class="ref"
+                        data-ref="agri"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
                 </div>
-                <div class="stats">
-                    <div class="stat"><b>≈2/3</b><span>reduction of <span class="sci">P. cinnamomi</span> growth by a cork-oak Bacillus, in vitro<sup class="ref" data-ref="corkbac" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                    <div class="stat"><b>3</b><span>lipopeptide families: surfactin, iturin, fengycin<sup class="ref" data-ref="ongena" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                    <div class="stat"><b>years</b><span>an endospore can wait, dormant, for the rains<sup class="ref" data-ref="commons" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                    <div class="stat"><b>GRAS</b><span>generally regarded as safe — already a commercial biofungicide<sup class="ref" data-ref="agri" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                </div>
+                <p class="stats-prose">
+                    In the lab, a cork-oak <span class="sci">Bacillus</span> cut the growth of <span class="sci">P. cinnamomi</span> by about two-thirds<sup class="ref" data-ref="corkbac" role="button" tabindex="0" aria-label="source"></sup>, working through three families of lipopeptides — surfactin, iturin and fengycin<sup class="ref" data-ref="ongena" role="button" tabindex="0" aria-label="source"></sup>. Its endospores can wait, dormant, for years until the rains return<sup class="ref" data-ref="commons" role="button" tabindex="0" aria-label="source"></sup>, and because the species is generally regarded as safe it is already sold as a commercial biofungicide<sup class="ref" data-ref="agri" role="button" tabindex="0" aria-label="source"></sup>.
+                </p>
             </section>
 
             <hr />
 
             <section class="poem-section">
-                <div class="poem-text">All summer it is a stone —
-folded shut, patient, dry,
-waiting under the cracked ground
-with the killer it will fight.
-
-The first rain wakes them both.
-One reaches for the root.
-The other is already there.</div>
+                <div class="poem-text">
+                    All summer it is a stone — folded shut, patient, dry,
+                    waiting under the cracked ground with the killer it will
+                    fight. The first rain wakes them both. One reaches for the
+                    root. The other is already there.
+                </div>
             </section>
 
+            <section class="refs-footer">
+                <div class="sec-head">Sources &amp; reading</div>
+                <ol class="refs-list" id="refsList"></ol>
+            </section>
 
             <hr />
 
@@ -1381,28 +1567,55 @@ The other is already there.</div>
                 <div class="explore-title">Explore Related Elements</div>
                 <div class="explore-scroller">
                     <div class="explore-grid" id="exploreGrid">
-<a href="phytophthora-cinnamomi.html" class="explore-item">
-                            <img src="images/phytophthora-cinnamomi-4.webp" alt="Phytophthora cinnamomi" />
+                        <a
+                            href="phytophthora-cinnamomi.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/phytophthora-cinnamomi-4.webp"
+                                alt="Phytophthora cinnamomi"
+                            />
                             <span>Phytophthora cinnamomi</span>
                         </a>
-<a href="pseudomonas-fluorescens.html" class="explore-item">
-                            <img src="images/pseudomonas-fluorescens-0.webp" alt="Pseudomonas fluorescens" />
+                        <a
+                            href="pseudomonas-fluorescens.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/pseudomonas-fluorescens-1.webp"
+                                alt="Pseudomonas fluorescens"
+                            />
                             <span>Pseudomonas fluorescens</span>
                         </a>
-<a href="bacillus-megaterium.html" class="explore-item">
-                            <img src="images/bacillus-megaterium-2.webp" alt="Bacillus megaterium" />
+                        <a href="bacillus-megaterium.html" class="explore-item">
+                            <img
+                                src="images/bacillus-megaterium-2.webp"
+                                alt="Bacillus megaterium"
+                            />
                             <span>Bacillus megaterium</span>
                         </a>
-<a href="streptomyces-griseus.html" class="explore-item">
-                            <img src="images/streptomyces-griseus-0.webp" alt="Streptomyces griseus" />
+                        <a
+                            href="streptomyces-griseus.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/streptomyces-griseus-13.webp"
+                                alt="Streptomyces griseus"
+                            />
                             <span>Streptomyces griseus</span>
                         </a>
-<a href="rhizobia.html" class="explore-item">
+                        <a href="rhizobia.html" class="explore-item">
                             <img src="images/rhizobia-3.webp" alt="Rhizobia" />
                             <span>Rhizobia</span>
                         </a>
                     </div>
-                    <button class="explore-arrow" id="exploreArrow" aria-label="Scroll right">›</button>
+                    <button
+                        class="explore-arrow"
+                        id="exploreArrow"
+                        aria-label="Scroll right"
+                    >
+                        ›
+                    </button>
                 </div>
             </section>
         </div>
@@ -1414,17 +1627,15 @@ The other is already there.</div>
                 var copy = document.getElementById("heroCopy");
                 if (!scroll || !img || !copy) return;
 
-                // Image is sticky at top:0. It releases when the copy's bottom
-                // reaches 1/6 up from the image's bottom edge — i.e. 5H/6 down
-                // from the top, near the image bottom.
-                //   copy.top = H/3
-                //   release at copy-bottom = 5H/6  ⇒  scroll.height = T + H/2
+                
+
+                
                 function layout() {
                     var H = img.getBoundingClientRect().height;
                     if (!H) return;
                     var T = copy.getBoundingClientRect().height;
                     copy.style.top = (1 / 3) * H + "px";
-                    scroll.style.height = T + (1 / 2) * H + "px";
+                    scroll.style.height = Math.max(H, T + (1 / 2) * H) + "px";
                 }
 
                 if (img.complete && img.naturalWidth) layout();
@@ -1440,37 +1651,36 @@ The other is already there.</div>
                 });
                 layout();
 
-
-                var HERO_REFS = {
-                    "1": [
-                                        {
-                                                            "t": "Camilo-Alves, C., Clara, M. I. E., & Ribeiro, N. M. C. A. (2013). Decline of Mediterranean oak trees and its association with Phytophthora cinnamomi: a review. European Journal of Forest Research, 132(3), 411–432.",
-                                                            "url": "https://doi.org/10.1007/s10342-013-0688-z"
-                                        }
+                HERO_REFS = {
+                    1: [
+                        {
+                            t: "Camilo-Alves, C., Clara, M. I. E., & Ribeiro, N. M. C. A. (2013). Decline of Mediterranean oak trees and its association with Phytophthora cinnamomi: a review. European Journal of Forest Research, 132(3), 411–432.",
+                            url: "https://doi.org/10.1007/s10342-013-0688-z",
+                        },
                     ],
-                    "2": [
-                                        {
-                                                            "t": "Bacillus subtilis — a Gram-positive, endospore-forming rod of soil; the spore resists heat, desiccation and long dormancy. Wikimedia Commons / species profile.",
-                                                            "url": "https://commons.wikimedia.org/wiki/Category:Bacillus_subtilis"
-                                        }
+                    2: [
+                        {
+                            t: "Bacillus subtilis — a Gram-positive, endospore-forming rod of soil; the spore resists heat, desiccation and long dormancy. Wikimedia Commons / species profile.",
+                            url: "https://commons.wikimedia.org/wiki/Category:Bacillus_subtilis",
+                        },
                     ],
-                    "3": [
-                                        {
-                                                            "t": "Ongena, M., & Jacques, P. (2008). Bacillus lipopeptides: versatile weapons for plant disease biocontrol. Trends in Microbiology, 16(3), 115–125.",
-                                                            "url": "https://doi.org/10.1016/j.tim.2007.12.009"
-                                        },
-                                        {
-                                                            "t": "Gómez-Garay, A., Manzanera, J. A., del Campo, R., & Pintos, B. (2023). Evaluation of Bacillus amyloliquefaciens as a biocontrol agent against oak decline disease in Quercus trees. Forest Systems, 32(3).",
-                                                            "url": "https://fs.revistas.csic.es/index.php/fs/article/view/20625"
-                                        }
+                    3: [
+                        {
+                            t: "Ongena, M., & Jacques, P. (2008). Bacillus lipopeptides: versatile weapons for plant disease biocontrol. Trends in Microbiology, 16(3), 115–125.",
+                            url: "https://doi.org/10.1016/j.tim.2007.12.009",
+                        },
+                        {
+                            t: "Gómez-Garay, A., Manzanera, J. A., del Campo, R., & Pintos, B. (2023). Evaluation of Bacillus amyloliquefaciens as a biocontrol agent against oak decline disease in Quercus trees. Forest Systems, 32(3).",
+                            url: "https://fs.revistas.csic.es/index.php/fs/article/view/20625",
+                        },
                     ],
-                    "4": [
-                                        {
-                                                            "t": "Ongena, M., & Jacques, P. (2008). Trends in Microbiology, 16(3), 115–125. Lipopeptides also elicit induced systemic resistance in the host plant.",
-                                                            "url": "https://doi.org/10.1016/j.tim.2007.12.009"
-                                        }
-                    ]
-};
+                    4: [
+                        {
+                            t: "Ongena, M., & Jacques, P. (2008). Trends in Microbiology, 16(3), 115–125. Lipopeptides also elicit induced systemic resistance in the host plant.",
+                            url: "https://doi.org/10.1016/j.tim.2007.12.009",
+                        },
+                    ],
+                };
                 var hcard = document.getElementById("heroRefCard");
                 var currentDot = null;
 
@@ -1481,20 +1691,34 @@ The other is already there.</div>
                         .replace(/>/g, "&gt;");
                 }
 
-                function build(n) {
+                function build(n, num) {
                     var cites = HERO_REFS[n];
                     if (!cites) return;
+                    var byUrl = {};
+                    if (typeof REFS !== "undefined")
+                        for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
                     var html =
-                        '<div class="hrc-kicker">Reference ' + n + "</div>";
+                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
                     cites.forEach(function (c) {
+                        var m = byUrl[c.url], title, meta;
+                        if (m) {
+                            title = m.title;
+                            meta = m.meta;
+                        } else {
+                            var p = c.t.split(/\(\d{4}\)\.\s*/);
+                            meta = c.t;
+                            title =
+                                p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
+                        }
                         html +=
-                            '<div class="hrc-cite">' +
-                            esc(c.t) +
-                            '<br><a href="' +
+                            (title
+                                ? '<div class="rc-title">' + esc(title) + "</div>"
+                                : "") +
+                            '<div class="rc-meta">' +
+                            esc(meta) +
+                            '</div><a class="rc-link" href="' +
                             c.url +
-                            '" target="_blank" rel="noopener">' +
-                            esc(c.url.replace(/^https?:\/\//, "")) +
-                            " ↗</a></div>";
+                            '" target="_blank" rel="noopener">Open source ↗</a>';
                     });
                     hcard.innerHTML = html;
                 }
@@ -1515,7 +1739,7 @@ The other is already there.</div>
                 }
 
                 function openDot(dot) {
-                    build(dot.dataset.ref);
+                    build(dot.dataset.ref, dot.dataset.num);
                     hcard.classList.add("open");
                     place(dot);
                     currentDot = dot;
@@ -1552,44 +1776,41 @@ The other is already there.</div>
                 });
             })();
 
-
             var REFS = {
-                "ongena": {
-                                "n": 1,
-                                "title": "Bacillus lipopeptides: versatile weapons for biocontrol",
-                                "meta": "Ongena, M., & Jacques, P. (2008). Trends in Microbiology, 16(3), 115–125. Surfactin, iturin and fengycin as antifungal membrane-active agents and plant-immunity elicitors.",
-                                "url": "https://doi.org/10.1016/j.tim.2007.12.009"
+                ongena: {
+                    n: 1,
+                    title: "Bacillus lipopeptides: versatile weapons for biocontrol",
+                    meta: "Ongena, M., & Jacques, P. (2008). Trends in Microbiology, 16(3), 115–125. Surfactin, iturin and fengycin as antifungal membrane-active agents and plant-immunity elicitors.",
+                    url: "https://doi.org/10.1016/j.tim.2007.12.009",
                 },
-                "commons": {
-                                "n": 2,
-                                "title": "Bacillus subtilis — biology & sporulation",
-                                "meta": "Gram-positive, motile, endospore-forming rod of soil and hay; the spore resists heat, desiccation and long dormancy. Micrographs via Wikimedia Commons.",
-                                "url": "https://commons.wikimedia.org/wiki/Category:Bacillus_subtilis"
+                commons: {
+                    n: 2,
+                    title: "Bacillus subtilis — biology & sporulation",
+                    meta: "Gram-positive, motile, endospore-forming rod of soil and hay; the spore resists heat, desiccation and long dormancy. Micrographs via Wikimedia Commons.",
+                    url: "https://commons.wikimedia.org/wiki/Category:Bacillus_subtilis",
                 },
-                "corkbac": {
-                                "n": 3,
-                                "title": "Bacillus vs P. cinnamomi in cork oak",
-                                "meta": "Gómez-Garay, A., Manzanera, J. A., del Campo, R., & Pintos, B. (2023). Evaluation of Bacillus amyloliquefaciens as a biocontrol agent against oak decline in Quercus (incl. Q. suber). Forest Systems, 32(3). ~65% in-vitro mycelial inhibition; dual inoculation → seedling survival.",
-                                "url": "https://fs.revistas.csic.es/index.php/fs/article/view/20625"
+                corkbac: {
+                    n: 3,
+                    title: "Bacillus vs P. cinnamomi in cork oak",
+                    meta: "Gómez-Garay, A., Manzanera, J. A., del Campo, R., & Pintos, B. (2023). Evaluation of Bacillus amyloliquefaciens as a biocontrol agent against oak decline in Quercus (incl. Q. suber). Forest Systems, 32(3). ~65% in-vitro mycelial inhibition; dual inoculation → seedling survival.",
+                    url: "https://fs.revistas.csic.es/index.php/fs/article/view/20625",
                 },
-                "montado": {
-                                "n": 4,
-                                "title": "The montado: cork & holm oak agroforestry",
-                                "meta": "Pinto-Correia, T., Ribeiro, N., & Sá-Sousa, P. (2011). Introducing the montado, the cork and holm oak agroforestry system of Southern Portugal. Agroforestry Systems, 82, 99–104.",
-                                "url": "https://doi.org/10.1007/s10457-011-9388-1"
+                montado: {
+                    n: 4,
+                    title: "The montado: cork & holm oak agroforestry",
+                    meta: "Pinto-Correia, T., Ribeiro, N., & Sá-Sousa, P. (2011). Introducing the montado, the cork and holm oak agroforestry system of Southern Portugal. Agroforestry Systems, 82, 99–104.",
+                    url: "https://doi.org/10.1007/s10457-011-9388-1",
                 },
-                "agri": {
-                                "n": 5,
-                                "title": "Biocontrol agents in Mediterranean Quercus",
-                                "meta": "Review of microbial biocontrol agents (Bacillus, Serratia, Streptomyces, Trichoderma…) against Phytophthora cinnamomi and other oak diseases. Agriculture, 16(4), 409 (2025/26).",
-                                "url": "https://doi.org/10.3390/agriculture16040409"
-                }
-};
+                agri: {
+                    n: 5,
+                    title: "Biocontrol agents in Mediterranean Quercus",
+                    meta: "Review of microbial biocontrol agents (Bacillus, Serratia, Streptomyces, Trichoderma…) against Phytophthora cinnamomi and other oak diseases. Agriculture, 16(4), 409 (2025/26).",
+                    url: "https://doi.org/10.3390/agriculture16040409",
+                },
+            };
             (function () {
                 var card = document.getElementById("refCard");
                 var current = null;
-
-                // markers render as dots (see sup.ref CSS); no number injected
 
                 function place(sup) {
                     var rect = sup.getBoundingClientRect();
@@ -1610,7 +1831,7 @@ The other is already there.</div>
                     var r = REFS[sup.dataset.ref];
                     if (!r) return;
                     card.querySelector(".rc-kicker").textContent =
-                        "Reference " + r.n;
+                        "Reference " + sup.dataset.num;
                     card.querySelector(".rc-title").textContent = r.title;
                     card.querySelector(".rc-meta").textContent = r.meta;
                     var a = card.querySelector(".rc-link");
@@ -1665,6 +1886,74 @@ The other is already there.</div>
                     arrow.addEventListener("click", function () {
                         grid.scrollBy({ left: 240, behavior: "smooth" });
                     });
+                }
+            })();
+            (function unifyRefs() {
+                function esc(x) {
+                    return String(x)
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;");
+                }
+                var H = typeof HERO_REFS !== "undefined" ? HERO_REFS : {};
+                var B = typeof REFS !== "undefined" ? REFS : {};
+                var byUrl = {};
+                for (var k in B) byUrl[B[k].url] = B[k];
+                function citesOf(el) {
+                    var raw = el.getAttribute("data-ref");
+                    if (el.classList.contains("hero-ref")) {
+                        return (H[raw] || []).map(function (c) {
+                            var m = byUrl[c.url];
+                            if (m) return { title: m.title, meta: m.meta, url: c.url };
+                            var p = c.t.split(/\(\d{4}\)\.\s*/);
+                            return {
+                                title: p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "",
+                                meta: c.t,
+                                url: c.url,
+                            };
+                        });
+                    }
+                    var r = B[raw] || {};
+                    return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
+                }
+                var seen = {}, order = [];
+                document
+                    .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
+                    .forEach(function (el) {
+                        var cs = citesOf(el);
+                        var key =
+                            cs.map(function (c) { return c.url; }).join("|") ||
+                            el.getAttribute("data-ref");
+                        if (!(key in seen)) {
+                            order.push(cs);
+                            seen[key] = order.length;
+                        }
+                        el.dataset.num = seen[key];
+                    });
+                var list = document.getElementById("refsList");
+                if (list) {
+                    list.innerHTML = order
+                        .map(function (cs, i) {
+                            var inner = cs
+                                .map(function (c) {
+                                    var link = c.url
+                                        ? ' <a href="' + c.url +
+                                          '" target="_blank" rel="noopener">Open ↗</a>'
+                                        : "";
+                                    return (
+                                        (c.title
+                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                            : "") +
+                                        esc(c.meta) + link
+                                    );
+                                })
+                                .join("<br />");
+                            return (
+                                '<li><span class="rn">[' + (i + 1) +
+                                "]</span><span>" + inner + "</span></li>"
+                            );
+                        })
+                        .join("");
                 }
             })();
 

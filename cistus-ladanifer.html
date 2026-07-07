@@ -4,16 +4,14 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <script>
-            // Detail pages always open full-page: if loaded inside the index.html
-            // container iframe, jump to the top window so scrolling works and the
-            // FIELD GUIDE bar doesn't appear at the bottom.
+
+            
             if (window.top !== window.self) {
                 window.top.location.replace(window.location.href);
             }
         </script>
         <title>Cistus ladanifer · The Microscopic Montado</title>
 
-        <!-- Syne Mono for the top-hero copy, consistent with the rest of the site -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -59,12 +57,12 @@
                 font-style: italic;
             }
 
-            /* ============ Full-page faint soil texture ============ */
             .page-bg {
                 position: absolute;
                 inset: 0;
                 z-index: -1;
                 pointer-events: none;
+                opacity: 0.5;
                 background-image: url("images/soil-background.webp");
                 background-repeat: repeat-y;
                 background-position: top center;
@@ -81,7 +79,6 @@
                 }
             }
 
-            /* ============ Top hero: pinned image + scrolling copy ============ */
             .hero-scroll {
                 position: relative;
                 width: 100%;
@@ -91,7 +88,7 @@
                 top: 0;
                 width: 100%;
                 line-height: 0;
-                /* dark fallback so the white copy stays readable if the photo is missing */
+                
                 background: radial-gradient(
                     120% 120% at 68% 12%,
                     #3a2f1e 0%,
@@ -104,10 +101,10 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 16 / 10; /* reserve height pre-load */
+                aspect-ratio: 16 / 10; 
                 object-fit: cover;
             }
-            /* soft darkening under the copy column for contrast on any photo */
+            
             .hero-bg-sticky::after {
                 content: "";
                 position: absolute;
@@ -200,7 +197,6 @@
                 }
             }
 
-            /* ============ Citation dots ============ */
             .hero-ref,
             sup.ref {
                 display: inline-block;
@@ -289,7 +285,6 @@
                 text-decoration: underline;
             }
 
-            /* ============ Container & general blocks ============ */
             .container {
                 max-width: 1200px;
                 margin: 0 auto;
@@ -302,7 +297,6 @@
                 margin: 50px 0;
             }
 
-            /* continue / back button */
             .continue-actions {
                 display: flex;
                 gap: 12px;
@@ -341,7 +335,6 @@
                 transform: translateX(-3px);
             }
 
-            /* hero-section: title + watercolour */
             .hero-section {
                 display: grid;
                 grid-template-columns: 1.7fr 1fr;
@@ -410,7 +403,6 @@
                 line-height: 1.5;
             }
 
-            /* metadata facts (was the "data strip") */
             .facts {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
@@ -444,7 +436,6 @@
                 display: block;
             }
 
-            /* section headings + copy blocks */
             .sec-head {
                 font-family: var(--font-display);
                 font-weight: 300;
@@ -484,7 +475,6 @@
                 margin-top: 1.1em;
             }
 
-            /* figures & photos */
             figure {
                 margin: 0;
             }
@@ -539,7 +529,6 @@
                 font-weight: 600;
             }
 
-            /* the "lean crew" grid (adapts the reference .modes) */
             .crew {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
@@ -576,7 +565,6 @@
                 display: block;
             }
 
-            /* thesis / pull quote */
             .thesis {
                 margin: 46px auto;
                 max-width: 640px;
@@ -601,7 +589,6 @@
                 line-height: 1.7;
             }
 
-            /* explore scroller */
             .explore-title {
                 text-align: center;
                 font-size: 14px;
@@ -735,14 +722,12 @@
         </style>
     </head>
     <body>
-        <!-- Full-page faint soil texture, behind all content -->
+        
         <div class="page-bg" aria-hidden="true"></div>
 
-        <!-- Shared navigation -->
         <div id="site-nav"></div>
         <script src="nav.js"></script>
 
-        <!-- ============ Top hero: pinned image + scrolling copy ============ -->
         <section class="hero-scroll" id="heroScroll">
             <div class="hero-bg-sticky" id="heroBgSticky">
                 <img
@@ -754,6 +739,7 @@
             </div>
 
             <div class="hero-copy" id="heroCopy">
+                <p><em>The rockrose reclaims the abandoned field; unseen in its roots, an ally holds the rot at bay — and is fed for standing guard.</em></p>
                 <div class="hero-scroll-hint" aria-hidden="true">
                     <svg
                         viewBox="0 0 24 24"
@@ -788,9 +774,8 @@
             </div>
         </section>
 
-        <!-- popups (kept outside .hero-copy so they are never blended) -->
         <div
-            class="hero-ref-card"
+            class="hero-ref-card ref-card"
             id="heroRefCard"
             role="dialog"
             aria-label="Reference"
@@ -810,7 +795,7 @@
         </div>
 
         <div class="container">
-            <!-- ============ Hero section: title + watercolour ============ -->
+            
             <section class="hero-section">
                 <div class="hero-left">
                     <div class="continue-actions">
@@ -931,7 +916,6 @@
                 </div>
             </section>
 
-            <!-- metadata facts -->
             <section class="facts" aria-label="Field data">
                 <div class="fact">
                     <span class="fl">Family</span>
@@ -961,7 +945,6 @@
 
             <hr />
 
-            <!-- 01 — Above ground -->
             <section class="content-block">
                 <div>
                     <div class="sec-kicker">01 — Above ground</div>
@@ -1011,7 +994,6 @@
 
             <hr />
 
-            <!-- 02 — Fire & policy -->
             <section class="content-block">
                 <div>
                     <div class="sec-kicker">02 — Fire &amp; policy</div>
@@ -1045,7 +1027,6 @@
 
             <hr />
 
-            <!-- 03 — Below ground -->
             <section class="content-block">
                 <div>
                     <div class="sec-kicker">03 — Below ground</div>
@@ -1127,7 +1108,6 @@
 
             <hr />
 
-            <!-- 04 — A real case -->
             <section class="content-block">
                 <div>
                     <div class="sec-kicker">04 — A real case</div>
@@ -1195,7 +1175,6 @@
 
             <hr />
 
-            <!-- closing thesis -->
             <div class="thesis">
                 <p>
                     The shrub farmers clear for a subsidy is, underground, doing
@@ -1204,9 +1183,13 @@
                 </p>
             </div>
 
+            <section class="refs-footer">
+                <div class="sec-head">Sources &amp; reading</div>
+                <ol class="refs-list" id="refsList"></ol>
+            </section>
+
             <hr />
 
-            <!-- explore -->
             <section class="explore-section">
                 <div class="explore-title">Explore Related Elements</div>
                 <div class="explore-scroller">
@@ -1244,7 +1227,7 @@
                         <a href="bryobacter-aggregatus.html" class="explore-item">
                             <span class="thumb"
                                 ><img
-                                    src="images/bryobacter-aggregatus-0.webp"
+                                    src="images/bryobacter-aggregatus-7.webp"
                                     alt="Acidobacteria"
                                     onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
                             /></span>
@@ -1285,7 +1268,7 @@
         </footer>
 
         <script>
-            /* ---------- shared reference data ---------- */
+            
             var REFS = {
                 1: {
                     n: 1,
@@ -1359,7 +1342,6 @@
                     .replace(/>/g, "&gt;");
             }
 
-            /* ---------- generic popup placement ---------- */
             function placeCard(card, anchor) {
                 var rect = anchor.getBoundingClientRect();
                 var cw = card.offsetWidth,
@@ -1374,7 +1356,6 @@
                 card.style.top = Math.max(12, top) + "px";
             }
 
-            /* ---------- TOP HERO: pinned image + scrolling copy ---------- */
             (function () {
                 var scroll = document.getElementById("heroScroll");
                 var img = document.getElementById("heroBgImg");
@@ -1386,9 +1367,8 @@
                     if (!H) return;
                     var T = copy.getBoundingClientRect().height;
                     copy.style.top = (1 / 3) * H + "px";
-                    // 高度取“图片高度”与“文案高度+半图”中的较大者：
-                    // 当文案较短（T < H/2）时旧算法会让容器高度小于图片高度，
-                    // 导致下方正文叠到大图上。用 Math.max 保证正文始终从图片底部之下开始。
+
+                    
                     scroll.style.height = Math.max(H, T + (1 / 2) * H) + "px";
                 }
 
@@ -1406,16 +1386,15 @@
                 });
                 layout();
 
-                /* hero dot-citations → white card (never blended) */
                 var hcard = document.getElementById("heroRefCard");
                 var currentDot = null;
 
-                function buildHero(n) {
+                function buildHero(n, num) {
                     var r = REFS[n];
                     if (!r) return;
                     hcard.innerHTML =
                         '<div class="rc-kicker">Reference ' +
-                        escHtml(r.n) +
+                        (num || escHtml(r.n)) +
                         "</div>" +
                         '<div class="rc-title">' +
                         escHtml(r.title) +
@@ -1428,7 +1407,7 @@
                         '" target="_blank" rel="noopener">Open source ↗</a>';
                 }
                 function openDot(dot) {
-                    buildHero(dot.dataset.ref);
+                    buildHero(dot.dataset.ref, dot.dataset.num);
                     hcard.classList.add("open");
                     placeCard(hcard, dot);
                     currentDot = dot;
@@ -1462,7 +1441,6 @@
                 });
             })();
 
-            /* ---------- BODY dot-citations → ref card ---------- */
             (function () {
                 var card = document.getElementById("refCard");
                 var current = null;
@@ -1471,7 +1449,7 @@
                     var r = REFS[sup.dataset.ref];
                     if (!r) return;
                     card.querySelector(".rc-kicker").textContent =
-                        "Reference " + r.n;
+                        "Reference " + sup.dataset.num;
                     card.querySelector(".rc-title").textContent = r.title;
                     card.querySelector(".rc-meta").textContent = r.meta;
                     card.querySelector(".rc-link").href = r.url;
@@ -1507,7 +1485,6 @@
                 window.addEventListener("resize", close);
             })();
 
-            /* ---------- explore scroller ---------- */
             (function () {
                 var grid = document.getElementById("exploreGrid");
                 var arrow = document.getElementById("exploreArrow");
@@ -1517,6 +1494,45 @@
                     });
                 }
             })();
+            (function unifyRefs() {
+                function esc(x) {
+                    return String(x)
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;");
+                }
+                var B = typeof REFS !== "undefined" ? REFS : {};
+                var seen = {}, order = [];
+                document
+                    .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
+                    .forEach(function (el) {
+                        var raw = el.getAttribute("data-ref");
+                        if (!(raw in seen)) {
+                            order.push(raw);
+                            seen[raw] = order.length;
+                        }
+                        el.dataset.num = seen[raw];
+                    });
+                var list = document.getElementById("refsList");
+                if (list) {
+                    list.innerHTML = order
+                        .map(function (raw, i) {
+                            var r = B[raw] || {};
+                            var link = r.url
+                                ? ' <a href="' + r.url +
+                                  '" target="_blank" rel="noopener">Open ↗</a>'
+                                : "";
+                            return (
+                                '<li><span class="rn">[' + (i + 1) +
+                                ']</span><span><span class="rt">' +
+                                esc(r.title || "") + "</span><br />" +
+                                esc(r.meta || "") + link + "</span></li>"
+                            );
+                        })
+                        .join("");
+                }
+            })();
+
         </script>
     </body>
 </html>

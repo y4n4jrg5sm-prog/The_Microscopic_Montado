@@ -38,10 +38,9 @@
                 background-color: var(--bg);
                 color: var(--text);
                 line-height: 1.6;
-                position: relative; /* positioning context for .page-bg */
+                position: relative;
             }
 
-            /* Body copy face for the top hero */
             @font-face {
                 font-family: "Syne Mono";
                 src: url("fonts/SyneMono-Regular.ttf") format("truetype");
@@ -50,8 +49,6 @@
                 font-display: swap;
             }
 
-            /* Top hero — pinned full-bleed image + scrolling inverted copy.
-               NB: .hero-scroll has NO z-index, so it does not isolate the blend. */
             .hero-scroll {
                 position: relative;
                 width: 100%;
@@ -66,17 +63,17 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 2560 / 1600; /* reserve correct height pre-load */
+                aspect-ratio: 2560 / 1600;
             }
 
             .hero-copy {
                 position: absolute;
-                top: 20.8vw; /* pre-JS estimate ≈ 1/3 down the image (H/3 for 2560×1600); JS sets exact px */
-                right: 0;
-                width: 40%; /* right two-fifths on desktop */
-                padding-right: clamp(20px, 4vw, 64px);
-                padding-left: 24px;
-                color: #ffffff; /* solid white copy */
+                top: 20.8vw;
+                left: 0;
+                width: 40%;
+                padding-left: clamp(20px, 4vw, 64px);
+                padding-right: 24px;
+                color: #ffffff;
             }
             .hero-copy p {
                 font-family: "Syne Mono", var(--font-mono);
@@ -93,13 +90,9 @@
                 font-style: italic;
             }
 
-            /* Upward scroll hint — sits just above the copy's top line.
-               Absolutely positioned so it does NOT push the text start down,
-               and does NOT add to the copy height (T) used by the scroll math.
-               It rides up with the copy as the page scrolls. */
             .hero-scroll-hint {
                 position: absolute;
-                left: 24px; /* aligns with .hero-copy padding-left */
+                left: 24px;
                 top: 0;
                 transform: translateY(calc(-100% - 12px));
                 color: #ffffff;
@@ -130,11 +123,10 @@
             }
             @media (max-width: 600px) {
                 .hero-scroll-hint {
-                    left: 20px; /* match mobile padding-left */
+                    left: 20px;
                 }
             }
 
-            /* Citation dots — upper-right of the preceding word */
             .hero-ref {
                 display: inline-block;
                 width: 6px;
@@ -158,7 +150,6 @@
                 outline-offset: 3px;
             }
 
-            /* Popup for the dots — a normal, readable card (never blended) */
             .hero-ref-card {
                 position: fixed;
                 z-index: 1000;
@@ -267,7 +258,6 @@
                 content: none;
             }
             sup.ref::after {
-                /* enlarged touch / click target */
                 content: "";
                 position: absolute;
                 inset: -8px;
@@ -506,12 +496,12 @@
                 position: relative;
             }
             .hero-right .wc-figure {
-                margin: 0; /* fills the right column, which is now image-width */
+                margin: 0;
                 width: 100%;
             }
             .hero-right .wc-slot {
                 width: 100%;
-                background: transparent; /* let the page soil texture show through */
+                background: transparent;
                 display: block;
             }
             .hero-right .wc-slot svg,
@@ -519,7 +509,7 @@
                 width: 100%;
                 height: auto;
                 display: block;
-                mix-blend-mode: multiply; /* key out the image's white so it prints onto the texture */
+                mix-blend-mode: multiply;
             }
             .hero-right .wc-caption {
                 width: 100%;
@@ -581,9 +571,20 @@
             .caption-text.wide {
                 max-width: none;
                 width: 100%;
-                grid-column: 1 / -1; /* span the full row when inside a grid */
+                grid-column: 1 / -1;
             }
 
+            .stats-prose {
+                grid-column: 1 / -1;
+                font-size: 16px;
+                line-height: 1.7;
+                color: var(--text);
+                margin: 0;
+            }
+            .stats-prose b {
+                color: var(--ink);
+                font-weight: 600;
+            }
             .stats {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
@@ -1182,34 +1183,27 @@
                 outline-offset: 3px;
             }
 
-            /* ============ Full-page soil background ============
-               A single layer covering the whole page height, sitting above the
-               white body background but behind all content (z-index:-1). The
-               source is a tall 682×8000 strip, so on desktop it's shown at full
-               page width (edge to edge) at its natural ratio; it's so tall it
-               effectively never needs to repeat. On iPad / phone it's scaled up
-               (and side-cropped) so the faint texture doesn't read as too dense. */
             .page-bg {
                 position: absolute;
-                inset: 0; /* fills body's full height */
+                inset: 0;
                 z-index: -1;
                 pointer-events: none;
+                opacity: 0.5;
                 background-image: url("images/soil-background.webp");
                 background-repeat: repeat-y;
                 background-position: top center;
-                background-size: 100% auto; /* desktop: edge to edge */
+                background-size: 100% auto;
             }
             @media (max-width: 1024px) {
                 .page-bg {
-                    background-size: 160% auto; /* iPad: zoom in, crop sides */
+                    background-size: 160% auto;
                 }
             }
             @media (max-width: 600px) {
                 .page-bg {
-                    background-size: 230% auto; /* phone: zoom in more */
+                    background-size: 230% auto;
                 }
             }
-
         </style>
     </head>
     <body>
@@ -1218,35 +1212,106 @@
         <div id="site-nav"></div>
         <script src="nav.js"></script>
 
-        <!-- ============ Top hero: pinned image + scrolling copy ============ -->
         <section class="hero-scroll" id="heroScroll">
             <div class="hero-bg-sticky" id="heroBgSticky">
                 <img
                     id="heroBgImg"
-                    src="images/bryobacter-aggregatus-hero.webp"
+                    src="images/orthotrichum-bryobacter-aggregatus.webp"
                     alt="Montado forest floor and acid soil — habitat of the little-known Acidobacteria"
                 />
             </div>
             <div class="hero-copy" id="heroCopy">
+                <p><em>In a damp, mossy corner the silent multitude works on, turning moss and rain, grain by grain, into acid soil.</em></p>
                 <div class="hero-scroll-hint" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
                         <polyline points="6 15 12 9 18 15"></polyline>
                     </svg>
                 </div>
-<p>Take a single gram of montado soil and read the DNA in it, and a huge share belongs to a group of bacteria almost no one has ever managed to grow: the <em class="sci">Acidobacteria</em>. In acidic forest soil they can be a third or more of everything alive — and yet, decades after their discovery, only a handful of species have been coaxed into a dish.<span class="hero-ref" data-ref="1" role="button" tabindex="0" aria-label="Reference 1"></span></p>
-<p><em class="sci">Bryobacter aggregatus</em> is one of the few. It was first pulled from acidic peat — <em>bryo-</em>, for the moss it lived among; <em>aggregatus</em>, for the way its cells clump into little clusters. Slow, aerobic, acid-loving, it lives on the sugars released as moss and leaf litter slowly decay.<span class="hero-ref" data-ref="2" role="button" tabindex="0" aria-label="Reference 2"></span></p>
-<p>It fixes no nitrogen. It makes no famous drug. It kills no pathogen. Its importance is quieter, and easy to miss: bacteria like it thrive where soil is <em>acidic, low in nutrients, stable and undisturbed</em> — exactly the poor, acid ground the cork oaks grow in — and they fade when the land is ploughed, limed and fertilised.<span class="hero-ref" data-ref="3" role="button" tabindex="0" aria-label="Reference 3"></span></p>
-<p>To find them in abundance is to know the soil is old, quiet and whole. They are the dark matter of the montado: most of what is there, and almost none of it understood. A reminder that the ground we are trying to save is mostly unknown to us — and worth saving anyway.<span class="hero-ref" data-ref="4" role="button" tabindex="0" aria-label="Reference 4"></span></p>
+                <p>
+                    Take a single gram of montado soil and read the DNA in it,
+                    and a huge share belongs to a group of bacteria almost no
+                    one has ever managed to grow: the
+                    <em class="sci">Acidobacteria</em>. In acidic forest soil
+                    they can be a third or more of everything alive — and yet,
+                    decades after their discovery, only a handful of species
+                    have been coaxed into a dish.<span
+                        class="hero-ref"
+                        data-ref="1"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 1"
+                    ></span>
+                </p>
+                <p>
+                    <em class="sci">Bryobacter aggregatus</em> is one of the
+                    few. It was first pulled from acidic peat — <em>bryo-</em>,
+                    for the moss it lived among; <em>aggregatus</em>, for the
+                    way its cells clump into little clusters. Slow, aerobic,
+                    acid-loving, it lives on the sugars released as moss and
+                    leaf litter slowly decay.<span
+                        class="hero-ref"
+                        data-ref="2"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 2"
+                    ></span>
+                </p>
+                <p>
+                    It fixes no nitrogen. It makes no famous drug. It kills no
+                    pathogen. Its importance is quieter, and easy to miss:
+                    bacteria like it thrive where soil is
+                    <em>acidic, low in nutrients, stable and undisturbed</em> —
+                    exactly the poor, acid ground the cork oaks grow in — and
+                    they fade when the land is ploughed, limed and
+                    fertilised.<span
+                        class="hero-ref"
+                        data-ref="3"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 3"
+                    ></span>
+                </p>
+                <p>
+                    To find them in abundance is to know the soil is old, quiet
+                    and whole. They are the dark matter of the montado: most of
+                    what is there, and almost none of it understood. A reminder
+                    that the ground we are trying to save is mostly unknown to
+                    us — and worth saving anyway.<span
+                        class="hero-ref"
+                        data-ref="4"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Reference 4"
+                    ></span>
+                </p>
             </div>
         </section>
 
-        <div class="hero-ref-card" id="heroRefCard" role="dialog" aria-label="Reference"></div>
-        <div class="ref-card" id="refCard" role="dialog" aria-label="Source reference">
+        <div
+            class="hero-ref-card ref-card"
+            id="heroRefCard"
+            role="dialog"
+            aria-label="Reference"
+        ></div>
+        <div
+            class="ref-card"
+            id="refCard"
+            role="dialog"
+            aria-label="Source reference"
+        >
             <div class="rc-kicker"></div>
             <div class="rc-title"></div>
             <div class="rc-meta"></div>
-            <a class="rc-link" href="#" target="_blank" rel="noopener">Open source ↗</a>
+            <a class="rc-link" href="#" target="_blank" rel="noopener"
+                >Open source ↗</a
+            >
         </div>
 
         <div class="container">
@@ -1255,60 +1320,149 @@
                     <div class="continue-actions">
                         <a class="continue-btn" href="index.html"
                             ><span class="arrow" aria-hidden="true">←</span>
-                            Continue exploring Field Guide</a>
+                            Continue exploring Field Guide</a
+                        >
                     </div>
                     <h1>the <em>dark matter</em></h1>
-                    <div class="h1-zh">聚集嗜酸杆菌 · 酸土里的沉默多数</div>
-                    <div class="description">One of the very few cultured members of the <span class="sci">Acidobacteria</span> — a phylum that can make up a third of the bacteria in acidic forest soil, yet is almost entirely unknown. Slow, acid-loving and oligotrophic, <span class="sci">Bryobacter</span> is a marker of the stable, undisturbed ground the montado depends on.<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></div>
-                    <div class="etym"><span class="sci">Bryobacter</span> — Greek <em>bryon</em>, "moss," for the peat and moss it was first found in.<br /><span class="sci">aggregatus</span> — Latin, "clustered," for the irregular cell aggregates it forms.<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></div>
+                    <div class="h1-zh">
+                        Bryobacter aggregatus · The silent majority of acid
+                        soils
+                    </div>
+                    <div class="description">
+                        One of the very few cultured members of the
+                        <span class="sci">Acidobacteria</span> — a phylum that
+                        can make up a third of the bacteria in acidic forest
+                        soil, yet is almost entirely unknown. Slow, acid-loving
+                        and oligotrophic, <span class="sci">Bryobacter</span> is
+                        a marker of the stable, undisturbed ground the montado
+                        depends on.<sup
+                            class="ref"
+                            data-ref="bryo"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </div>
+                    <div class="etym">
+                        <span class="sci">Bryobacter</span> — Greek
+                        <em>bryon</em>, "moss," for the peat and moss it was
+                        first found in.<br /><span class="sci">aggregatus</span>
+                        — Latin, "clustered," for the irregular cell aggregates
+                        it forms.<sup
+                            class="ref"
+                            data-ref="bryo"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
+                    </div>
                 </div>
                 <div class="hero-right">
                     <figure class="wc-figure">
                         <div class="wc-slot">
                             <img
                                 id="heroImg"
-                                src="images/bryobacter-aggregatus-0.webp"
+                                src="images/bryobacter-aggregatus-7.webp"
                                 alt="Bryobacter aggregatus, watercolour — colourless coccoid cells forming irregular aggregates"
-                                onerror="this.style.display='none';"
+                                onerror="this.style.display = 'none'"
                             />
                         </div>
-                        <figcaption class="wc-caption"><em>Bryobacter aggregatus</em>: strictly aerobic, Gram-negative, non-motile coccoids or short rods that gather into irregular cell aggregates.<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></figcaption>
+                        <figcaption class="wc-caption">
+                            <em>Bryobacter aggregatus</em>: strictly aerobic,
+                            Gram-negative, non-motile coccoids or short rods
+                            that gather into irregular cell aggregates.<sup
+                                class="ref"
+                                data-ref="bryo"
+                                role="button"
+                                tabindex="0"
+                                aria-label="source"
+                            ></sup>
+                        </figcaption>
                     </figure>
                 </div>
             </section>
-
 
             <hr />
 
             <section class="content-block">
                 <div class="caption-text wide">
-                    Cork oak grows on poor, acid, sandy soil — and acid forest soils are the domain
-                    of the <span class="sci">Acidobacteria</span>, one of the most abundant and
-                    diverse phyla in the earth beneath us, between roughly a twentieth and a half of
-                    all the bacteria present. <sup class="ref" data-ref="acido" role="button" tabindex="0" aria-label="source"></sup> Almost none of them will grow in a laboratory.
-                    <span class="sci">Bryobacter</span> is one of the rare exceptions — a first, faint
-                    light on a vast dark continent.
+                    Cork oak grows on poor, acid, sandy soil — and acid forest
+                    soils are the domain of the
+                    <span class="sci">Acidobacteria</span>, one of the most
+                    abundant and diverse phyla in the earth beneath us, between
+                    roughly a twentieth and a half of all the bacteria present.
+                    <sup
+                        class="ref"
+                        data-ref="acido"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
+                    Almost none of them will grow in a laboratory.
+                    <span class="sci">Bryobacter</span> is one of the rare
+                    exceptions — a first, faint light on a vast dark continent.
                 </div>
             </section>
 
             <figure class="section-photos">
                 <div class="photo-pair">
                     <div class="ph">
-                        <img src="images/bryobacter-aggregatus-moss.webp" alt="Sphagnum moss and acidic peat — the habitat Bryobacter was first isolated from" loading="lazy" referrerpolicy="no-referrer"
-                            onerror="this.style.display='none';this.parentNode.querySelector('.ph-fallback').style.display='flex';" />
-                        <a class="ph-fallback" href="https://commons.wikimedia.org/wiki/Category:Sphagnum" target="_blank" rel="noopener">Moss/peat photo via Wikimedia Commons — open ↗</a>
+                        <img
+                            src="images/bryobacter-aggregatus-moss.webp"
+                            alt="Sphagnum moss and acidic peat — the habitat Bryobacter was first isolated from"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                            onerror="
+                                this.style.display = 'none';
+                                this.parentNode.querySelector(
+                                    '.ph-fallback',
+                                ).style.display = 'flex';
+                            "
+                        />
+                        <a
+                            class="ph-fallback"
+                            href="https://commons.wikimedia.org/wiki/Category:Sphagnum"
+                            target="_blank"
+                            rel="noopener"
+                            >Moss/peat photo via Wikimedia Commons — open ↗</a
+                        >
                     </div>
                     <div class="ph">
-                        <img src="images/bryobacter-aggregatus-soil.webp" alt="The acid, sandy forest-floor soil of the montado" loading="lazy" referrerpolicy="no-referrer"
-                            onerror="this.style.display='none';this.parentNode.querySelector('.ph-fallback').style.display='flex';" />
-                        <a class="ph-fallback" href="https://commons.wikimedia.org/wiki/Category:Quercus_suber_in_Portugal" target="_blank" rel="noopener">Montado soil photo via Wikimedia Commons — open ↗</a>
+                        <img
+                            src="images/bryobacter-aggregatus-soil.webp"
+                            alt="The acid, sandy forest-floor soil of the montado"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                            onerror="
+                                this.style.display = 'none';
+                                this.parentNode.querySelector(
+                                    '.ph-fallback',
+                                ).style.display = 'flex';
+                            "
+                        />
+                        <a
+                            class="ph-fallback"
+                            href="https://commons.wikimedia.org/wiki/Category:Quercus_suber_in_Portugal"
+                            target="_blank"
+                            rel="noopener"
+                            >Montado soil photo via Wikimedia Commons — open
+                            ↗</a
+                        >
                     </div>
                 </div>
                 <figcaption class="credit">
                     Left: acidic <span class="sci">Sphagnum</span> peat, where
-                    <span class="sci">Bryobacter aggregatus</span> was first isolated. Right: the
-                    acid, litter-fed forest floor of the montado, where its relatives dominate the
-                    unseen majority. <b>Photographs via Wikimedia Commons.</b><sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup>
+                    <span class="sci">Bryobacter aggregatus</span> was first
+                    isolated. Right: the acid, litter-fed forest floor of the
+                    montado, where its relatives dominate the unseen majority.
+                    <b>Photographs via Wikimedia Commons.</b
+                    ><sup
+                        class="ref"
+                        data-ref="bryo"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
                 </figcaption>
             </figure>
 
@@ -1316,64 +1470,95 @@
 
             <section class="content-block">
                 <div class="caption-text">
-                    Not a hero, but a witness — the kind of organism whose mere abundance tells you
-                    the soil is being left to be itself.
-                    <p style="margin-top:1.1em">
-                        <span class="sci">Bryobacter</span> grows on the sugars, uronic acids and
-                        heteropolysaccharides freed as plant litter and moss break down — a recycler
-                        at the slow end of the carbon cycle, tolerant of acid from pH&nbsp;4.5 to
-                        7.2, patient where richer, faster bacteria cannot persist.<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup>
+                    Not a hero, but a witness — the kind of organism whose mere
+                    abundance tells you the soil is being left to be itself.
+                    <p style="margin-top: 1.1em">
+                        <span class="sci">Bryobacter</span> grows on the sugars,
+                        uronic acids and heteropolysaccharides freed as plant
+                        litter and moss break down — a recycler at the slow end
+                        of the carbon cycle, tolerant of acid from pH&nbsp;4.5
+                        to 7.2, patient where richer, faster bacteria cannot
+                        persist.<sup
+                            class="ref"
+                            data-ref="bryo"
+                            role="button"
+                            tabindex="0"
+                            aria-label="source"
+                        ></sup>
                     </p>
                 </div>
                 <div class="modes">
                     <div class="mode">
                         <div class="n">01</div>
-                        <b>Oligotroph</b><span>Thrives on scarcity — sugars from decaying litter and moss.</span>
+                        <b>Oligotroph</b
+                        ><span
+                            >Thrives on scarcity — sugars from decaying litter
+                            and moss.</span
+                        >
                     </div>
                     <div class="mode">
                         <div class="n">02</div>
-                        <b>Acidophile</b><span>Grows at pH 4.5–7.2 — at home in acid montado soil.</span>
+                        <b>Acidophile</b
+                        ><span
+                            >Grows at pH 4.5–7.2 — at home in acid montado
+                            soil.</span
+                        >
                     </div>
                     <div class="mode">
                         <div class="n">03</div>
-                        <b>Slow &amp; patient</b><span>A marker of stable, undisturbed, mature ground.</span>
+                        <b>Slow &amp; patient</b
+                        ><span
+                            >A marker of stable, undisturbed, mature
+                            ground.</span
+                        >
                     </div>
                     <div class="mode">
                         <div class="n">04</div>
-                        <b>The uncultured majority</b><span>One of very few named cells in a vast, unknown phylum.</span>
+                        <b>The uncultured majority</b
+                        ><span
+                            >One of very few named cells in a vast, unknown
+                            phylum.</span
+                        >
                     </div>
                 </div>
             </section>
 
             <section class="content-block">
-                <div class="caption-text wide" style="margin-top:6px">
-                    Perhaps the deepest lesson of the montado's soil is humility. We have named a
-                    few defenders, a few nitrogen-fixers — and around them lies an unseen majority we
-                    cannot yet grow, name or fully understand. Conservation here is not managing what
-                    we know, but protecting what we don't.<sup class="ref" data-ref="acido" role="button" tabindex="0" aria-label="source"></sup>
+                <div class="caption-text wide" style="margin-top: 6px">
+                    Perhaps the deepest lesson of the montado's soil is
+                    humility. We have named a few defenders, a few
+                    nitrogen-fixers — and around them lies an unseen majority we
+                    cannot yet grow, name or fully understand. Conservation here
+                    is not managing what we know, but protecting what we
+                    don't.<sup
+                        class="ref"
+                        data-ref="acido"
+                        role="button"
+                        tabindex="0"
+                        aria-label="source"
+                    ></sup>
                 </div>
-                <div class="stats">
-                    <div class="stat"><b>5–50%</b><span>share of a soil's bacteria that can be Acidobacteria<sup class="ref" data-ref="acido" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                    <div class="stat"><b>pH 4.5–7.2</b><span>its acid-tolerant range (optimum 5.5–6.5)<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                    <div class="stat"><b>1</b><span>cultured species named in the whole genus<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                    <div class="stat"><b>subdiv. 3</b><span>first cultured member of its acidobacterial group<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                </div>
+                <p class="stats-prose">
+                    Acidobacteria can make up anywhere from 5 to 50 percent of a soil's bacteria<sup class="ref" data-ref="acido" role="button" tabindex="0" aria-label="source"></sup>, yet they are famously hard to grow: this is the only cultured species named in its entire genus, and the first ever grown from its acidobacterial subdivision<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup>. It tolerates a pH of 4.5 to 7.2, most at home in the mildly acid ground the montado provides<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup>.
+                </p>
             </section>
 
             <hr />
 
             <section class="poem-section">
-                <div class="poem-text">Most of what lives here has no name.
-It will not grow in glass.
-It makes no medicine, fixes no air,
-kills nothing, saves nothing we can measure.
-
-It only means: the ground is old,
-and acid, and left alone.
-We are asked to protect
-a darkness we cannot yet read.</div>
+                <div class="poem-text">
+                    Most of what lives here has no name. It will not grow in
+                    glass. It makes no medicine, fixes no air, kills nothing,
+                    saves nothing we can measure. It only means: the ground is
+                    old, and acid, and left alone. We are asked to protect a
+                    darkness we cannot yet read.
+                </div>
             </section>
 
+            <section class="refs-footer">
+                <div class="sec-head">Sources &amp; reading</div>
+                <ol class="refs-list" id="refsList"></ol>
+            </section>
 
             <hr />
 
@@ -1381,28 +1566,55 @@ a darkness we cannot yet read.</div>
                 <div class="explore-title">Explore Related Elements</div>
                 <div class="explore-scroller">
                     <div class="explore-grid" id="exploreGrid">
-<a href="phytophthora-cinnamomi.html" class="explore-item">
-                            <img src="images/phytophthora-cinnamomi-4.webp" alt="Phytophthora cinnamomi" />
+                        <a
+                            href="phytophthora-cinnamomi.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/phytophthora-cinnamomi-4.webp"
+                                alt="Phytophthora cinnamomi"
+                            />
                             <span>Phytophthora cinnamomi</span>
                         </a>
-<a href="streptomyces-griseus.html" class="explore-item">
-                            <img src="images/streptomyces-griseus-0.webp" alt="Streptomyces griseus" />
+                        <a
+                            href="streptomyces-griseus.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/streptomyces-griseus-13.webp"
+                                alt="Streptomyces griseus"
+                            />
                             <span>Streptomyces griseus</span>
                         </a>
-<a href="bradyrhizobium.html" class="explore-item">
-                            <img src="images/rhizobia-3.webp" alt="Bradyrhizobium" />
+                        <a href="bradyrhizobium.html" class="explore-item">
+                            <img
+                                src="images/bradyrhizobium-1.webp"
+                                alt="Bradyrhizobium"
+                            />
                             <span>Bradyrhizobium</span>
                         </a>
-<a href="rhizobium-leguminosarum.html" class="explore-item">
-                            <img src="images/rhizobia-3.webp" alt="Rhizobium leguminosarum" />
+                        <a
+                            href="rhizobium-leguminosarum.html"
+                            class="explore-item"
+                        >
+                            <img
+                                src="images/rhizobium-leguminosarum-4.webp"
+                                alt="Rhizobium leguminosarum"
+                            />
                             <span>Rhizobium leguminosarum</span>
                         </a>
-<a href="rhizobia.html" class="explore-item">
+                        <a href="rhizobia.html" class="explore-item">
                             <img src="images/rhizobia-3.webp" alt="Rhizobia" />
                             <span>Rhizobia</span>
                         </a>
                     </div>
-                    <button class="explore-arrow" id="exploreArrow" aria-label="Scroll right">›</button>
+                    <button
+                        class="explore-arrow"
+                        id="exploreArrow"
+                        aria-label="Scroll right"
+                    >
+                        ›
+                    </button>
                 </div>
             </section>
         </div>
@@ -1414,17 +1626,12 @@ a darkness we cannot yet read.</div>
                 var copy = document.getElementById("heroCopy");
                 if (!scroll || !img || !copy) return;
 
-                // Image is sticky at top:0. It releases when the copy's bottom
-                // reaches 1/6 up from the image's bottom edge — i.e. 5H/6 down
-                // from the top, near the image bottom.
-                //   copy.top = H/3
-                //   release at copy-bottom = 5H/6  ⇒  scroll.height = T + H/2
                 function layout() {
                     var H = img.getBoundingClientRect().height;
                     if (!H) return;
                     var T = copy.getBoundingClientRect().height;
                     copy.style.top = (1 / 3) * H + "px";
-                    scroll.style.height = T + (1 / 2) * H + "px";
+                    scroll.style.height = Math.max(H, T + (1 / 2) * H) + "px";
                 }
 
                 if (img.complete && img.naturalWidth) layout();
@@ -1440,33 +1647,32 @@ a darkness we cannot yet read.</div>
                 });
                 layout();
 
-
-                var HERO_REFS = {
-                    "1": [
-                                        {
-                                                            "t": "Kielak, A. M., Barreto, C. C., Kowalchuk, G. A., van Veen, J. A., & Kuramae, E. E. (2016). The ecology of Acidobacteria: moving beyond genes and genomes. Frontiers in Microbiology, 7, 744. Acidobacteria make up ~5–50% of soil bacterial communities yet remain largely uncultured.",
-                                                            "url": "https://doi.org/10.3389/fmicb.2016.00744"
-                                        }
+                HERO_REFS = {
+                    1: [
+                        {
+                            t: "Kielak, A. M., Barreto, C. C., Kowalchuk, G. A., van Veen, J. A., & Kuramae, E. E. (2016). The ecology of Acidobacteria: moving beyond genes and genomes. Frontiers in Microbiology, 7, 744. Acidobacteria make up ~5–50% of soil bacterial communities yet remain largely uncultured.",
+                            url: "https://doi.org/10.3389/fmicb.2016.00744",
+                        },
                     ],
-                    "2": [
-                                        {
-                                                            "t": "Kulichevskaya, I. S., Suzina, N. E., Liesack, W., & Dedysh, S. N. (2010). Bryobacter aggregatus gen. nov., sp. nov., a peat-inhabiting, aerobic chemo-organotroph from subdivision 3 of the Acidobacteria. International Journal of Systematic and Evolutionary Microbiology, 60(2), 301–306.",
-                                                            "url": "https://doi.org/10.1099/ijs.0.013250-0"
-                                        }
+                    2: [
+                        {
+                            t: "Kulichevskaya, I. S., Suzina, N. E., Liesack, W., & Dedysh, S. N. (2010). Bryobacter aggregatus gen. nov., sp. nov., a peat-inhabiting, aerobic chemo-organotroph from subdivision 3 of the Acidobacteria. International Journal of Systematic and Evolutionary Microbiology, 60(2), 301–306.",
+                            url: "https://doi.org/10.1099/ijs.0.013250-0",
+                        },
                     ],
-                    "3": [
-                                        {
-                                                            "t": "Kielak, A. M., et al. (2016). Frontiers in Microbiology, 7, 744. Acidobacteria are typically oligotrophic and most abundant in acidic, low-nutrient, relatively undisturbed soils.",
-                                                            "url": "https://doi.org/10.3389/fmicb.2016.00744"
-                                        }
+                    3: [
+                        {
+                            t: "Kielak, A. M., et al. (2016). Frontiers in Microbiology, 7, 744. Acidobacteria are typically oligotrophic and most abundant in acidic, low-nutrient, relatively undisturbed soils.",
+                            url: "https://doi.org/10.3389/fmicb.2016.00744",
+                        },
                     ],
-                    "4": [
-                                        {
-                                                            "t": "Kulichevskaya, I. S., et al. (2010). IJSEM, 60(2), 301–306. Bryobacter aggregatus is the first taxonomically characterised member of acidobacterial subdivision 3 — a rare cultured representative of a largely unknown phylum.",
-                                                            "url": "https://doi.org/10.1099/ijs.0.013250-0"
-                                        }
-                    ]
-};
+                    4: [
+                        {
+                            t: "Kulichevskaya, I. S., et al. (2010). IJSEM, 60(2), 301–306. Bryobacter aggregatus is the first taxonomically characterised member of acidobacterial subdivision 3 — a rare cultured representative of a largely unknown phylum.",
+                            url: "https://doi.org/10.1099/ijs.0.013250-0",
+                        },
+                    ],
+                };
                 var hcard = document.getElementById("heroRefCard");
                 var currentDot = null;
 
@@ -1477,20 +1683,34 @@ a darkness we cannot yet read.</div>
                         .replace(/>/g, "&gt;");
                 }
 
-                function build(n) {
+                function build(n, num) {
                     var cites = HERO_REFS[n];
                     if (!cites) return;
+                    var byUrl = {};
+                    if (typeof REFS !== "undefined")
+                        for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
                     var html =
-                        '<div class="hrc-kicker">Reference ' + n + "</div>";
+                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
                     cites.forEach(function (c) {
+                        var m = byUrl[c.url], title, meta;
+                        if (m) {
+                            title = m.title;
+                            meta = m.meta;
+                        } else {
+                            var p = c.t.split(/\(\d{4}\)\.\s*/);
+                            meta = c.t;
+                            title =
+                                p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
+                        }
                         html +=
-                            '<div class="hrc-cite">' +
-                            esc(c.t) +
-                            '<br><a href="' +
+                            (title
+                                ? '<div class="rc-title">' + esc(title) + "</div>"
+                                : "") +
+                            '<div class="rc-meta">' +
+                            esc(meta) +
+                            '</div><a class="rc-link" href="' +
                             c.url +
-                            '" target="_blank" rel="noopener">' +
-                            esc(c.url.replace(/^https?:\/\//, "")) +
-                            " ↗</a></div>";
+                            '" target="_blank" rel="noopener">Open source ↗</a>';
                     });
                     hcard.innerHTML = html;
                 }
@@ -1511,7 +1731,7 @@ a darkness we cannot yet read.</div>
                 }
 
                 function openDot(dot) {
-                    build(dot.dataset.ref);
+                    build(dot.dataset.ref, dot.dataset.num);
                     hcard.classList.add("open");
                     place(dot);
                     currentDot = dot;
@@ -1548,32 +1768,29 @@ a darkness we cannot yet read.</div>
                 });
             })();
 
-
             var REFS = {
-                "bryo": {
-                                "n": 1,
-                                "title": "Bryobacter aggregatus — description",
-                                "meta": "Kulichevskaya, I. S., Suzina, N. E., Liesack, W., & Dedysh, S. N. (2010). A peat-inhabiting, aerobic chemo-organotroph from subdivision 3 of the Acidobacteria. IJSEM, 60(2), 301–306. Aerobic, Gram-negative, non-motile coccoids/short rods in aggregates; pH 4.5–7.2; grows on sugars and uronic acids from decaying moss/litter.",
-                                "url": "https://doi.org/10.1099/ijs.0.013250-0"
+                bryo: {
+                    n: 1,
+                    title: "Bryobacter aggregatus — description",
+                    meta: "Kulichevskaya, I. S., Suzina, N. E., Liesack, W., & Dedysh, S. N. (2010). A peat-inhabiting, aerobic chemo-organotroph from subdivision 3 of the Acidobacteria. IJSEM, 60(2), 301–306. Aerobic, Gram-negative, non-motile coccoids/short rods in aggregates; pH 4.5–7.2; grows on sugars and uronic acids from decaying moss/litter.",
+                    url: "https://doi.org/10.1099/ijs.0.013250-0",
                 },
-                "acido": {
-                                "n": 2,
-                                "title": "The ecology of Acidobacteria",
-                                "meta": "Kielak, A. M., Barreto, C. C., Kowalchuk, G. A., van Veen, J. A., & Kuramae, E. E. (2016). Moving beyond genes and genomes. Frontiers in Microbiology, 7, 744. ~5–50% of soil bacteria; oligotrophic; abundant in acidic, undisturbed soils; largely uncultured.",
-                                "url": "https://doi.org/10.3389/fmicb.2016.00744"
+                acido: {
+                    n: 2,
+                    title: "The ecology of Acidobacteria",
+                    meta: "Kielak, A. M., Barreto, C. C., Kowalchuk, G. A., van Veen, J. A., & Kuramae, E. E. (2016). Moving beyond genes and genomes. Frontiers in Microbiology, 7, 744. ~5–50% of soil bacteria; oligotrophic; abundant in acidic, undisturbed soils; largely uncultured.",
+                    url: "https://doi.org/10.3389/fmicb.2016.00744",
                 },
-                "montado": {
-                                "n": 3,
-                                "title": "The montado agroforestry system",
-                                "meta": "Pinto-Correia, T., Ribeiro, N., & Sá-Sousa, P. (2011). Introducing the montado, the cork and holm oak agroforestry system of Southern Portugal. Agroforestry Systems, 82, 99–104.",
-                                "url": "https://doi.org/10.1007/s10457-011-9388-1"
-                }
-};
+                montado: {
+                    n: 3,
+                    title: "The montado agroforestry system",
+                    meta: "Pinto-Correia, T., Ribeiro, N., & Sá-Sousa, P. (2011). Introducing the montado, the cork and holm oak agroforestry system of Southern Portugal. Agroforestry Systems, 82, 99–104.",
+                    url: "https://doi.org/10.1007/s10457-011-9388-1",
+                },
+            };
             (function () {
                 var card = document.getElementById("refCard");
                 var current = null;
-
-                // markers render as dots (see sup.ref CSS); no number injected
 
                 function place(sup) {
                     var rect = sup.getBoundingClientRect();
@@ -1594,7 +1811,7 @@ a darkness we cannot yet read.</div>
                     var r = REFS[sup.dataset.ref];
                     if (!r) return;
                     card.querySelector(".rc-kicker").textContent =
-                        "Reference " + r.n;
+                        "Reference " + sup.dataset.num;
                     card.querySelector(".rc-title").textContent = r.title;
                     card.querySelector(".rc-meta").textContent = r.meta;
                     var a = card.querySelector(".rc-link");
@@ -1649,6 +1866,74 @@ a darkness we cannot yet read.</div>
                     arrow.addEventListener("click", function () {
                         grid.scrollBy({ left: 240, behavior: "smooth" });
                     });
+                }
+            })();
+            (function unifyRefs() {
+                function esc(x) {
+                    return String(x)
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;");
+                }
+                var H = typeof HERO_REFS !== "undefined" ? HERO_REFS : {};
+                var B = typeof REFS !== "undefined" ? REFS : {};
+                var byUrl = {};
+                for (var k in B) byUrl[B[k].url] = B[k];
+                function citesOf(el) {
+                    var raw = el.getAttribute("data-ref");
+                    if (el.classList.contains("hero-ref")) {
+                        return (H[raw] || []).map(function (c) {
+                            var m = byUrl[c.url];
+                            if (m) return { title: m.title, meta: m.meta, url: c.url };
+                            var p = c.t.split(/\(\d{4}\)\.\s*/);
+                            return {
+                                title: p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "",
+                                meta: c.t,
+                                url: c.url,
+                            };
+                        });
+                    }
+                    var r = B[raw] || {};
+                    return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
+                }
+                var seen = {}, order = [];
+                document
+                    .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
+                    .forEach(function (el) {
+                        var cs = citesOf(el);
+                        var key =
+                            cs.map(function (c) { return c.url; }).join("|") ||
+                            el.getAttribute("data-ref");
+                        if (!(key in seen)) {
+                            order.push(cs);
+                            seen[key] = order.length;
+                        }
+                        el.dataset.num = seen[key];
+                    });
+                var list = document.getElementById("refsList");
+                if (list) {
+                    list.innerHTML = order
+                        .map(function (cs, i) {
+                            var inner = cs
+                                .map(function (c) {
+                                    var link = c.url
+                                        ? ' <a href="' + c.url +
+                                          '" target="_blank" rel="noopener">Open ↗</a>'
+                                        : "";
+                                    return (
+                                        (c.title
+                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                            : "") +
+                                        esc(c.meta) + link
+                                    );
+                                })
+                                .join("<br />");
+                            return (
+                                '<li><span class="rn">[' + (i + 1) +
+                                "]</span><span>" + inner + "</span></li>"
+                            );
+                        })
+                        .join("");
                 }
             })();
 

@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# 内部文档 / 笔记（不发布到网站）
+WEBSITE-ANALYSIS.md
+WEBSITE-ANALYSIS-中文.md
+OUTREACH-EMAILS.md
+PRESENTATION-SCRIPT.md
+
+# 临时/未命名图片
+images/未命名.webp

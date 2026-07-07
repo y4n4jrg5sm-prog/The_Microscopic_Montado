@@ -7,16 +7,14 @@
             content="black-translucent"
         />
         <meta charset="UTF-8" />
-        <!-- ✏️ 关键：让手机/iPad 按真实设备宽度渲染，@media 手机适配才会生效 -->
-        <!-- maximum-scale=1 + user-scalable=no：展台防误触缩放。若做公开网页版想让用户能放大，删掉这两项即可。 -->
+
         <meta
             name="viewport"
             content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
         />
         <title>index</title>
         <style>
-            /* ✏️ 背景大字专用字体：本地 Syne Mono。
-               fonts/ 需与 index.html 同级；format 用 truetype 对应 .ttf。 */
+            
             @font-face {
                 font-family: "Syne Mono";
                 src: url("fonts/SyneMono-Regular.ttf") format("truetype");
@@ -25,15 +23,12 @@
                 font-display: swap;
             }
 
-            /* ==================== 字体设置 ==================== */
             :root {
-                /* ✏️ 全站字体：Mac/iOS 显示真·Helvetica，Windows 自动回退到 Arial */
+                
                 --font-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
-                /* ✏️ 投影颜色（偏蓝紫的冷调，而非纯灰）。
-                   三个数字是 R,G,B：想更蓝紫→拉高第三个(B)、压低前两个；
-                   想更接近中性灰→把三个值拉近。透明度由 JS 的 --sh-alpha 控制，互不影响。 */
+                
                 --sh-rgb: 72, 60, 100;
-                /* ✏️ 背景图路径 */
+                
                 --bg-image: url("images/soil-8.webp");
             }
 
@@ -43,22 +38,20 @@
                 box-sizing: border-box;
             }
             body {
-                background: #ffffff; /* ✏️ 背景色 */
-                font-family: var(--font-main); /* ✏️ 全局字体 */
+                background: #ffffff; 
+                font-family: var(--font-main); 
                 overflow: hidden;
                 width: 100vw;
                 height: 100vh;
-                height: 100dvh; /* 移动端动态视口高度：地址栏伸缩时不跳动 */
-                /* iOS 触屏杂项：长按不弹"存储图片/拷贝"菜单、禁双击缩放、去掉点按灰色高亮 */
+                height: 100dvh; 
+                
                 -webkit-touch-callout: none;
                 -webkit-user-select: none;
                 user-select: none;
                 touch-action: manipulation;
                 -webkit-tap-highlight-color: transparent;
             }
-            /* 满屏背景层：position:fixed + cover，电脑/iPad/手机都铺满且不裁焦点；
-               用 fixed 伪元素而非 background-attachment:fixed，避开 iOS Safari 的兼容问题。
-               z-index:-1 让它落在所有漂浮插画（z-index 1+）和大字（z-index 0）之下。 */
+            
             body::before {
                 content: "";
                 position: fixed;
@@ -84,23 +77,19 @@
                 transition: none !important;
                 transform: scale(
                     var(--img-scale, 1)
-                ) !important; /* ✏️ 由 JS 驱动的缩放，围绕中心 */
+                ) !important; 
                 transform-origin: center center;
-                /* ✏️ 跟随图片形状的投影：drop-shadow 沿不透明像素的真实轮廓生成，
-                   配合下移和模糊，看起来像浮在纸面上方。
-                   颜色取自 --sh-rgb（偏蓝紫），透明度/位移/模糊由下方 JS 常量控制 */
+                
                 filter: drop-shadow(
                     var(--sh-x, 0px) var(--sh-y, 16px) var(--sh-blur, 16px)
                         rgba(var(--sh-rgb, 0, 0, 0), var(--sh-alpha, 0.28))
                 );
             }
 
-            /* 悬停手感（桌面）：细菌被鼠标经过时暂停并原地画圈，见 .item.hovered。 */
             .item.hovered {
                 z-index: 999 !important;
             }
 
-            /* ==================== 科普名片样式 ==================== */
             #card-overlay {
                 position: fixed;
                 top: 0;
@@ -125,9 +114,9 @@
                 width: min(
                     900px,
                     92vw
-                ); /* ✏️ 名片宽度（自适应视口，手机/iPad 不再溢出） */
-                height: min(440px, 86vh); /* ✏️ 名片高度（自适应视口） */
-                border-radius: 0; /* ✏️ 直角（去掉圆角） */
+                ); 
+                height: min(440px, 86vh); 
+                border-radius: 0; 
                 box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06);
                 display: flex;
                 padding: 40px 60px 40px 40px;
@@ -140,7 +129,7 @@
                 transform: translateY(0);
             }
             .card-left {
-                width: 350px; /* ✏️ 左侧图片区宽度 */
+                width: 350px; 
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -162,27 +151,26 @@
                 transform: translateX(0);
             }
             .card-title {
-                font-family: var(--font-main); /* ✏️ 名片标题字体 */
-                font-size: 30px; /* ✏️ 名片标题字号（已放大） */
+                font-family: var(--font-main); 
+                font-size: 30px; 
                 color: #222;
                 line-height: 1;
                 text-align: left;
-                font-weight: 400; /* ✏️ 字重：100极细 / 400正常 / 700加粗 */
-                letter-spacing: 0em; /* ✏️ 字间距：em单位相对字号，0为默认 */
+                font-weight: 400; 
+                letter-spacing: 0em; 
                 margin-bottom: 40px;
             }
             .card-desc {
-                font-family: var(--font-main); /* ✏️ 名片正文字体 */
-                font-size: 16px; /* ✏️ 名片正文字号（已放大） */
+                font-family: var(--font-main); 
+                font-size: 16px; 
                 color: #000000;
                 line-height: 1.5;
                 text-align: left;
-                font-weight: 400; /* ✏️ 字重：100极细 / 400正常 / 700加粗 */
-                letter-spacing: 0em; /* ✏️ 字间距：em单位相对字号，0为默认 */
-                margin-bottom: 40px; /* 给按钮留出向下的间距 */
+                font-weight: 400; 
+                letter-spacing: 0em; 
+                margin-bottom: 40px; 
             }
 
-            /* 🌟 "进入"按钮的精致样式 */
             .enter-btn {
                 align-self: flex-start;
                 display: inline-flex;
@@ -191,8 +179,8 @@
                 padding: 11px 26px;
                 background: #333333;
                 color: #ffffff;
-                font-size: 15px; /* ✏️ 按钮字号（已放大） */
-                font-family: var(--font-main); /* ✏️ 按钮字体 */
+                font-size: 15px; 
+                font-family: var(--font-main); 
                 font-weight: 500;
                 letter-spacing: 0.05em;
                 text-decoration: none;
@@ -223,55 +211,49 @@
                 letter-spacing: 0.1em;
             }
 
-            /* ==================== 页面中央提示文字 ==================== */
-            /* Syne Mono 字体 + difference 混合：白色源色在任何背景上自动反色，
-               既清晰又不破坏整体低对比氛围。放在 #card-overlay 之后（见下方 HTML）。 */
+            
             .tip-text {
                 position: fixed;
-                top: 50%; /* 垂直居中：移到中线… */
-                left: 50%; /* 水平居中：移到中线… */
+                top: 50%; 
+                left: 50%; 
                 transform: translate(
                     -50%,
                     -50%
-                ); /* …再回退自身一半宽高，真正居中 */
+                ); 
                 text-align: center;
-                /* 展览引导语：抬到最上层，保证在任何背景/细菌之上都清晰可读。
-                   若想让它回到细菌之下，把 5000 改回 0 即可（difference 混合不受影响）。 */
+                
                 z-index: 5000;
                 font-family:
-                    "Syne Mono", var(--font-main); /* ✏️ 提示专用字体，加载失败回退 Helvetica */
-                /* ✏️ 字号随屏幕大小变化：最小 18px，中间随视口宽度(3vw)，最大 30px */
+                    "Syne Mono", var(--font-main); 
+                
                 font-size: clamp(18px, 3vw, 30px);
-                font-weight: 400; /* ✏️ 字重 */
-                color: #ffffff; /* difference 混合的源色 */
+                font-weight: 400; 
+                color: #ffffff; 
                 mix-blend-mode: difference;
-                letter-spacing: 0.04em; /* ✏️ 字间距 */
+                letter-spacing: 0.04em; 
                 line-height: 1.4;
-                pointer-events: none; /* 点击穿透到下方细菌，不挡交互 */
+                pointer-events: none; 
                 user-select: none;
                 opacity: 1;
                 transition: opacity 0.5s ease;
-                white-space: nowrap; /* 宽屏保证一整行不折 */
+                white-space: nowrap; 
                 max-width: 96vw;
             }
-            /* 名片打开时提示一起淡出 */
+            
             #card-overlay.active ~ .tip-text {
                 opacity: 0;
             }
 
-            /* ✏️ 窄屏（≤640px）：在 Click / Tap 前换行，变成两行居中。
-               断点由这里的 640px 控制；把动词那截 (#tip-verb) 变成块级，就会另起一行。 */
             @media (max-width: 640px) {
                 .tip-text {
-                    white-space: normal; /* 允许换行 */
+                    white-space: normal; 
                 }
                 .tip-text #tip-verb {
-                    display: block; /* 在 Click/Tap 前断行 */
+                    display: block; 
                 }
             }
 
-            /* ==================== 手机 / iPad 竖屏适配 ==================== */
-            /* 窄屏时名片改成上下堆叠：图片在上、文字在下，整体可滚动，不再被裁切 */
+            
             @media (max-width: 760px) {
                 .info-card {
                     flex-direction: column;
@@ -288,7 +270,7 @@
                     flex-shrink: 0;
                 }
                 .card-right {
-                    transform: none; /* 竖排时不再需要横向位移动画 */
+                    transform: none; 
                 }
                 #card-overlay.active .card-right {
                     transform: none;
@@ -325,15 +307,13 @@
             </div>
         </div>
 
-        <!-- ✏️ 页面中央提示：动词那截单独放进 #tip-verb，窄屏时它另起一行、触屏时脚本只替换它。 -->
-        <!-- 文案由下方脚本按设备切换：触屏 Tap / 鼠标 Click。默认写 Click，触屏时脚本改成 Tap。 -->
+        
         <div class="tip-text" id="tip-text">
             <span>These are alive.</span>
             <span id="tip-verb">Click one to look closer.</span>
         </div>
         <script>
-            // 触屏设备（手机/iPad）上把 "Click" 换成 "Tap"，鼠标设备保持 "Click"。
-            // 判据：无悬停能力且指针较粗 → 触屏。桌面浏览器不受影响。
+
             if (
                 window.matchMedia("(hover: none) and (pointer: coarse)").matches
             ) {
@@ -426,35 +406,30 @@
 
             let clickedActive = null;
 
-            /* ==================== 选中放大参数（可调） ==================== */
-            // 窄屏名片更小，放大倍数相应调低，避免飞入的图片超出图片框
+            
             const ACTIVE_SCALE = window.matchMedia("(max-width: 760px)").matches
                 ? 1.0
-                : 1.5; // ✏️ 选中后放大到原来的倍数（手机 1.0 / 桌面 1.5）
-            const SCALE_EASE = 0.12; // ✏️ 缓动缩放系数（先快后慢，与飞入动作的 0.12 同步；越大越快）
+                : 1.5; 
+            const SCALE_EASE = 0.12; 
 
-            /* ==================== 标签定位参数（可调） ==================== */
-            const LABEL_GAP = 8; // ✏️ 标签与图片底边的垂直间距(px)
+            const LABEL_GAP = 8; 
 
-            /* ==================== 漂浮投影参数（可调） ==================== */
-            // 投影颜色（偏蓝紫）在 CSS 的 :root --sh-rgb 里调；这里只控制透明度/位移/模糊。
-            const SHADOW_Y = 16; // ✏️ 投影基础下移距离(px)，越大越像悬空
-            const SHADOW_BLUR = 10; // ✏️ 投影基础模糊(px)，越大越柔和
-            const SHADOW_ALPHA = 0.2; // ✏️ 投影深浅(0~1)
-            const SHADOW_FLOAT = 5; // ✏️ 漂浮呼吸幅度(px)：>0 投影随起伏轻微胀缩；设 0 则静止、最省性能
+            
+            const SHADOW_Y = 16; 
+            const SHADOW_BLUR = 10; 
+            const SHADOW_ALPHA = 0.2; 
+            const SHADOW_FLOAT = 5; 
 
-            /* ==================== 有机漂动参数（可调） ==================== */
-            const FLOAT_SPEED = 0.03; // ✏️ 基础漂动速度
-            const WANDER_TURN = 0.0008; // ✏️ 方向游走强度：越大转向越频繁、路径越蜿蜒
-            const SPEED_VARY = 0.3; // ✏️ 速度起伏幅度(0~1)：越大忽快忽慢越明显
-            const SWING = 0.2; // ✏️ 左右飘忽幅度（原有的横向摆动）
+            const FLOAT_SPEED = 0.03; 
+            const WANDER_TURN = 0.0008; 
+            const SPEED_VARY = 0.3; 
+            const SWING = 0.2; 
 
-            /* ==================== 响应式尺寸（可调） ==================== */
-            // 细菌图片尺寸随视口宽度整体缩放：宽屏用原始尺寸，窄屏等比缩小，
-            // 避免手机上细菌过大、互相拥挤。iPad 旋转 / 窗口缩放时也会实时重算。
-            const SIZE_REF_WIDTH = 1440; // ✏️ 参考视口宽度：达到此宽度用 100% 原始尺寸
-            const SIZE_MIN = 0.5; // ✏️ 最小缩放（很窄的手机，约原尺寸一半）
-            const SIZE_MAX = 1.0; // ✏️ 最大缩放（不超过原始设计尺寸）
+            
+            
+            const SIZE_REF_WIDTH = 1440; 
+            const SIZE_MIN = 0.5; 
+            const SIZE_MAX = 1.0; 
             function sizeScale() {
                 return Math.max(
                     SIZE_MIN,
@@ -480,7 +455,7 @@
                 img.src = item.src;
                 img.style.width = item.w * sizeScale() + "px";
                 img.draggable = false;
-                // 初始化投影变量（即便关闭呼吸，也保证有一份静态投影）
+                
                 img.style.setProperty("--sh-y", SHADOW_Y + "px");
                 img.style.setProperty("--sh-blur", SHADOW_BLUR + "px");
                 img.style.setProperty("--sh-alpha", SHADOW_ALPHA);
@@ -495,32 +470,31 @@
 
                 const obj = {
                     el,
-                    img, // ← 存下图片引用，用于精准对齐
+                    img, 
                     item,
                     x,
                     y,
-                    heading: Math.random() * Math.PI * 2, // 当前前进方向（会随时间游走）
-                    speed: 0.3 + Math.random() * 0.3, // 基础速度
-                    // —— 有机漂动随机种子：每张图各不相同，避免整齐划一 ——
-                    wf1: 0.1 + Math.random() * 0.2, // 方向游走频率 1
-                    wf2: 0.04 + Math.random() * 0.1, // 方向游走频率 2
-                    wp1: Math.random() * Math.PI * 2, // 方向游走相位 1
-                    wp2: Math.random() * Math.PI * 2, // 方向游走相位 2
-                    spf1: 0.08 + Math.random() * 0.15, // 速度起伏频率 1
-                    spf2: 0.03 + Math.random() * 0.08, // 速度起伏频率 2
-                    spp1: Math.random() * Math.PI * 2, // 速度起伏相位 1
-                    spp2: Math.random() * Math.PI * 2, // 速度起伏相位 2
+                    heading: Math.random() * Math.PI * 2, 
+                    speed: 0.3 + Math.random() * 0.3, 
+                    
+                    wf1: 0.1 + Math.random() * 0.2, 
+                    wf2: 0.04 + Math.random() * 0.1, 
+                    wp1: Math.random() * Math.PI * 2, 
+                    wp2: Math.random() * Math.PI * 2, 
+                    spf1: 0.08 + Math.random() * 0.15, 
+                    spf2: 0.03 + Math.random() * 0.08, 
+                    spp1: Math.random() * Math.PI * 2, 
+                    spp2: Math.random() * Math.PI * 2, 
                     hovered: false,
                     phase: Math.random() * Math.PI * 2,
                     zIndex: index + 1,
-                    scale: 1, // 当前缩放，缓动逼近目标
+                    scale: 1, 
                 };
 
                 el.addEventListener("click", (e) => {
                     e.stopPropagation();
-                    // 点细菌直接跳转到对应页面（不再弹科普名片）。
-                    // 同标签页跳转（不用新窗口），展台上返回更顺、不会卡在新标签里。
-                    // 直接跳到该生物的详情页：跳出容器 iframe，整页打开。
+
+                    
                     window.top.location.href = item.link;
                 });
 
@@ -533,7 +507,6 @@
                 clickedActive = null;
             });
 
-            // 视口尺寸变化（含 iPad 旋转、窗口缩放）时，等比重算所有细菌尺寸
             function applySizes() {
                 const sc = sizeScale();
                 state.forEach((s) => {
@@ -578,15 +551,13 @@
                 state.forEach((s) => {
                     s.phase += dt * 0.002;
 
-                    // 缓动缩放：选中的图片缓动放大到 ACTIVE_SCALE 倍（先快后慢），
-                    // 其余缓动回到 1 倍，与飞入左框的动作同步
+                    
                     const targetScale = s === clickedActive ? ACTIVE_SCALE : 1;
                     s.scale += (targetScale - s.scale) * SCALE_EASE;
                     s.img.style.setProperty("--img-scale", s.scale.toFixed(3));
 
-                    // 漂浮呼吸：用各自相位做缓慢起伏，投影随之变大变虚，强化悬浮感
                     if (SHADOW_FLOAT > 0) {
-                        const lift = (Math.sin(s.phase * 0.8) + 1) / 2; // 0~1
+                        const lift = (Math.sin(s.phase * 0.8) + 1) / 2; 
                         s.img.style.setProperty(
                             "--sh-y",
                             (SHADOW_Y + lift * SHADOW_FLOAT).toFixed(1) + "px",
@@ -603,10 +574,10 @@
                     }
 
                     if (s === clickedActive) {
-                        // 名片打开状态：让图片中心精准落在左框中心
+                        
                         const elRect = s.el.getBoundingClientRect();
                         const imgRect = s.img.getBoundingClientRect();
-                        // 图片中心相对于 .item 容器左上角的偏移（与宽高、标签长短无关）
+                        
                         const offsetX =
                             imgRect.left + imgRect.width / 2 - elRect.left;
                         const offsetY =
@@ -620,14 +591,14 @@
 
                         s.el.style.zIndex = 1001;
                     } else if (clickedActive) {
-                        // 背景被冻结：其他微生物在原地微颤
+                        
                         s.x += Math.sin(s.phase * 1.0) * 0.15;
                         s.y += Math.cos(s.phase * 0.8) * 0.15;
                         s.el.style.zIndex = s.zIndex;
                     } else {
-                        // 正常游荡状态
+                        
                         if (s === currentActive) {
-                            // 🌟 核心：鼠标悬停时，扣留基础速度，转为优雅的"水中原地悬浮画圈摆动"
+                            
                             if (!s.hovered) {
                                 s.hovered = true;
                                 s.el.classList.add("hovered");
@@ -639,17 +610,15 @@
                                 s.hovered = false;
                                 s.el.classList.remove("hovered");
                             }
-                            // —— 有机自由漂动 ——
-                            const t = now * 0.001; // 秒
+                            
+                            const t = now * 0.001; 
 
-                            // 1) 方向游走：朝向随时间缓慢、随机地偏转，整体路径上下左右都飘
                             s.heading +=
                                 (Math.sin(t * s.wf1 + s.wp1) +
                                     0.5 * Math.sin(t * s.wf2 + s.wp2)) *
                                 WANDER_TURN *
                                 dt;
 
-                            // 2) 速度忽快忽慢：基础速度上叠加缓慢起伏
                             const speedFactor =
                                 1 +
                                 SPEED_VARY *
@@ -665,7 +634,6 @@
                             s.x += Math.cos(s.heading) * sp;
                             s.y += Math.sin(s.heading) * sp;
 
-                            // 3) 保留左右飘忽（垂直于前进方向的横向摆动）
                             const swing = Math.sin(s.phase * 1.5) * SWING;
                             s.x += -Math.sin(s.heading) * swing;
                             s.y += Math.cos(s.heading) * swing;

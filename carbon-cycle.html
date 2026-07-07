@@ -38,10 +38,9 @@
                 background-color: var(--bg);
                 color: var(--text);
                 line-height: 1.6;
-                position: relative; /* positioning context for .page-bg */
+                position: relative; 
             }
 
-            /* Body copy face for the top hero */
             @font-face {
                 font-family: "Syne Mono";
                 src: url("fonts/SyneMono-Regular.ttf") format("truetype");
@@ -50,8 +49,6 @@
                 font-display: swap;
             }
 
-            /* Top hero — pinned full-bleed image + scrolling inverted copy.
-               NB: .hero-scroll has NO z-index, so it does not isolate the blend. */
             .hero-scroll {
                 position: relative;
                 width: 100%;
@@ -66,17 +63,17 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 2560 / 1600; /* reserve correct height pre-load */
+                aspect-ratio: 2560 / 1600; 
             }
 
             .hero-copy {
                 position: absolute;
-                top: 20.8vw; /* pre-JS estimate ≈ 1/3 down the image (H/3 for 2560×1600); JS sets exact px */
+                top: 20.8vw; 
                 right: 0;
-                width: 40%; /* right two-fifths on desktop */
+                width: 40%; 
                 padding-right: clamp(20px, 4vw, 64px);
                 padding-left: 24px;
-                color: #ffffff; /* solid white copy */
+                color: #ffffff; 
             }
             .hero-copy p {
                 font-family: "Syne Mono", var(--font-mono);
@@ -93,13 +90,9 @@
                 font-style: italic;
             }
 
-            /* Upward scroll hint — sits just above the copy's top line.
-               Absolutely positioned so it does NOT push the text start down,
-               and does NOT add to the copy height (T) used by the scroll math.
-               It rides up with the copy as the page scrolls. */
             .hero-scroll-hint {
                 position: absolute;
-                left: 24px; /* aligns with .hero-copy padding-left */
+                left: 24px; 
                 top: 0;
                 transform: translateY(calc(-100% - 12px));
                 color: #ffffff;
@@ -130,11 +123,10 @@
             }
             @media (max-width: 600px) {
                 .hero-scroll-hint {
-                    left: 20px; /* match mobile padding-left */
+                    left: 20px; 
                 }
             }
 
-            /* Citation dots — upper-right of the preceding word */
             .hero-ref {
                 display: inline-block;
                 width: 6px;
@@ -158,7 +150,6 @@
                 outline-offset: 3px;
             }
 
-            /* Popup for the dots — a normal, readable card (never blended) */
             .hero-ref-card {
                 position: fixed;
                 z-index: 1000;
@@ -267,7 +258,7 @@
                 content: none;
             }
             sup.ref::after {
-                /* enlarged touch / click target */
+                
                 content: "";
                 position: absolute;
                 inset: -8px;
@@ -506,12 +497,12 @@
                 position: relative;
             }
             .hero-right .wc-figure {
-                margin: 0; /* fills the right column, which is now image-width */
+                margin: 0; 
                 width: 100%;
             }
             .hero-right .wc-slot {
                 width: 100%;
-                background: transparent; /* let the page soil texture show through */
+                background: transparent; 
                 display: block;
             }
             .hero-right .wc-slot svg,
@@ -519,7 +510,7 @@
                 width: 100%;
                 height: auto;
                 display: block;
-                mix-blend-mode: multiply; /* key out the image's white so it prints onto the texture */
+                mix-blend-mode: multiply; 
             }
             .hero-right .wc-caption {
                 width: 100%;
@@ -581,9 +572,20 @@
             .caption-text.wide {
                 max-width: none;
                 width: 100%;
-                grid-column: 1 / -1; /* span the full row when inside a grid */
+                grid-column: 1 / -1; 
             }
 
+            .stats-prose {
+                grid-column: 1 / -1;
+                font-size: 16px;
+                line-height: 1.7;
+                color: var(--text);
+                margin: 0;
+            }
+            .stats-prose b {
+                color: var(--ink);
+                font-weight: 600;
+            }
             .stats {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
@@ -1182,31 +1184,25 @@
                 outline-offset: 3px;
             }
 
-            /* ============ Full-page soil background ============
-               A single layer covering the whole page height, sitting above the
-               white body background but behind all content (z-index:-1). The
-               source is a tall 682×8000 strip, so on desktop it's shown at full
-               page width (edge to edge) at its natural ratio; it's so tall it
-               effectively never needs to repeat. On iPad / phone it's scaled up
-               (and side-cropped) so the faint texture doesn't read as too dense. */
             .page-bg {
                 position: absolute;
-                inset: 0; /* fills body's full height */
+                inset: 0; 
                 z-index: -1;
                 pointer-events: none;
+                opacity: 0.5;
                 background-image: url("images/soil-background.webp");
                 background-repeat: repeat-y;
                 background-position: top center;
-                background-size: 100% auto; /* desktop: edge to edge */
+                background-size: 100% auto; 
             }
             @media (max-width: 1024px) {
                 .page-bg {
-                    background-size: 160% auto; /* iPad: zoom in, crop sides */
+                    background-size: 160% auto; 
                 }
             }
             @media (max-width: 600px) {
                 .page-bg {
-                    background-size: 230% auto; /* phone: zoom in more */
+                    background-size: 230% auto; 
                 }
             }
 
@@ -1235,7 +1231,7 @@
             </div>
         </section>
 
-        <div class="hero-ref-card" id="heroRefCard" role="dialog" aria-label="Reference"></div>
+        <div class="hero-ref-card ref-card" id="heroRefCard" role="dialog" aria-label="Reference"></div>
         <div class="ref-card" id="refCard" role="dialog" aria-label="Source reference">
             <div class="rc-kicker"></div>
             <div class="rc-title"></div>
@@ -1252,7 +1248,7 @@
                             Continue exploring Field Guide</a>
                     </div>
                     <h1>the <em>slow</em> breath</h1>
-                    <div class="h1-zh">碳循环 · 森林最深的节律</div>
+                    <div class="h1-zh">The Carbon Cycle · The forest’s deepest rhythm</div>
                     <div class="description">Carbon moves in a great loop: fixed from the air by photosynthesis, built into wood, cork and flesh, and returned by respiration and decay. The montado's long-lived oaks and deep soils make it hold carbon back — a working sink in a warming Mediterranean.<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup></div>
                     <div class="etym">A <span class="sci">biogeochemical cycle</span>: the endless passage of carbon through air, living things, soil and rock — the loop all the others hang from.<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup></div>
                 </div>
@@ -1266,7 +1262,6 @@
                     </figure>
                 </div>
             </section>
-
 
             <hr />
             <section class="content-block">
@@ -1302,12 +1297,9 @@
                     gently — is a way of holding carbon that also holds a landscape, a livelihood and
                     a culture together. Climate care and land care, here, are the same act.<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup>
                 </div>
-                <div class="stats">
-                    <div class="stat"><b>fix ⇄ return</b><span>photosynthesis against respiration and decay<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                    <div class="stat"><b>net sink</b><span>the montado stores more than it releases<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                    <div class="stat"><b>cork</b><span>carbon harvested without felling the tree<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                    <div class="stat"><b>deep soil</b><span>a long-term montado carbon store<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup></span></div>
-                </div>
+                <p class="stats-prose">
+                    The whole cycle turns on one balance — carbon fixed by photosynthesis against carbon returned by respiration and decay<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup>. In the montado the books come out in credit: it is a net sink, storing more than it releases<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup>. Some of that carbon leaves as cork, harvested without ever felling the tree, and much more is held for the long term in its deep soil<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup>.
+                </p>
             </section>
 
             <hr />
@@ -1323,6 +1315,10 @@ in the deep soil,
 in the cork walking out of the forest.</div>
             </section>
 
+            <section class="refs-footer">
+                <div class="sec-head">Sources &amp; reading</div>
+                <ol class="refs-list" id="refsList"></ol>
+            </section>
 
             <hr />
 
@@ -1363,17 +1359,15 @@ in the cork walking out of the forest.</div>
                 var copy = document.getElementById("heroCopy");
                 if (!scroll || !img || !copy) return;
 
-                // Image is sticky at top:0. It releases when the copy's bottom
-                // reaches 1/6 up from the image's bottom edge — i.e. 5H/6 down
-                // from the top, near the image bottom.
-                //   copy.top = H/3
-                //   release at copy-bottom = 5H/6  ⇒  scroll.height = T + H/2
+                
+
+                
                 function layout() {
                     var H = img.getBoundingClientRect().height;
                     if (!H) return;
                     var T = copy.getBoundingClientRect().height;
                     copy.style.top = (1 / 3) * H + "px";
-                    scroll.style.height = T + (1 / 2) * H + "px";
+                    scroll.style.height = Math.max(H, T + (1 / 2) * H) + "px";
                 }
 
                 if (img.complete && img.naturalWidth) layout();
@@ -1389,7 +1383,7 @@ in the cork walking out of the forest.</div>
                 });
                 layout();
 
-                var HERO_REFS = {
+                HERO_REFS = {
                     "1": [
                                         {
                                                             "t": "Falkowski, P., et al. (2000). The global carbon cycle. Science, 290, 291–296. Carbon cycles between atmosphere, biosphere, soils and oceans via photosynthesis and respiration.",
@@ -1425,20 +1419,34 @@ in the cork walking out of the forest.</div>
                         .replace(/>/g, "&gt;");
                 }
 
-                function build(n) {
+                function build(n, num) {
                     var cites = HERO_REFS[n];
                     if (!cites) return;
+                    var byUrl = {};
+                    if (typeof REFS !== "undefined")
+                        for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
                     var html =
-                        '<div class="hrc-kicker">Reference ' + n + "</div>";
+                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
                     cites.forEach(function (c) {
+                        var m = byUrl[c.url], title, meta;
+                        if (m) {
+                            title = m.title;
+                            meta = m.meta;
+                        } else {
+                            var p = c.t.split(/\(\d{4}\)\.\s*/);
+                            meta = c.t;
+                            title =
+                                p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
+                        }
                         html +=
-                            '<div class="hrc-cite">' +
-                            esc(c.t) +
-                            '<br><a href="' +
+                            (title
+                                ? '<div class="rc-title">' + esc(title) + "</div>"
+                                : "") +
+                            '<div class="rc-meta">' +
+                            esc(meta) +
+                            '</div><a class="rc-link" href="' +
                             c.url +
-                            '" target="_blank" rel="noopener">' +
-                            esc(c.url.replace(/^https?:\/\//, "")) +
-                            " ↗</a></div>";
+                            '" target="_blank" rel="noopener">Open source ↗</a>';
                     });
                     hcard.innerHTML = html;
                 }
@@ -1459,7 +1467,7 @@ in the cork walking out of the forest.</div>
                 }
 
                 function openDot(dot) {
-                    build(dot.dataset.ref);
+                    build(dot.dataset.ref, dot.dataset.num);
                     hcard.classList.add("open");
                     place(dot);
                     currentDot = dot;
@@ -1496,7 +1504,6 @@ in the cork walking out of the forest.</div>
                 });
             })();
 
-
             var REFS = {
                 "carbon": {
                                 "title": "The global carbon cycle",
@@ -1514,8 +1521,6 @@ in the cork walking out of the forest.</div>
             (function () {
                 var card = document.getElementById("refCard");
                 var current = null;
-
-                // markers render as dots (see sup.ref CSS); no number injected
 
                 function place(sup) {
                     var rect = sup.getBoundingClientRect();
@@ -1536,7 +1541,7 @@ in the cork walking out of the forest.</div>
                     var r = REFS[sup.dataset.ref];
                     if (!r) return;
                     card.querySelector(".rc-kicker").textContent =
-                        "Reference " + r.n;
+                        "Reference " + sup.dataset.num;
                     card.querySelector(".rc-title").textContent = r.title;
                     card.querySelector(".rc-meta").textContent = r.meta;
                     var a = card.querySelector(".rc-link");
@@ -1591,6 +1596,75 @@ in the cork walking out of the forest.</div>
                     arrow.addEventListener("click", function () {
                         grid.scrollBy({ left: 240, behavior: "smooth" });
                     });
+                }
+            })();
+
+            (function unifyRefs() {
+                function esc(x) {
+                    return String(x)
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;");
+                }
+                var H = typeof HERO_REFS !== "undefined" ? HERO_REFS : {};
+                var B = typeof REFS !== "undefined" ? REFS : {};
+                var byUrl = {};
+                for (var k in B) byUrl[B[k].url] = B[k];
+                function citesOf(el) {
+                    var raw = el.getAttribute("data-ref");
+                    if (el.classList.contains("hero-ref")) {
+                        return (H[raw] || []).map(function (c) {
+                            var m = byUrl[c.url];
+                            if (m) return { title: m.title, meta: m.meta, url: c.url };
+                            var p = c.t.split(/\(\d{4}\)\.\s*/);
+                            return {
+                                title: p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "",
+                                meta: c.t,
+                                url: c.url,
+                            };
+                        });
+                    }
+                    var r = B[raw] || {};
+                    return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
+                }
+                var seen = {}, order = [];
+                document
+                    .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
+                    .forEach(function (el) {
+                        var cs = citesOf(el);
+                        var key =
+                            cs.map(function (c) { return c.url; }).join("|") ||
+                            el.getAttribute("data-ref");
+                        if (!(key in seen)) {
+                            order.push(cs);
+                            seen[key] = order.length;
+                        }
+                        el.dataset.num = seen[key];
+                    });
+                var list = document.getElementById("refsList");
+                if (list) {
+                    list.innerHTML = order
+                        .map(function (cs, i) {
+                            var inner = cs
+                                .map(function (c) {
+                                    var link = c.url
+                                        ? ' <a href="' + c.url +
+                                          '" target="_blank" rel="noopener">Open ↗</a>'
+                                        : "";
+                                    return (
+                                        (c.title
+                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                            : "") +
+                                        esc(c.meta) + link
+                                    );
+                                })
+                                .join("<br />");
+                            return (
+                                '<li><span class="rn">[' + (i + 1) +
+                                "]</span><span>" + inner + "</span></li>"
+                            );
+                        })
+                        .join("");
                 }
             })();
 
