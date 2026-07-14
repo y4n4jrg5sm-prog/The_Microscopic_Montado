@@ -48,6 +48,13 @@
                 font-style: normal;
                 font-display: swap;
             }
+            @font-face {
+                font-family: "Tiny5";
+                src: url("fonts/Tiny5-Regular.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
 
             .hero-scroll {
                 position: relative;
@@ -64,6 +71,8 @@
                 width: 100%;
                 height: auto;
                 aspect-ratio: 2560 / 1600;
+                object-fit: cover;
+                object-position: center 35%;
             }
 
             .hero-copy {
@@ -427,6 +436,7 @@
                 flex-wrap: wrap;
                 margin-bottom: 26px;
             }
+            .continue-bottom { text-align: center; margin: 30px 0 4px; }
             .continue-btn {
                 display: inline-flex;
                 align-items: center;
@@ -1016,8 +1026,8 @@
                 justify-content: center;
             }
             .poem-text {
-                font-family: var(--font-mono);
-                font-size: 14px;
+                font-family: "Tiny5", var(--font-mono);
+                font-size: 16px;
                 color: #555;
                 line-height: 1.9;
                 white-space: pre-line;
@@ -1204,6 +1214,18 @@
                     background-size: 230% auto;
                 }
             }
+                    .relweb-section { margin: 50px 0; }
+            .relweb { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin: 40px 0 0; }
+            .relweb-card { border: 1px solid var(--line, #e2e2e2); padding: 24px 22px 26px; background: #fff; transition: box-shadow 0.3s, transform 0.3s; }
+            .relweb-card:hover { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); transform: translateY(-3px); }
+            .relweb-jump { text-decoration: none; color: inherit; display: block; }
+            .relweb-jump .rw-icon { width: auto; height: 60px; object-fit: contain; display: block; margin-bottom: 14px; }
+            .relweb-jump h3 { margin: 0 0 16px; font-family: var(--font-display, inherit); font-weight: 300; font-size: 21px; color: var(--ink, #111); font-style: italic; }
+            .relweb-jump:hover h3 { text-decoration: underline; }
+            .relweb-card ul { margin: 0; padding: 0; list-style: none; }
+            .relweb-card li { font-size: 13.5px; color: #555; padding: 9px 0; border-top: 1px solid var(--line, #eee); line-height: 1.5; }
+            .relweb-card li:first-child { border-top: none; }
+            .relweb-card li b { color: var(--ink, #111); font-weight: 600; }
         </style>
     </head>
     <body>
@@ -1318,7 +1340,7 @@
             <section class="hero-section">
                 <div class="hero-left">
                     <div class="continue-actions">
-                        <a class="continue-btn" href="index.html"
+                        <a class="continue-btn" href="index.html#field-guide"
                             ><span class="arrow" aria-hidden="true">←</span>
                             Continue exploring Field Guide</a
                         >
@@ -1544,15 +1566,42 @@
             </section>
 
             <hr />
+            <style>
+                .montado-photo { margin: 40px 0; }
+                .montado-photo img { width: 100%; height: auto; display: block; border-radius: 0; }
+                .montado-photo figcaption { margin-top: 9px; font-size: 12px; line-height: 1.55; color: #888; }
+                .montado-photo figcaption a { color: var(--accent, #777); }
+                .montado-photo.diagram img { max-width: 760px; margin: 0 auto; border: 1px solid var(--line, #e2e2e2); border-radius: 0; background: #fff; }
+                .twoscale .caption-text { max-width: none; }
+                .twoscale a.el { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+            </style>
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Leaf_litter.jpg?width=1100" alt="Leaf litter on a forest floor" loading="lazy" />
+                <figcaption>Leaf litter on the forest floor — the raw material acid-loving recyclers like Bryobacter turn into humus and soil carbon.<sup class="ref" data-ref="tsImg" role="button" tabindex="0" aria-label="image source"></sup></figcaption>
+            </figure>
+            <section class="content-block twoscale">
+                <div class="caption-text wide">Bryobacter is a slow, acid-loving recycler of the undisturbed montado soil. Turning litter into humus, it helps decide how much carbon the soil keeps versus returns to the air — the storage side of what makes cork-oak woodlands carbon sinks.<sup class="ref" data-ref="tsSink" role="button" tabindex="0" aria-label="source"></sup> Its pace is a global lever in miniature: stable, undisturbed ground stores more, while warming and disturbance tip the balance back toward release across the <a class="el" href="carbon-cycle.html">carbon cycle</a>.</div>
+            </section>
 
+            <hr />
+            <section class="relweb-section">
+                <div class="caption-text wide" style="margin-top: 6px">Bryobacter is one of the few cultured Acidobacteria — a slow, acid-loving recycler that marks the stable, undisturbed ground the montado depends on.<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></div>
+                <div class="relweb"><div class="relweb-card"><a class="relweb-jump" href="lignin-hemicellulose.html"><img class="rw-icon" src="images/lignin-hemicellulose.webp" alt="Lignin and hemicellulose" loading="lazy" /><h3>Lignin &amp; hemicellulose</h3></a><ul><li>It breaks down litter and moss<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></li><li>Feeding on the sugars they release<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></li><li>Returning tough carbon to the soil<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="oak-leaves-acorns.html"><img class="rw-icon" src="images/oak-leaves-acorns.webp" alt="Oak" loading="lazy" /><h3>Oak</h3></a><ul><li>It helps decay the oak's fallen litter<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></li><li>Keeping the carbon balance of damp corners<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></li><li>A marker of undisturbed montado ground<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="streptomyces-griseus.html"><img class="rw-icon" src="images/streptomyces-griseus-13.webp" alt="Streptomyces" loading="lazy" /><h3>Streptomyces</h3></a><ul><li>Both are decomposers of tough litter</li><li>Acidobacteria beside the actinomycetes<sup class="ref" data-ref="acido" role="button" tabindex="0" aria-label="source"></sup></li><li>The unseen majority of acid forest soil<sup class="ref" data-ref="acido" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="carbon-cycle.html"><img class="rw-icon" src="images/carbon-cycle.webp" alt="The Carbon Cycle" loading="lazy" /><h3>The Carbon Cycle</h3></a><ul><li>A recycler at the slow end of the loop<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></li><li>Tolerant of acid from pH 4.5 to 7.2<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></li><li>Patient where faster microbes cannot persist<sup class="ref" data-ref="bryo" role="button" tabindex="0" aria-label="source"></sup></li></ul></div></div>
+            </section>
+
+            <hr />
             <section class="poem-section">
-                <div class="poem-text">
-                    Most of what lives here has no name. It will not grow in
-                    glass. It makes no medicine, fixes no air, kills nothing,
-                    saves nothing we can measure. It only means: the ground is
-                    old, and acid, and left alone. We are asked to protect a
-                    darkness we cannot yet read.
-                </div>
+                <div class="poem-text">Most of what lives here has no name.
+It will not grow in glass.
+It makes no medicine,
+fixes no air,
+kills nothing,
+saves nothing we can measure.
+It only means:
+the ground is old,
+and acid,
+and left alone.
+We are asked to protect a darkness we cannot yet read.</div>
             </section>
 
             <section class="refs-footer">
@@ -1562,61 +1611,9 @@
 
             <hr />
 
-            <section class="explore-section">
-                <div class="explore-title">Explore Related Elements</div>
-                <div class="explore-scroller">
-                    <div class="explore-grid" id="exploreGrid">
-                        <a
-                            href="phytophthora-cinnamomi.html"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/phytophthora-cinnamomi-4.webp"
-                                alt="Phytophthora cinnamomi"
-                            />
-                            <span>Phytophthora cinnamomi</span>
-                        </a>
-                        <a
-                            href="streptomyces-griseus.html"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/streptomyces-griseus-13.webp"
-                                alt="Streptomyces griseus"
-                            />
-                            <span>Streptomyces griseus</span>
-                        </a>
-                        <a href="bradyrhizobium.html" class="explore-item">
-                            <img
-                                src="images/bradyrhizobium-1.webp"
-                                alt="Bradyrhizobium"
-                            />
-                            <span>Bradyrhizobium</span>
-                        </a>
-                        <a
-                            href="rhizobium-leguminosarum.html"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/rhizobium-leguminosarum-4.webp"
-                                alt="Rhizobium leguminosarum"
-                            />
-                            <span>Rhizobium leguminosarum</span>
-                        </a>
-                        <a href="rhizobia.html" class="explore-item">
-                            <img src="images/rhizobia-3.webp" alt="Rhizobia" />
-                            <span>Rhizobia</span>
-                        </a>
-                    </div>
-                    <button
-                        class="explore-arrow"
-                        id="exploreArrow"
-                        aria-label="Scroll right"
-                    >
-                        ›
-                    </button>
-                </div>
-            </section>
+            <div class="continue-bottom">
+                <a class="continue-btn" href="index.html#field-guide"><span class="arrow" aria-hidden="true">←</span> Continue exploring Field Guide</a>
+            </div>
         </div>
 
         <script>
@@ -1689,8 +1686,8 @@
                     var byUrl = {};
                     if (typeof REFS !== "undefined")
                         for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
-                    var html =
-                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
+                    var map = window.__refNum || {};
+                    var html = "";
                     cites.forEach(function (c) {
                         var m = byUrl[c.url], title, meta;
                         if (m) {
@@ -1703,6 +1700,9 @@
                                 p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
                         }
                         html +=
+                            '<div class="rc-kicker">Reference ' +
+                            (map[c.url] || "") +
+                            "</div>" +
                             (title
                                 ? '<div class="rc-title">' + esc(title) + "</div>"
                                 : "") +
@@ -1769,6 +1769,9 @@
             })();
 
             var REFS = {
+                tsSink: { title: "Cork oak wooded grasslands: plant diversity, pasture &amp; soil carbon", meta: "Seddaiu, G., Bagella, S., Pulina, A., et al. (2018). Mediterranean cork oak wooded grasslands: synergies and trade-offs between plant diversity, pasture production and soil carbon. Agroforestry Systems, 92, 893–908.", url: "https://doi.org/10.1007/s10457-018-0225-7" },
+                tsImg: { title: "Image: forest-floor leaf litter", meta: "Wikimedia Commons. Fallen leaves on a forest floor. Author: Mokkie. CC BY-SA 3.0.", url: "https://commons.wikimedia.org/wiki/File:Leaf_litter.jpg" },
+
                 bryo: {
                     n: 1,
                     title: "Bryobacter aggregatus — description",
@@ -1896,41 +1899,42 @@
                     var r = B[raw] || {};
                     return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
                 }
-                var seen = {}, order = [];
+                var urlNum = {}, orderCites = [];
                 document
                     .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
                     .forEach(function (el) {
                         var cs = citesOf(el);
-                        var key =
-                            cs.map(function (c) { return c.url; }).join("|") ||
-                            el.getAttribute("data-ref");
-                        if (!(key in seen)) {
-                            order.push(cs);
-                            seen[key] = order.length;
-                        }
-                        el.dataset.num = seen[key];
+                        var nums = [];
+                        cs.forEach(function (c) {
+                            var key = c.url || c.meta || "";
+                            if (!(key in urlNum)) {
+                                orderCites.push(c);
+                                urlNum[key] = orderCites.length;
+                            }
+                            nums.push(urlNum[key]);
+                        });
+                        el.dataset.nums = nums.join(",");
+                        el.dataset.num = nums[0] || "";
                     });
+                window.__refNum = {};
+                orderCites.forEach(function (c, i) {
+                    window.__refNum[c.url || c.meta || ""] = i + 1;
+                });
                 var list = document.getElementById("refsList");
                 if (list) {
-                    list.innerHTML = order
-                        .map(function (cs, i) {
-                            var inner = cs
-                                .map(function (c) {
-                                    var link = c.url
-                                        ? ' <a href="' + c.url +
-                                          '" target="_blank" rel="noopener">Open ↗</a>'
-                                        : "";
-                                    return (
-                                        (c.title
-                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
-                                            : "") +
-                                        esc(c.meta) + link
-                                    );
-                                })
-                                .join("<br />");
+                    list.innerHTML = orderCites
+                        .map(function (c, i) {
+                            var link = c.url
+                                ? ' <a href="' + c.url +
+                                  '" target="_blank" rel="noopener">Open ↗</a>'
+                                : "";
                             return (
                                 '<li><span class="rn">[' + (i + 1) +
-                                "]</span><span>" + inner + "</span></li>"
+                                "]</span><span>" +
+                                (c.title
+                                    ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                    : "") +
+                                esc(c.meta) + link + "</span></li>"
                             );
                         })
                         .join("");

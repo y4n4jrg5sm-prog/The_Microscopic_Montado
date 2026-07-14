@@ -48,6 +48,13 @@
                 font-style: normal;
                 font-display: swap;
             }
+            @font-face {
+                font-family: "Tiny5";
+                src: url("fonts/Tiny5-Regular.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
 
             .hero-scroll {
                 position: relative;
@@ -63,7 +70,9 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 2560 / 1600; 
+                aspect-ratio: 2560 / 1600;
+                object-fit: cover;
+                object-position: center 35%; 
             }
 
             .hero-copy {
@@ -428,6 +437,7 @@
                 flex-wrap: wrap;
                 margin-bottom: 26px;
             }
+            .continue-bottom { text-align: center; margin: 30px 0 4px; }
             .continue-btn {
                 display: inline-flex;
                 align-items: center;
@@ -1017,8 +1027,8 @@
                 justify-content: center;
             }
             .poem-text {
-                font-family: var(--font-mono);
-                font-size: 14px;
+                font-family: "Tiny5", var(--font-mono);
+                font-size: 16px;
                 color: #555;
                 line-height: 1.9;
                 white-space: pre-line;
@@ -1206,6 +1216,18 @@
                 }
             }
 
+                    .relweb-section { margin: 50px 0; }
+            .relweb { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin: 40px 0 0; }
+            .relweb-card { border: 1px solid var(--line, #e2e2e2); padding: 24px 22px 26px; background: #fff; transition: box-shadow 0.3s, transform 0.3s; }
+            .relweb-card:hover { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); transform: translateY(-3px); }
+            .relweb-jump { text-decoration: none; color: inherit; display: block; }
+            .relweb-jump .rw-icon { width: auto; height: 60px; object-fit: contain; display: block; margin-bottom: 14px; }
+            .relweb-jump h3 { margin: 0 0 16px; font-family: var(--font-display, inherit); font-weight: 300; font-size: 21px; color: var(--ink, #111); font-style: italic; }
+            .relweb-jump:hover h3 { text-decoration: underline; }
+            .relweb-card ul { margin: 0; padding: 0; list-style: none; }
+            .relweb-card li { font-size: 13.5px; color: #555; padding: 9px 0; border-top: 1px solid var(--line, #eee); line-height: 1.5; }
+            .relweb-card li:first-child { border-top: none; }
+            .relweb-card li b { color: var(--ink, #111); font-weight: 600; }
         </style>
     </head>
     <body>
@@ -1243,7 +1265,7 @@
             <section class="hero-section">
                 <div class="hero-left">
                     <div class="continue-actions">
-                        <a class="continue-btn" href="index.html"
+                        <a class="continue-btn" href="index.html#field-guide"
                             ><span class="arrow" aria-hidden="true">←</span>
                             Continue exploring Field Guide</a>
                     </div>
@@ -1324,16 +1346,42 @@
             </section>
 
             <hr />
+            <style>
+                .montado-photo { margin: 40px 0; }
+                .montado-photo img { width: 100%; height: auto; display: block; border-radius: 0; }
+                .montado-photo figcaption { margin-top: 9px; font-size: 12px; line-height: 1.55; color: #888; }
+                .montado-photo figcaption a { color: var(--accent, #777); }
+                .montado-photo.diagram img { max-width: 760px; margin: 0 auto; border: 1px solid var(--line, #e2e2e2); border-radius: 0; background: #fff; }
+                .twoscale .caption-text { max-width: none; }
+                .twoscale a.el { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+            </style>
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Geschilde_kurkeiken_in_een_bosje,_Bestanddeelnr_254-0677.jpg?width=1000" alt="Cork oaks with their bark harvested, in a grove" loading="lazy" />
+                <figcaption>Cork oaks stripped of their bark in an Iberian grove — cork is harvested every few years without felling the tree, so the oak keeps growing and storing carbon.<sup class="ref" data-ref="tsImg" role="button" tabindex="0" aria-label="image source"></sup></figcaption>
+            </figure>
+            <section class="content-block twoscale">
+                <div class="caption-text wide">The oak is the montado’s carbon sink made visible. Its long-lived wood, regenerating cork and deep soils hold carbon for centuries, which is why cork-oak woodlands are valued as Mediterranean carbon stores.<sup class="ref" data-ref="tsSink" role="button" tabindex="0" aria-label="source"></sup> Whether that store grows or empties turns on the tree’s survival: a stand lost to <a class="el" href="phytophthora-cinnamomi.html">Phytophthora</a> stops fixing CO₂ and begins releasing it, flipping the montado from sink to source across the <a class="el" href="carbon-cycle.html">carbon cycle</a> — the point where one tree’s fate meets the global atmosphere.</div>
+            </section>
+
+            <hr />
+            <section class="relweb-section">
+                <div class="caption-text wide" style="margin-top: 6px">The cork and holm oaks are the montado's centre. Everything here flows toward them — carbon from the air, nitrogen and phosphorus freed by microbes, and the pathogen that threatens their roots.<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup></div>
+                <div class="relweb"><div class="relweb-card"><a class="relweb-jump" href="carbon-dioxide.html"><img class="rw-icon" src="images/CO2.webp" alt="Carbon dioxide" loading="lazy" /><h3>Carbon dioxide</h3></a><ul><li>Its leaves fix CO₂ into wood, cork and acorns<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup></li><li>Stored for centuries as a carbon sink<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup></li><li>The montado takes in more than it releases<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="glucose.html"><img class="rw-icon" src="images/C6H12O6.webp" alt="Glucose" loading="lazy" /><h3>Glucose</h3></a><ul><li>Photosynthesis turns that carbon into sugar</li><li>The oak builds itself from it</li><li>And leaks a share to feed its root microbes</li></ul></div><div class="relweb-card"><a class="relweb-jump" href="ammonia.html"><img class="rw-icon" src="images/NH3.webp" alt="Ammonia" loading="lazy" /><h3>Ammonia</h3></a><ul><li>Every protein in the oak traces back to ammonia</li><li>Fixed from the air by the pasture's legumes</li><li>Fed to the tree through litter and soil</li></ul></div><div class="relweb-card"><a class="relweb-jump" href="dihydrogen-phosphate.html"><img class="rw-icon" src="images/H2PO4.webp" alt="Dihydrogen phosphate" loading="lazy" /><h3>Dihydrogen phosphate</h3></a><ul><li>The phosphorus its roots take up</li><li>Freed from locked minerals by soil microbes</li><li>Scarce in the montado's acid ground</li></ul></div><div class="relweb-card"><a class="relweb-jump" href="phytophthora-cinnamomi.html"><img class="rw-icon" src="images/phytophthora-cinnamomi-4.webp" alt="Phytophthora" loading="lazy" /><h3>Phytophthora</h3></a><ul><li>The water mould that rots its fine roots</li><li>Cause of the montado's a seca decline</li><li>Held back by the soil's defender microbes</li></ul></div><div class="relweb-card"><a class="relweb-jump" href="streptomyces-griseus.html"><img class="rw-icon" src="images/streptomyces-griseus-13.webp" alt="Streptomyces" loading="lazy" /><h3>Streptomyces</h3></a><ul><li>Its fallen leaves are broken into humus<sup class="ref" data-ref="corksoil" role="button" tabindex="0" aria-label="source"></sup></li><li>By actinomycetes and acidobacteria<sup class="ref" data-ref="corksoil" role="button" tabindex="0" aria-label="source"></sup></li><li>Returning carbon and nutrients to the soil<sup class="ref" data-ref="corksoil" role="button" tabindex="0" aria-label="source"></sup></li></ul></div></div>
+            </section>
+
+            <hr />
             <section class="poem-section">
                 <div class="poem-text">Two things fall from the oak each year:
-the leaf, which becomes the soil,
-and the acorn, which becomes the pig,
-which becomes the ham, which becomes
-a table, a village, a way of life.
+the leaf,
+which becomes the soil,
+and the acorn,
+which becomes the pig,
+which becomes the ham,
+which becomes a table,
+a village,
+a way of life.
 
-A thousand years of people
-have lived on what drops from these trees
-in the quiet of an Alentejo autumn.</div>
+A thousand years of people have lived on what drops from these trees in the quiet of an Alentejo autumn.</div>
             </section>
 
             <section class="refs-footer">
@@ -1343,34 +1391,9 @@ in the quiet of an Alentejo autumn.</div>
 
             <hr />
 
-            <section class="explore-section">
-                <div class="explore-title">Explore Related Elements</div>
-                <div class="explore-scroller">
-                    <div class="explore-grid" id="exploreGrid">
-<a href="carbon-cycle.html" class="explore-item">
-                            <img src="images/carbon-cycle.webp" alt="The Carbon Cycle" />
-                            <span>The Carbon Cycle</span>
-                        </a>
-<a href="lignin-hemicellulose.html" class="explore-item">
-                            <img src="images/lignin-hemicellulose.webp" alt="Lignin and Hemicellulose" />
-                            <span>Lignin and Hemicellulose</span>
-                        </a>
-<a href="glucose.html" class="explore-item">
-                            <img src="images/C6H12O6.webp" alt="Glucose" />
-                            <span>Glucose</span>
-                        </a>
-<a href="bryobacter-aggregatus.html" class="explore-item">
-                            <img src="images/bryobacter-aggregatus-7.webp" alt="Bryobacter aggregatus" />
-                            <span>Bryobacter aggregatus</span>
-                        </a>
-<a href="phytophthora-cinnamomi.html" class="explore-item">
-                            <img src="images/phytophthora-cinnamomi-4.webp" alt="Phytophthora cinnamomi" />
-                            <span>Phytophthora cinnamomi</span>
-                        </a>
-                    </div>
-                    <button class="explore-arrow" id="exploreArrow" aria-label="Scroll right">›</button>
-                </div>
-            </section>
+            <div class="continue-bottom">
+                <a class="continue-btn" href="index.html#field-guide"><span class="arrow" aria-hidden="true">←</span> Continue exploring Field Guide</a>
+            </div>
         </div>
 
         <script>
@@ -1413,7 +1436,7 @@ in the quiet of an Alentejo autumn.</div>
                     ],
                     "2": [
                                         {
-                                                            "t": "Leaf litter decomposition by soil fungi, actinomycetes and acidobacteria returns carbon and nutrients to montado soil as humus. Mendes, R., et al. (2021).",
+                                                            "t": "Leaf litter decomposition by soil fungi, actinomycetes and acidobacteria returns carbon and nutrients to montado soil as humus. Reis, F., et al. (2021).",
                                                             "url": "https://doi.org/10.3390/microorganisms9091973"
                                         }
                     ],
@@ -1446,8 +1469,8 @@ in the quiet of an Alentejo autumn.</div>
                     var byUrl = {};
                     if (typeof REFS !== "undefined")
                         for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
-                    var html =
-                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
+                    var map = window.__refNum || {};
+                    var html = "";
                     cites.forEach(function (c) {
                         var m = byUrl[c.url], title, meta;
                         if (m) {
@@ -1460,6 +1483,9 @@ in the quiet of an Alentejo autumn.</div>
                                 p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
                         }
                         html +=
+                            '<div class="rc-kicker">Reference ' +
+                            (map[c.url] || "") +
+                            "</div>" +
                             (title
                                 ? '<div class="rc-title">' + esc(title) + "</div>"
                                 : "") +
@@ -1526,6 +1552,9 @@ in the quiet of an Alentejo autumn.</div>
             })();
 
             var REFS = {
+                tsSink: { title: "Cork oak wooded grasslands: plant diversity, pasture &amp; soil carbon", meta: "Seddaiu, G., Bagella, S., Pulina, A., et al. (2018). Mediterranean cork oak wooded grasslands: synergies and trade-offs between plant diversity, pasture production and soil carbon. Agroforestry Systems, 92, 893–908.", url: "https://doi.org/10.1007/s10457-018-0225-7" },
+                tsImg: { title: "Image: cork oaks after cork harvest", meta: "Wikimedia Commons. Cork oaks stripped of cork, Llagostera, Catalonia. Photo: Willem van de Poll / Nationaal Archief. Public domain (CC0).", url: "https://commons.wikimedia.org/wiki/File:Geschilde_kurkeiken_in_een_bosje,_Bestanddeelnr_254-0677.jpg" },
+
                 "bugalho": {
                                 "title": "Mediterranean cork oak savannas & ecosystem services",
                                 "meta": "Bugalho, M. N., Caldeira, M. C., Pereira, J. S., Aronson, J., & Pausas, J. G. (2011). Mediterranean cork oak savannas require human use to sustain biodiversity and ecosystem services. Frontiers in Ecology and the Environment, 9(5), 278–286.",
@@ -1534,7 +1563,7 @@ in the quiet of an Alentejo autumn.</div>
                 },
                 "corksoil": {
                                 "title": "Actinobacteria & litter breakdown in cork-oak soils",
-                                "meta": "Mendes, R., et al. (2021). Cork oak forests soil bacteria. Microorganisms, 9(9), 1973. Actinomycetes and Acidobacteria (Bryobacter) help decompose lignified litter into humus.",
+                                "meta": "Reis, F., et al. (2021). Cork oak forests soil bacteria. Microorganisms, 9(9), 1973. Actinomycetes and Acidobacteria (Bryobacter) help decompose lignified litter into humus.",
                                 "url": "https://doi.org/10.3390/microorganisms9091973",
                                 "n": 2
                 }
@@ -1648,41 +1677,42 @@ in the quiet of an Alentejo autumn.</div>
                     var r = B[raw] || {};
                     return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
                 }
-                var seen = {}, order = [];
+                var urlNum = {}, orderCites = [];
                 document
                     .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
                     .forEach(function (el) {
                         var cs = citesOf(el);
-                        var key =
-                            cs.map(function (c) { return c.url; }).join("|") ||
-                            el.getAttribute("data-ref");
-                        if (!(key in seen)) {
-                            order.push(cs);
-                            seen[key] = order.length;
-                        }
-                        el.dataset.num = seen[key];
+                        var nums = [];
+                        cs.forEach(function (c) {
+                            var key = c.url || c.meta || "";
+                            if (!(key in urlNum)) {
+                                orderCites.push(c);
+                                urlNum[key] = orderCites.length;
+                            }
+                            nums.push(urlNum[key]);
+                        });
+                        el.dataset.nums = nums.join(",");
+                        el.dataset.num = nums[0] || "";
                     });
+                window.__refNum = {};
+                orderCites.forEach(function (c, i) {
+                    window.__refNum[c.url || c.meta || ""] = i + 1;
+                });
                 var list = document.getElementById("refsList");
                 if (list) {
-                    list.innerHTML = order
-                        .map(function (cs, i) {
-                            var inner = cs
-                                .map(function (c) {
-                                    var link = c.url
-                                        ? ' <a href="' + c.url +
-                                          '" target="_blank" rel="noopener">Open ↗</a>'
-                                        : "";
-                                    return (
-                                        (c.title
-                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
-                                            : "") +
-                                        esc(c.meta) + link
-                                    );
-                                })
-                                .join("<br />");
+                    list.innerHTML = orderCites
+                        .map(function (c, i) {
+                            var link = c.url
+                                ? ' <a href="' + c.url +
+                                  '" target="_blank" rel="noopener">Open ↗</a>'
+                                : "";
                             return (
                                 '<li><span class="rn">[' + (i + 1) +
-                                "]</span><span>" + inner + "</span></li>"
+                                "]</span><span>" +
+                                (c.title
+                                    ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                    : "") +
+                                esc(c.meta) + link + "</span></li>"
                             );
                         })
                         .join("");

@@ -65,7 +65,9 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 2560 / 1600; 
+                aspect-ratio: 2560 / 1600;
+                object-fit: cover;
+                object-position: center 35%; 
             }
 
             .hero-copy {
@@ -430,6 +432,7 @@
                 flex-wrap: wrap;
                 margin-bottom: 26px;
             }
+            .continue-bottom { text-align: center; margin: 30px 0 4px; }
             .continue-btn {
                 display: inline-flex;
                 align-items: center;
@@ -1249,7 +1252,7 @@
             <section class="hero-section">
                 <div class="hero-left">
                     <div class="continue-actions">
-                        <a class="continue-btn" href="index.html"
+                        <a class="continue-btn" href="index.html#field-guide"
                             ><span class="arrow" aria-hidden="true">←</span>
                             Continue exploring Field Guide</a
                         >
@@ -1790,6 +1793,34 @@
                 </div>
             </section>
 
+            <hr />
+
+            <style>
+                .montado-photo { margin: 40px 0; }
+                .montado-photo img { width: 100%; height: auto; display: block; border-radius: 0; }
+                .montado-photo figcaption { margin-top: 9px; font-size: 12px; line-height: 1.55; color: #888; }
+                .montado-photo figcaption a { color: var(--accent, #777); }
+                .montado-photo.diagram img { max-width: 760px; margin: 0 auto; border: 1px solid var(--line, #e2e2e2); border-radius: 0; background: #fff; }
+                .twoscale .caption-text { max-width: none; }
+                .twoscale a.el { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+            </style>
+
+            <section class="content-block twoscale">
+                <div class="caption-text wide">
+                    Everything on this page happens at the scale of a microscopic zoospore swimming through a film of soil water — yet its consequences do not stay there. When <span class="sci">Phytophthora cinnamomi</span> rots the fine roots of a <a class="el" href="oak-leaves-acorns.html">cork oak</a>, the tree that dies was one of the montado's largest carbon stores: long-lived wood, regenerating bark and deep soil that hold carbon for centuries.<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup> A stand killed by root rot stops fixing CO₂ and begins releasing it — the <a class="el" href="carbon-cycle.html">carbon</a> sink tips toward a carbon source, and the montado's very extent contracts across the landscape.<sup class="ref" data-ref="declineSpatial" role="button" tabindex="0" aria-label="source"></sup>
+                    <p style="margin-top:1.1em">
+                    The loop closes because the global scale reaches back down. Warmer, wetter winters and the drought stress of a changing climate are exactly the conditions that let this warm-soil pathogen spread and overwhelm the oak's defences.<sup class="ref" data-ref="brasier" role="button" tabindex="0" aria-label="source"></sup><sup class="ref" data-ref="declineReview" role="button" tabindex="0" aria-label="source"></sup> So the arrow runs both ways: a warming atmosphere empowers a microbe you need a microscope to see, and that microbe — multiplied across the roughly three million hectares of Iberian montado and dehesa — feeds carbon back to the same atmosphere. Micro and macro are not two stories here; they are one feedback loop, and <span class="sci">Phytophthora</span> is where it turns. You can trace the whole loop in the <b>Web of Relations</b> panel — the button at the corner of every page.
+                    </p>
+                </div>
+            </section>
+
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Korkeichenkrankheit.jpg?width=1000" alt="A cork oak in decline, with dead branches and a thinning crown" loading="lazy" />
+                <figcaption>A cork oak in decline — dead limbs and a thinning crown. When root rot kills trees like this, the montado&#39;s carbon store is released rather than held.<sup class="ref" data-ref="imgKeeling" role="button" tabindex="0" aria-label="image source"></sup></figcaption>
+            </figure>
+
+            <hr />
+
             <section class="refs-footer">
                 <div class="sec-head">Sources &amp; reading</div>
                 <ol class="refs-list" id="refsList"></ol>
@@ -1797,74 +1828,9 @@
 
             <hr />
 
-            <section class="explore-section">
-                <div class="explore-title">Explore Related Elements</div>
-                <div class="explore-scroller">
-                    <div class="explore-grid" id="exploreGrid">
-                        <a
-                            href="phytophthora-cinnamomi.html"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/phytophthora-cinnamomi-4.webp"
-                                alt="Phytophthora cinnamomi"
-                            />
-                            <span>Phytophthora cinnamomi</span>
-                        </a>
-                        <a
-                            href="pseudomonas-fluorescens.html"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/pseudomonas-fluorescens-1.webp"
-                                alt="Fluorescent Pseudomonas"
-                            />
-                            <span>Fluorescent Pseudomonas</span>
-                        </a>
-                        <a
-                            href="bacillus-subtilis.html"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/bacillus-subtilis-1.webp"
-                                alt="Bacillus subtilis"
-                            />
-                            <span>Bacillus subtilis</span>
-                        </a>
-                        <a
-                            href="streptomyces-griseus.html"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/streptomyces-griseus-13.webp"
-                                alt="Streptomyces griseus"
-                            />
-                            <span>Streptomyces griseus</span>
-                        </a>
-                        <a href="rhizobia.html" class="explore-item">
-                            <img src="images/rhizobia-3.webp" alt="Rhizobia" />
-                            <span>Rhizobia</span>
-                        </a>
-                        <a
-                            href="bacillus-megaterium.html"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/bacillus-megaterium-2.webp"
-                                alt="Bacillus megaterium"
-                            />
-                            <span>Bacillus megaterium</span>
-                        </a>
-                    </div>
-                    <button
-                        class="explore-arrow"
-                        id="exploreArrow"
-                        aria-label="Scroll right"
-                    >
-                        ›
-                    </button>
-                </div>
-            </section>
+            <div class="continue-bottom">
+                <a class="continue-btn" href="index.html#field-guide"><span class="arrow" aria-hidden="true">←</span> Continue exploring Field Guide</a>
+            </div>
         </div>
 
         <script>
@@ -1978,8 +1944,8 @@
                     var byUrl = {};
                     if (typeof REFS !== "undefined")
                         for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
-                    var html =
-                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
+                    var map = window.__refNum || {};
+                    var html = "";
                     cites.forEach(function (c) {
                         var m = byUrl[c.url], title, meta;
                         if (m) {
@@ -1992,6 +1958,9 @@
                                 p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
                         }
                         html +=
+                            '<div class="rc-kicker">Reference ' +
+                            (map[c.url] || "") +
+                            "</div>" +
                             (title
                                 ? '<div class="rc-title">' + esc(title) + "</div>"
                                 : "") +
@@ -2093,6 +2062,31 @@
                     title: "Phytophthora cinnamomi asexual phase — watercolour",
                     meta: "Watercolour by Zihan Gao, after a micrograph by Gloria Abad (USDA-APHIS-PPQ). Via IDphy.",
                     url: "https://idtools.org/phytophthora/index.cfm?packageID=1131&entityID=5043",
+                },
+                brasier: {
+                    title: "Climate change enhances P. cinnamomi in southern Europe",
+                    meta: "Brasier, C. M. (1996). Phytophthora cinnamomi and oak decline in southern Europe: environmental constraints including climate change. Annales des Sciences Forestières, 53(2–3), 347–358. CLIMEX modelling indicates warming would significantly enhance the pathogen's activity in the western Mediterranean.",
+                    url: "https://hal.science/hal-00883057v1",
+                },
+                declineReview: {
+                    title: "Decline of Mediterranean oak trees & its association with P. cinnamomi",
+                    meta: "Camilo-Alves, C., Clara, M. I. E., & Ribeiro, N. M. C. A. (2013). Decline of Mediterranean oak trees and its association with Phytophthora cinnamomi: a review. European Journal of Forest Research, 132(3), 411–432.",
+                    url: "https://doi.org/10.1007/s10342-013-0688-z",
+                },
+                declineSpatial: {
+                    title: "Iberian oak decline caused by P. cinnamomi at landscape scale",
+                    meta: "Cardillo, E., Abad, E., & Meyer, S. (2021). Iberian oak decline caused by Phytophthora cinnamomi: a spatiotemporal analysis incorporating the effect of host heterogeneities at landscape scale. Forest Pathology, 51(2), e12667.",
+                    url: "https://doi.org/10.1111/efp.12667",
+                },
+                bugalho: {
+                    title: "Mediterranean cork oak savannas & ecosystem services",
+                    meta: "Bugalho, M. N., Caldeira, M. C., Pereira, J. S., Aronson, J., & Pausas, J. G. (2011). Mediterranean cork oak savannas require human use to sustain biodiversity and ecosystem services. Frontiers in Ecology and the Environment, 9(5), 278–286.",
+                    url: "https://doi.org/10.1890/100084",
+                },
+                imgKeeling: {
+                    title: "Image: cork oak in decline",
+                    meta: "Wikimedia Commons. A diseased / declining cork oak (Quercus suber). Author: Bunks (German Wikipedia). CC BY-SA 3.0.",
+                    url: "https://commons.wikimedia.org/wiki/File:Korkeichenkrankheit.jpg",
                 },
             };
 
@@ -2204,41 +2198,42 @@
                     var r = B[raw] || {};
                     return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
                 }
-                var seen = {}, order = [];
+                var urlNum = {}, orderCites = [];
                 document
                     .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
                     .forEach(function (el) {
                         var cs = citesOf(el);
-                        var key =
-                            cs.map(function (c) { return c.url; }).join("|") ||
-                            el.getAttribute("data-ref");
-                        if (!(key in seen)) {
-                            order.push(cs);
-                            seen[key] = order.length;
-                        }
-                        el.dataset.num = seen[key];
+                        var nums = [];
+                        cs.forEach(function (c) {
+                            var key = c.url || c.meta || "";
+                            if (!(key in urlNum)) {
+                                orderCites.push(c);
+                                urlNum[key] = orderCites.length;
+                            }
+                            nums.push(urlNum[key]);
+                        });
+                        el.dataset.nums = nums.join(",");
+                        el.dataset.num = nums[0] || "";
                     });
+                window.__refNum = {};
+                orderCites.forEach(function (c, i) {
+                    window.__refNum[c.url || c.meta || ""] = i + 1;
+                });
                 var list = document.getElementById("refsList");
                 if (list) {
-                    list.innerHTML = order
-                        .map(function (cs, i) {
-                            var inner = cs
-                                .map(function (c) {
-                                    var link = c.url
-                                        ? ' <a href="' + c.url +
-                                          '" target="_blank" rel="noopener">Open ↗</a>'
-                                        : "";
-                                    return (
-                                        (c.title
-                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
-                                            : "") +
-                                        esc(c.meta) + link
-                                    );
-                                })
-                                .join("<br />");
+                    list.innerHTML = orderCites
+                        .map(function (c, i) {
+                            var link = c.url
+                                ? ' <a href="' + c.url +
+                                  '" target="_blank" rel="noopener">Open ↗</a>'
+                                : "";
                             return (
                                 '<li><span class="rn">[' + (i + 1) +
-                                "]</span><span>" + inner + "</span></li>"
+                                "]</span><span>" +
+                                (c.title
+                                    ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                    : "") +
+                                esc(c.meta) + link + "</span></li>"
                             );
                         })
                         .join("");

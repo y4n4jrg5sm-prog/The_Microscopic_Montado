@@ -12,16 +12,22 @@
                 --p1-y: 55%;
                 --p2-x: 47.4%;
                 --p2-y: 74.5%;
+                --p3-x: 47.4%;
+                --p3-y: 99%;
 
                 --scene-x: 4vw;
                 --scene-y: -20vh;
 
-                --edge: clamp(28px, 5vw, 80px);       
-                --mid: clamp(14px, 2.4vw, 36px);      
-                --panel-w: calc((100vw - 2 * var(--edge) - var(--mid)) / 2);
-                --panel-top: clamp(56px, 9vh, 110px); 
+                --edge: clamp(28px, 5vw, 80px);
+                --mid: clamp(14px, 2.4vw, 36px);
+                --panel-w: clamp(200px, 26vw, 420px);
+                --panel-top: clamp(56px, 9vh, 110px);
+                /* staggered top offsets for the three video panels */
+                --p-top-1: 3vh;
+                --p-top-2: 22vh;
+                --p-top-3: 41vh;
                 --cap-gap: 14px;
-                --cap-w: var(--panel-w);              
+                --cap-w: var(--panel-w);
 
                 --region-bloom: 2s;
                 --panel-bloom: 1.3s;
@@ -37,8 +43,8 @@
                 --frame-thickness: 3px; 
                 --corner: 10px; 
                 --frame-color: #fff; 
-                --frame-breathe: 2s; 
-                --frame-breathe-scale: 0.7; 
+                --frame-breathe: 2s;
+                --frame-breathe-scale: 0.9;
             }
 
             * {
@@ -164,6 +170,10 @@
                 left: var(--p2-x);
                 top: var(--p2-y);
             }
+            .beacon--p3 {
+                left: var(--p3-x);
+                top: var(--p3-y);
+            }
             .beacon .label {
                 position: absolute;
                 left: 50%;
@@ -218,14 +228,16 @@
                 pointer-events: auto;
             }
             .panel--tl {
-                
                 left: var(--edge);
-                top: var(--panel-top);
+                top: var(--p-top-1);
+            }
+            .panel--mid {
+                left: calc(50vw - var(--panel-w) / 2);
+                top: var(--p-top-2);
             }
             .panel--br {
-                
                 right: var(--edge);
-                top: var(--panel-top);
+                top: var(--p-top-3);
             }
             .panel video {
                 width: 100%;
@@ -291,18 +303,23 @@
                 color: rgba(0, 0, 0, 0.72);
             }
             .cap--tl {
-                
                 left: var(--edge);
                 top: calc(
-                    var(--panel-top) + var(--panel-w) * 9 / 16 + var(--cap-gap)
+                    var(--p-top-1) + var(--panel-w) * 9 / 16 + var(--cap-gap)
+                );
+                text-align: left;
+            }
+            .cap--mid {
+                left: calc(50vw - var(--panel-w) / 2);
+                top: calc(
+                    var(--p-top-2) + var(--panel-w) * 9 / 16 + var(--cap-gap)
                 );
                 text-align: left;
             }
             .cap--br {
-                
                 right: var(--edge);
                 top: calc(
-                    var(--panel-top) + var(--panel-w) * 9 / 16 + var(--cap-gap)
+                    var(--p-top-3) + var(--panel-w) * 9 / 16 + var(--cap-gap)
                 );
                 text-align: left;
             }
@@ -628,6 +645,9 @@
             <button class="beacon beacon--p2" id="site2" aria-label="Site 2">
                 <span class="label">A Holm Oak Farm</span>
             </button>
+            <button class="beacon beacon--p3" id="site3" aria-label="Site 3">
+                <span class="label">A super-intensive olive plantation</span>
+            </button>
         </div>
 
         <div class="panel panel--tl" id="panel1" aria-hidden="true">
@@ -638,11 +658,19 @@
                 ✕
             </button>
         </div>
-        <div class="panel panel--br" id="panel2" aria-hidden="true">
+        <div class="panel panel--mid" id="panel2" aria-hidden="true">
             <video playsinline preload="auto" loop>
                 <source src="videos/clip2.mp4" type="video/mp4" />
             </video>
             <button class="panel__close" data-close="2" aria-label="Close video">
+                ✕
+            </button>
+        </div>
+        <div class="panel panel--br" id="panel3" aria-hidden="true">
+            <video playsinline preload="auto" loop>
+                <source src="videos/olive-plantation.mp4" type="video/mp4" />
+            </video>
+            <button class="panel__close" data-close="3" aria-label="Close video">
                 ✕
             </button>
         </div>
@@ -662,7 +690,7 @@
             </div>
         </div>
 
-        <div class="cap cap--br" id="cap2">
+        <div class="cap cap--mid" id="cap2">
             <div class="cap__title">Site 2 · Eva's montado — near Ferreira do Alentejo</div>
             <div class="cap__desc">
                 An unnamed holm-oak montado at 38°01′40″N, 8°04′33″W, run by
@@ -678,6 +706,20 @@
                 water retention, biodiversity and carbon storage, yet its
                 keepers are still barely paid for that value. This is the ground
                 the project speaks from.
+            </div>
+        </div>
+
+        <div class="cap cap--br" id="cap3">
+            <div class="cap__title">A super-intensive olive plantation — what replaces the montado</div>
+            <div class="cap__desc">
+                This is what moves in when the montado goes: a super-intensive,
+                drip-irrigated olive orchard, the trees packed into dense
+                hedgerows on ground that has been cleared, ploughed and laid
+                bare. Yields are high but brief — plantations like this exhaust
+                themselves in roughly 15–25 years before they must be grubbed
+                out and replanted. Where the oaks held water, carbon and
+                biodiversity in the soil for centuries, the olive monoculture
+                draws them down in decades.
             </div>
         </div>
 
@@ -742,10 +784,13 @@
             var region = document.getElementById("region");
             var site1 = document.getElementById("site1");
             var site2 = document.getElementById("site2");
+            var site3 = document.getElementById("site3");
             var panel1 = document.getElementById("panel1");
             var panel2 = document.getElementById("panel2");
+            var panel3 = document.getElementById("panel3");
             var cap1 = document.getElementById("cap1");
             var cap2 = document.getElementById("cap2");
+            var cap3 = document.getElementById("cap3");
             var intro = document.getElementById("intro");
 
             (function openRegionOnLoad() {
@@ -753,10 +798,11 @@
                 region.setAttribute("aria-hidden", "false");
             })();
 
-            var opened = { p1: false, p2: false };
+            var opened = { p1: false, p2: false, p3: false };
             function markOpened(key) {
                 opened[key] = true;
-                if (opened.p1 && opened.p2) intro.classList.add("show");
+                // Intro ("The Microscopic Montado" + ENTER) no longer pops up
+                // automatically after all videos are opened.
             }
 
             function openPanel(panel, beacon, key, caption) {
@@ -826,13 +872,20 @@
             site2.addEventListener("click", function () {
                 openPanel(panel2, site2, "p2", cap2);
             });
+            site3.addEventListener("click", function () {
+                openPanel(panel3, site3, "p3", cap3);
+            });
 
+            var panelMap = {
+                "1": { panel: panel1, beacon: site1, cap: cap1 },
+                "2": { panel: panel2, beacon: site2, cap: cap2 },
+                "3": { panel: panel3, beacon: site3, cap: cap3 },
+            };
             document.querySelectorAll(".panel__close").forEach(function (btn) {
                 btn.addEventListener("click", function (e) {
                     e.stopPropagation();
-                    if (btn.dataset.close === "1")
-                        closePanel(panel1, site1, cap1);
-                    else closePanel(panel2, site2, cap2);
+                    var m = panelMap[btn.dataset.close];
+                    if (m) closePanel(m.panel, m.beacon, m.cap);
                 });
             });
 
@@ -893,7 +946,8 @@
             function rsUpdateBlur() {
                 var any =
                     panel1.classList.contains("is-open") ||
-                    panel2.classList.contains("is-open");
+                    panel2.classList.contains("is-open") ||
+                    panel3.classList.contains("is-open");
                 if (rsOverlay) rsOverlay.classList.toggle("blur", any);
             }
 

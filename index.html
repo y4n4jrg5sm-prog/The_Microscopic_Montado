@@ -218,6 +218,40 @@
             (function () {
                 const app = document.getElementById("app");
                 const bar = document.getElementById("toggle-bar");
+                const stage = document.getElementById("stage");
+
+                // Arriving with #field-guide (e.g. from a detail page's
+                // "Continue exploring Field Guide" button): open directly on the
+                // lower half (Field Guide), with no slide animation.
+                function goFieldGuide(instant) {
+                    if (instant) {
+                        const st = stage.style.transition;
+                        const bt = bar.style.transition;
+                        stage.style.transition = "none";
+                        bar.style.transition = "none";
+                        app.classList.add("at-top");
+                        void app.offsetWidth; // force reflow
+                        stage.style.transition = st;
+                        bar.style.transition = bt;
+                    } else {
+                        app.classList.add("at-top");
+                    }
+                }
+
+                if (
+                    location.hash === "#field-guide" ||
+                    location.hash === "#fieldguide"
+                ) {
+                    goFieldGuide(true);
+                }
+                window.addEventListener("hashchange", function () {
+                    if (
+                        location.hash === "#field-guide" ||
+                        location.hash === "#fieldguide"
+                    )
+                        goFieldGuide(false);
+                });
+
                 bar.addEventListener("click", function () {
                     app.classList.toggle("at-top");
                 });

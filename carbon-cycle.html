@@ -48,6 +48,13 @@
                 font-style: normal;
                 font-display: swap;
             }
+            @font-face {
+                font-family: "Tiny5";
+                src: url("fonts/Tiny5-Regular.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
 
             .hero-scroll {
                 position: relative;
@@ -63,7 +70,9 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 2560 / 1600; 
+                aspect-ratio: 2560 / 1600;
+                object-fit: cover;
+                object-position: center 35%; 
             }
 
             .hero-copy {
@@ -428,6 +437,7 @@
                 flex-wrap: wrap;
                 margin-bottom: 26px;
             }
+            .continue-bottom { text-align: center; margin: 30px 0 4px; }
             .continue-btn {
                 display: inline-flex;
                 align-items: center;
@@ -572,8 +582,17 @@
             .caption-text.wide {
                 max-width: none;
                 width: 100%;
-                grid-column: 1 / -1; 
+                grid-column: 1 / -1;
             }
+
+            .montado-photo { margin: 40px 0; }
+            .montado-photo img { width: 100%; height: auto; display: block; border-radius: 0; }
+            .montado-photo figcaption { margin-top: 9px; font-size: 12px; line-height: 1.55; color: #888; }
+            .montado-photo figcaption a { color: var(--accent, #777); text-decoration: none; }
+            .montado-photo figcaption a:hover { text-decoration: underline; }
+            .montado-photo.diagram img { max-width: 760px; margin: 0 auto; border: 1px solid var(--line, #e2e2e2); border-radius: 0; background: #fff; }
+            .note-block { margin: 50px 0; }
+            .note-block .caption-text { max-width: none; }
 
             .stats-prose {
                 grid-column: 1 / -1;
@@ -1017,8 +1036,8 @@
                 justify-content: center;
             }
             .poem-text {
-                font-family: var(--font-mono);
-                font-size: 14px;
+                font-family: "Tiny5", var(--font-mono);
+                font-size: 16px;
                 color: #555;
                 line-height: 1.9;
                 white-space: pre-line;
@@ -1206,6 +1225,18 @@
                 }
             }
 
+                    .relweb-section { margin: 50px 0; }
+            .relweb { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin: 40px 0 0; }
+            .relweb-card { border: 1px solid var(--line, #e2e2e2); padding: 24px 22px 26px; background: #fff; transition: box-shadow 0.3s, transform 0.3s; }
+            .relweb-card:hover { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); transform: translateY(-3px); }
+            .relweb-jump { text-decoration: none; color: inherit; display: block; }
+            .relweb-jump .rw-icon { width: auto; height: 60px; object-fit: contain; display: block; margin-bottom: 14px; }
+            .relweb-jump h3 { margin: 0 0 16px; font-family: var(--font-display, inherit); font-weight: 300; font-size: 21px; color: var(--ink, #111); font-style: italic; }
+            .relweb-jump:hover h3 { text-decoration: underline; }
+            .relweb-card ul { margin: 0; padding: 0; list-style: none; }
+            .relweb-card li { font-size: 13.5px; color: #555; padding: 9px 0; border-top: 1px solid var(--line, #eee); line-height: 1.5; }
+            .relweb-card li:first-child { border-top: none; }
+            .relweb-card li b { color: var(--ink, #111); font-weight: 600; }
         </style>
     </head>
     <body>
@@ -1243,7 +1274,7 @@
             <section class="hero-section">
                 <div class="hero-left">
                     <div class="continue-actions">
-                        <a class="continue-btn" href="index.html"
+                        <a class="continue-btn" href="index.html#field-guide"
                             ><span class="arrow" aria-hidden="true">←</span>
                             Continue exploring Field Guide</a>
                     </div>
@@ -1272,6 +1303,11 @@
                     montado is carbon, endlessly changing hands.
                 </div>
             </section>
+
+            <figure class="montado-photo diagram">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Carbon_cycle.jpg?width=1100" alt="Diagram of the carbon cycle — carbon exchanged between atmosphere, plants, animals, soil and oceans" loading="lazy" />
+                <figcaption>The carbon cycle in full: carbon fixed from the air, built into living tissue, and returned by respiration and decay — the loop every element in this Field Guide belongs to.<sup class="ref" data-ref="imgDiagram" role="button" tabindex="0" aria-label="image source"></sup></figcaption>
+            </figure>
 
             <hr />
             <section class="content-block">
@@ -1302,15 +1338,31 @@
                 </p>
             </section>
 
+            <section class="content-block">
+                <div class="caption-text wide">Whether the montado keeps drawing carbon down depends on the woodland staying alive: a single soil pathogen, <a href="phytophthora-cinnamomi.html" style="color:inherit;text-decoration:underline;text-underline-offset:2px">Phytophthora cinnamomi</a>, can flip the montado from carbon sink to carbon source — the point where the microscopic and the global close into one loop.</div>
+            </section>
+
+                        <hr />
+
+            <section class="relweb-section">
+                <div class="caption-text wide" style="margin-top: 6px">The carbon cycle is the montado's deepest, slowest loop — carbon fixed from the air by photosynthesis, built into wood, cork and flesh, and returned by respiration and decay.<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup></div>
+                <div class="relweb"><div class="relweb-card"><a class="relweb-jump" href="carbon-dioxide.html"><img class="rw-icon" src="images/CO2.webp" alt="Carbon dioxide" loading="lazy" /><h3>Carbon dioxide</h3></a><ul><li>The airborne form carbon takes<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup></li><li>Fixed by leaves, released by decay<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup></li><li>The gas the whole loop turns on</li></ul></div><div class="relweb-card"><a class="relweb-jump" href="glucose.html"><img class="rw-icon" src="images/C6H12O6.webp" alt="Glucose" loading="lazy" /><h3>Glucose</h3></a><ul><li>Where fixed carbon first enters life<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup></li><li>Sunlight stored in chemical bonds</li><li>The tree's building block and the soil's food</li></ul></div><div class="relweb-card"><a class="relweb-jump" href="oak-leaves-acorns.html"><img class="rw-icon" src="images/oak-leaves-acorns.webp" alt="Oak" loading="lazy" /><h3>Oak</h3></a><ul><li>Long-lived oaks hold carbon for centuries<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup></li><li>Deep soils store more still<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup></li><li>Making the montado a net carbon sink<sup class="ref" data-ref="bugalho" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="streptomyces-griseus.html"><img class="rw-icon" src="images/streptomyces-griseus-13.webp" alt="Streptomyces" loading="lazy" /><h3>Streptomyces</h3></a><ul><li>Decomposers run the return step</li><li>Breaking litter down into humus</li><li>Respiration sends carbon back as CO₂<sup class="ref" data-ref="carbon" role="button" tabindex="0" aria-label="source"></sup></li></ul></div></div>
+            </section>
+
             <hr />
             <section class="poem-section">
-                <div class="poem-text">One atom, lifted from the sky,
-made wood, made acorn, made pig,
-dropped, and broken down,
+                <div class="poem-text">One atom,
+lifted from the sky,
+made wood,
+made acorn,
+made pig,
+dropped,
+and broken down,
 and handed back to the ground —
 
 and some of it not handed back at all,
-but kept: in the old oak,
+but kept:
+in the old oak,
 in the deep soil,
 in the cork walking out of the forest.</div>
             </section>
@@ -1322,34 +1374,9 @@ in the cork walking out of the forest.</div>
 
             <hr />
 
-            <section class="explore-section">
-                <div class="explore-title">Explore Related Elements</div>
-                <div class="explore-scroller">
-                    <div class="explore-grid" id="exploreGrid">
-<a href="carbon-dioxide.html" class="explore-item">
-                            <img src="images/CO2.webp" alt="Carbon Dioxide" />
-                            <span>Carbon Dioxide</span>
-                        </a>
-<a href="glucose.html" class="explore-item">
-                            <img src="images/C6H12O6.webp" alt="Glucose" />
-                            <span>Glucose</span>
-                        </a>
-<a href="lignin-hemicellulose.html" class="explore-item">
-                            <img src="images/lignin-hemicellulose.webp" alt="Lignin and Hemicellulose" />
-                            <span>Lignin and Hemicellulose</span>
-                        </a>
-<a href="oak-leaves-acorns.html" class="explore-item">
-                            <img src="images/oak-leaves-acorns.webp" alt="Oak Leaves and Acorns" />
-                            <span>Oak Leaves and Acorns</span>
-                        </a>
-<a href="nitrogen-cycle.html" class="explore-item">
-                            <img src="images/nitrogen-cycle.webp" alt="The Nitrogen Cycle" />
-                            <span>The Nitrogen Cycle</span>
-                        </a>
-                    </div>
-                    <button class="explore-arrow" id="exploreArrow" aria-label="Scroll right">›</button>
-                </div>
-            </section>
+            <div class="continue-bottom">
+                <a class="continue-btn" href="index.html#field-guide"><span class="arrow" aria-hidden="true">←</span> Continue exploring Field Guide</a>
+            </div>
         </div>
 
         <script>
@@ -1425,8 +1452,8 @@ in the cork walking out of the forest.</div>
                     var byUrl = {};
                     if (typeof REFS !== "undefined")
                         for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
-                    var html =
-                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
+                    var map = window.__refNum || {};
+                    var html = "";
                     cites.forEach(function (c) {
                         var m = byUrl[c.url], title, meta;
                         if (m) {
@@ -1439,6 +1466,9 @@ in the cork walking out of the forest.</div>
                                 p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
                         }
                         html +=
+                            '<div class="rc-kicker">Reference ' +
+                            (map[c.url] || "") +
+                            "</div>" +
                             (title
                                 ? '<div class="rc-title">' + esc(title) + "</div>"
                                 : "") +
@@ -1516,6 +1546,21 @@ in the cork walking out of the forest.</div>
                                 "meta": "Bugalho, M. N., Caldeira, M. C., Pereira, J. S., Aronson, J., & Pausas, J. G. (2011). Mediterranean cork oak savannas require human use to sustain biodiversity and ecosystem services. Frontiers in Ecology and the Environment, 9(5), 278–286.",
                                 "url": "https://doi.org/10.1890/100084",
                                 "n": 2
+                },
+                "imgDiagram": {
+                                "title": "Diagram: the carbon cycle",
+                                "meta": "Wikimedia Commons. The carbon cycle — exchange between atmosphere, plants, animals, soils and oceans. Adapted from U.S. DOE, Biological and Environmental Research Information System / NASA Earth Observatory. Public domain (US Government work).",
+                                "url": "https://commons.wikimedia.org/wiki/File:Carbon_cycle.jpg"
+                },
+                "imgMontado": {
+                                "title": "Image: Quercus suber.Alentejo04.jpg",
+                                "meta": "Wikimedia Commons. Cork oak (Quercus suber) in the montado of Alentejo, Portugal — long-lived wood that locks carbon for centuries. Author: Georges Jansoone. Licensed CC BY 2.5 / CC BY-SA 3.0 / GFDL.",
+                                "url": "https://commons.wikimedia.org/wiki/File:Quercus_suber.Alentejo04.jpg"
+                },
+                "imgKeeling": {
+                                "title": "Diagram: the Keeling curve (atmospheric CO₂)",
+                                "meta": "Wikimedia Commons. Monthly mean atmospheric CO₂ measured at Mauna Loa since 1958 — the record of man-made CO₂ rise the montado's carbon sink helps offset. Author: Oeneis. Data: NOAA/ESRL & Scripps. CC BY-SA 4.0.",
+                                "url": "https://commons.wikimedia.org/wiki/File:Mauna_Loa_CO2_monthly_mean_concentration.svg"
                 }
 };
             (function () {
@@ -1627,41 +1672,42 @@ in the cork walking out of the forest.</div>
                     var r = B[raw] || {};
                     return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
                 }
-                var seen = {}, order = [];
+                var urlNum = {}, orderCites = [];
                 document
                     .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
                     .forEach(function (el) {
                         var cs = citesOf(el);
-                        var key =
-                            cs.map(function (c) { return c.url; }).join("|") ||
-                            el.getAttribute("data-ref");
-                        if (!(key in seen)) {
-                            order.push(cs);
-                            seen[key] = order.length;
-                        }
-                        el.dataset.num = seen[key];
+                        var nums = [];
+                        cs.forEach(function (c) {
+                            var key = c.url || c.meta || "";
+                            if (!(key in urlNum)) {
+                                orderCites.push(c);
+                                urlNum[key] = orderCites.length;
+                            }
+                            nums.push(urlNum[key]);
+                        });
+                        el.dataset.nums = nums.join(",");
+                        el.dataset.num = nums[0] || "";
                     });
+                window.__refNum = {};
+                orderCites.forEach(function (c, i) {
+                    window.__refNum[c.url || c.meta || ""] = i + 1;
+                });
                 var list = document.getElementById("refsList");
                 if (list) {
-                    list.innerHTML = order
-                        .map(function (cs, i) {
-                            var inner = cs
-                                .map(function (c) {
-                                    var link = c.url
-                                        ? ' <a href="' + c.url +
-                                          '" target="_blank" rel="noopener">Open ↗</a>'
-                                        : "";
-                                    return (
-                                        (c.title
-                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
-                                            : "") +
-                                        esc(c.meta) + link
-                                    );
-                                })
-                                .join("<br />");
+                    list.innerHTML = orderCites
+                        .map(function (c, i) {
+                            var link = c.url
+                                ? ' <a href="' + c.url +
+                                  '" target="_blank" rel="noopener">Open ↗</a>'
+                                : "";
                             return (
                                 '<li><span class="rn">[' + (i + 1) +
-                                "]</span><span>" + inner + "</span></li>"
+                                "]</span><span>" +
+                                (c.title
+                                    ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                    : "") +
+                                esc(c.meta) + link + "</span></li>"
                             );
                         })
                         .join("");

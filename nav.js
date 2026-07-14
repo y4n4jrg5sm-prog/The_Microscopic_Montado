@@ -164,6 +164,34 @@
         @media (prefers-reduced-motion: reduce) {
             #gpop-trigger, #gpop-close { transition: none !important; }
         }
+
+        #fg-net { max-width: 1040px; margin: 0 auto; }
+        #fg-net .fg-h { color: #888888; font-size: 12px; letter-spacing: 0.28em;
+            text-transform: uppercase; margin: 0 0 14px; padding-bottom: 14px;
+            border-bottom: 1px solid #ececec; font-weight: 500; }
+        #fg-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px;
+            color: #666666; margin-bottom: 6px; }
+        #fg-legend span { display: inline-flex; align-items: center; }
+        #fg-legend i { width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+        #fg-svgwrap { position: relative; }
+        #fg-svg { display: block; width: 100%; height: auto; max-height: 80vh; margin: 0 auto; -webkit-user-select: none; user-select: none; }
+        #fg-reset { position: absolute; top: 6px; left: 6px; border: 1px solid #dddddd;
+            background: #ffffff; color: #555555; font-size: 12px; border-radius: 8px;
+            padding: 5px 11px; cursor: pointer; font-family: inherit; }
+        #fg-reset:hover { color: #111111; border-color: #bbbbbb; }
+        .fg-node { cursor: pointer; }
+        #fg-panel { border-top: 1px solid #ececec; margin-top: 6px; padding-top: 14px;
+            min-height: 120px; }
+        #fg-phead { font-size: 17px; font-weight: 500; color: #111111; margin-bottom: 10px; }
+        #fg-phead .fg-dot { display: inline-block; width: 11px; height: 11px;
+            border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+        #fg-phead .fg-open { margin-left: 10px; font-size: 14px; color: #c0552f;
+            text-decoration: none; font-weight: 500; }
+        #fg-phead .fg-open:hover { text-decoration: underline; }
+        #fg-pbody { font-size: 14px; color: #555555; line-height: 1.65; }
+        #fg-pbody .fg-row { padding: 6px 0; border-bottom: 1px solid #f2f2f2; cursor: pointer; }
+        #fg-pbody .fg-row:hover { color: #111111; }
+        #fg-pbody .fg-row b { color: #111111; font-weight: 500; }
     `;
   document.head.appendChild(style);
 
@@ -299,25 +327,50 @@
   const trigger = document.createElement("button");
   trigger.id = "gpop-trigger";
   trigger.type = "button";
-  trigger.textContent = "Gallery";
+  trigger.textContent = "Web of Relations";
 
   const overlay = document.createElement("div");
   overlay.id = "gpop-overlay";
   overlay.innerHTML =
     '<div id="gpop-scroll">' +
       '<div id="gpop-spacer"></div>' +
-      '<div id="gpop-panel"><div class="gpop-body">' + buildGalleryHTML() + '</div></div>' +
+      '<div id="gpop-panel"><div class="gpop-body">' +
+        '<div id="fg-net">' +
+          '<div class="fg-h">Field Guide · a web of relations in the montado</div>' +
+          '<div id="fg-legend">' +
+            '<span><i style="background:#1D9E75"></i>Microbe</span>' +
+            '<span><i style="background:#D85A30"></i>Pathogen</span>' +
+            '<span><i style="background:#639922"></i>Plant</span>' +
+            '<span><i style="background:#888780"></i>Molecule / mineral</span>' +
+            '<span><i style="background:#7F77DD"></i>Cycle</span>' +
+            '<span><i style="background:#2E4159"></i>Global scale</span>' +
+            '<span id="fg-hint" style="color:#b0b0b0">· pinch to zoom · drag to pan</span>' +
+          '</div>' +
+          '<div id="fg-svgwrap">' +
+            '<svg id="fg-svg" viewBox="-40 -120 920 960" role="img">' +
+              '<title>Field Guide relationship network</title>' +
+              '<g id="fg-view"><g id="fg-edges"></g><g id="fg-nodes"></g></g>' +
+            '</svg>' +
+            '<button id="fg-reset" type="button" aria-label="Reset view">Reset view</button>' +
+          '</div>' +
+          '<div id="fg-panel">' +
+            '<div id="fg-phead">Hover an element to see its relations · click to open its page</div>' +
+            '<div id="fg-pbody">Hubs: <b>Oak</b> touches almost everything; <b>Glucose</b> is the underground currency linking carbon to nitrogen, phosphorus and defence; <b>S. griseus + Bryobacter</b> return carbon, nitrogen and phosphorus to the soil. The dark outer ring is the <b>global scale</b> — atmospheric CO₂, temperature, greening and the montado&#39;s own extent — tied to the microbes by dashed cross-scale threads that close into a loop.</div>' +
+          '</div>' +
+        '</div>' +
+      '</div></div>' +
     '</div>';
 
   const closeBtn = document.createElement("button");
   closeBtn.id = "gpop-close";
   closeBtn.type = "button";
-  closeBtn.setAttribute("aria-label", "Close gallery");
+  closeBtn.setAttribute("aria-label", "Close web of relations");
   closeBtn.innerHTML = "&times;";
 
   document.body.appendChild(trigger);
   document.body.appendChild(overlay);
   document.body.appendChild(closeBtn);
+  buildFgNetwork();
 
   const scroll = overlay.querySelector("#gpop-scroll");
   let prevBodyOverflow = "";
@@ -347,4 +400,228 @@
   window.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && overlay.classList.contains("gpop-open")) closeGallery();
   });
+
+  function buildFgNetwork() {
+    var svg = document.getElementById("fg-svg");
+    if (!svg) return;
+    var CAT = { microbe: "#1D9E75", pathogen: "#D85A30", plant: "#639922", mol: "#888780", cycle: "#7F77DD", macro: "#2E4159" };
+    var CATNAME = { microbe: "Microbe", pathogen: "Pathogen", plant: "Plant", mol: "Molecule / mineral", cycle: "Cycle", macro: "Global outcome" };
+    var N = [
+      { id: "co2", t: "CO₂", c: "mol", x: 165, y: 80, lp: "t", href: "carbon-dioxide.html" },
+      { id: "glucose", t: "Glucose", c: "mol", x: 315, y: 135, lp: "t", href: "glucose.html" },
+      { id: "friedelin", t: "Friedelin", c: "mol", x: 470, y: 80, lp: "t", href: "friedelin.html" },
+      { id: "lignin", t: "Lignin", c: "mol", x: 585, y: 135, lp: "t", href: "lignin-hemicellulose.html" },
+      { id: "ccyc", t: "Carbon cycle", c: "cycle", x: 625, y: 70, lp: "l", href: "carbon-cycle.html" },
+      { id: "oak", t: "Oak", c: "plant", x: 330, y: 330, lp: "r", href: "oak-leaves-acorns.html" },
+      { id: "streptomyces", t: "S. griseus", c: "microbe", x: 600, y: 315, lp: "l", href: "streptomyces-griseus.html" },
+      { id: "bryobacter", t: "Bryobacter", c: "microbe", x: 610, y: 430, lp: "l", href: "bryobacter-aggregatus.html" },
+      { id: "phyt", t: "Phytophthora", c: "pathogen", x: 435, y: 245, lp: "l", href: "phytophthora-cinnamomi.html" },
+      { id: "pseudo", t: "P. fluorescens", c: "microbe", x: 530, y: 220, lp: "l", href: "pseudomonas-fluorescens.html" },
+      { id: "bsub", t: "B. subtilis", c: "microbe", x: 490, y: 345, lp: "l", href: "bacillus-subtilis.html" },
+      { id: "n2", t: "N₂", c: "mol", x: 80, y: 250, lp: "s", href: "nitrogen-gas.html" },
+      { id: "nh3", t: "NH₃", c: "mol", x: 165, y: 170, lp: "t", href: "ammonia.html" },
+      { id: "rhizobia", t: "Rhizobia", c: "microbe", x: 120, y: 385, lp: "s", href: "rhizobia.html" },
+      { id: "ncyc", t: "Nitrogen cycle", c: "cycle", x: 70, y: 120, lp: "r", href: "nitrogen-cycle.html" },
+      { id: "brady", t: "Bradyrhizobium", c: "microbe", x: 110, y: 505, lp: "r", href: "bradyrhizobium.html" },
+      { id: "rleg", t: "R. leguminosarum", c: "microbe", x: 255, y: 525, lp: "b", href: "rhizobium-leguminosarum.html" },
+      { id: "clover", t: "Sub. clover", c: "plant", x: 370, y: 565, lp: "b", href: "subterranean-clover.html" },
+      { id: "serradella", t: "Serradella", c: "plant", x: 210, y: 615, lp: "b", href: "yellow-serradella.html" },
+      { id: "h2po4", t: "H₂PO₄⁻", c: "mol", x: 405, y: 445, lp: "l", href: "dihydrogen-phosphate.html" },
+      { id: "bmeg", t: "B. megaterium", c: "microbe", x: 520, y: 485, lp: "l", href: "bacillus-megaterium.html" },
+      { id: "varis", t: "Variscite", c: "mol", x: 600, y: 585, lp: "b", href: "variscite.html" },
+      { id: "pcyc", t: "Phosphorus cycle", c: "cycle", x: 625, y: 540, lp: "l", href: "phosphorus-cycle.html" },
+      { id: "co2atm", t: "Atmospheric CO₂", c: "macro", x: 285, y: -70, lp: "t", href: "https://gml.noaa.gov/ccgg/trends/" },
+      { id: "gtemp", t: "Global temperature", c: "macro", x: 745, y: -55, lp: "l", href: "https://berkeleyearth.org/data/" },
+      { id: "greening", t: "Global greening (NDVI)", c: "macro", x: 825, y: 285, lp: "l", href: "https://doi.org/10.3334/ORNLDAAC/2187" },
+      { id: "drought", t: "Mediterranean drought", c: "macro", x: 800, y: 560, lp: "l", href: "" },
+      { id: "extent", t: "Montado extent (Portugal)", c: "macro", x: 430, y: 790, lp: "b", href: "https://www.dgterritorio.gov.pt/" }
+    ];
+    var E = [
+      ["co2","glucose","photosynthesis: CO₂ → sugar"],["oak","glucose","the oak makes glucose by photosynthesis"],
+      ["oak","co2","leaves fix atmospheric CO₂"],["glucose","lignin","sugar built into wood & cork"],
+      ["glucose","friedelin","sugar built into cork wax"],["oak","friedelin","cork oak makes friedelin — water & fire proof"],
+      ["oak","lignin","builds its wood & cork structure"],["friedelin","lignin","both main components of cork"],
+      ["lignin","streptomyces","breaks lignin down into humus"],["lignin","bryobacter","breaks lignin & litter down"],
+      ["oak","streptomyces","decomposes litter & protects the oak"],["oak","bryobacter","decomposes litter into humus"],
+      ["streptomyces","co2","decay returns carbon to the air"],["bryobacter","co2","decay releases CO₂"],
+      ["streptomyces","bryobacter","both decomposers of the soil"],["glucose","rhizobia","root sugar buys fixed nitrogen"],
+      ["glucose","bmeg","root sugar buys freed phosphorus"],["glucose","pseudo","root sugar buys defence"],
+      ["ccyc","co2","part of the carbon cycle"],["ccyc","glucose","part of the carbon cycle"],["ccyc","oak","part of the carbon cycle"],
+      ["ccyc","lignin","part of the carbon cycle"],["ccyc","friedelin","part of the carbon cycle"],["ccyc","streptomyces","part of the carbon cycle"],["ccyc","bryobacter","part of the carbon cycle"],
+      ["n2","nh3","fixation: N₂ → NH₃"],["rhizobia","n2","rhizobia break the triple bond"],["rhizobia","nh3","produce ammonia"],
+      ["rhizobia","rleg","R. leguminosarum is a rhizobium"],["rhizobia","brady","Bradyrhizobium is the slow rhizobium"],
+      ["rleg","clover","nodulates subterranean clover"],["brady","serradella","nodulates yellow serradella"],
+      ["clover","nh3","fixes nitrogen into ammonia"],["serradella","nh3","fixes nitrogen into ammonia"],
+      ["nh3","oak","ammonia → protein, feeds the oak"],["clover","oak","fixed N returns via litter to the oak"],
+      ["serradella","oak","fixed N feeds the woodland"],
+      ["ncyc","n2","part of the nitrogen cycle"],["ncyc","nh3","part of the nitrogen cycle"],["ncyc","rhizobia","part of the nitrogen cycle"],
+      ["ncyc","rleg","part of the nitrogen cycle"],["ncyc","brady","part of the nitrogen cycle"],["ncyc","clover","part of the nitrogen cycle"],["ncyc","serradella","part of the nitrogen cycle"],
+      ["bmeg","varis","organic acids dissolve the mineral"],["bmeg","h2po4","releases plant-available phosphate"],
+      ["varis","h2po4","locked P → usable P"],["pseudo","h2po4","also a strong phosphate-solubiliser"],
+      ["h2po4","oak","roots take up phosphate"],["serradella","h2po4","thrives on very little phosphate"],
+      ["pcyc","varis","part of the phosphorus cycle"],["pcyc","h2po4","part of the phosphorus cycle"],["pcyc","bmeg","part of the phosphorus cycle"],["pcyc","pseudo","part of the phosphorus cycle"],
+      ["phyt","oak","rots the oak's roots — a seca"],["pseudo","phyt","suppresses the pathogen"],
+      ["bsub","phyt","lipopeptides inhibit its growth"],["streptomyces","phyt","enzymes dissolve its walls"],
+      ["pseudo","oak","protects & primes oak immunity"],["bsub","oak","primes the oak's immunity"],
+      ["bmeg","oak","feeds the tree to resist disease"],
+      ["co2","co2atm","the montado's CO₂ joins the global pool"],
+      ["oak","co2atm","cork oak fixes CO₂ — a carbon sink"],
+      ["streptomyces","co2atm","decay returns carbon to the atmosphere"],
+      ["ccyc","co2atm","the local carbon loop feeds the global budget"],
+      ["co2atm","gtemp","more CO₂ drives global warming"],
+      ["gtemp","greening","warming reshapes global vegetation greening"],
+      ["ccyc","greening","vegetation productivity shows up as greening"],
+      ["oak","greening","tree canopy is what NDVI measures"],
+      ["rhizobia","greening","fixed nitrogen fuels plant growth"],
+      ["gtemp","drought","warming drives Mediterranean drought"],
+      ["gtemp","phyt","warmer, wetter winters favour the pathogen"],
+      ["drought","phyt","drought stress weakens the oak's defences"],
+      ["drought","oak","water stress deepens oak decline"],
+      ["phyt","extent","root rot kills oaks — the montado shrinks"],
+      ["oak","extent","oak cover defines the montado's extent"],
+      ["drought","extent","drought erodes the montado's edge"],
+      ["extent","co2atm","lost woodland releases its stored carbon"]
+    ];
+    var NS = "http://www.w3.org/2000/svg";
+    var canHover = !(window.matchMedia && window.matchMedia("(hover: none)").matches);
+    var mobileMode = !!(window.matchMedia && window.matchMedia("(hover: none) and (max-width: 700px)").matches);
+    var pointerDown = false;
+    var ge = document.getElementById("fg-edges"), gn = document.getElementById("fg-nodes");
+    var head = document.getElementById("fg-phead"), body = document.getElementById("fg-pbody");
+    var byId = {}; N.forEach(function (n) { byId[n.id] = n; n.adj = []; });
+    E.forEach(function (e) { byId[e[0]].adj.push({ o: e[1], r: e[2] }); byId[e[1]].adj.push({ o: e[0], r: e[2] }); });
+    var eLines = [];
+    E.forEach(function (e) {
+      var a = byId[e[0]], b = byId[e[1]];
+      var ln = document.createElementNS(NS, "line");
+      ln.setAttribute("x1", a.x); ln.setAttribute("y1", a.y); ln.setAttribute("x2", b.x); ln.setAttribute("y2", b.y);
+      ln.setAttribute("stroke", "#cfcfca"); ln.setAttribute("stroke-width", "1"); ln.setAttribute("opacity", "0.5");
+      if (a.c === "macro" || b.c === "macro") { ln.setAttribute("stroke-dasharray", "5 4"); ln.setAttribute("stroke", "#b7b2cf"); }
+      ln.dataset.a = e[0]; ln.dataset.b = e[1]; ge.appendChild(ln); eLines.push(ln);
+    });
+    var nodeEls = {};
+    N.forEach(function (n) {
+      var g = document.createElementNS(NS, "g"); g.setAttribute("class", "fg-node");
+      var sh;
+      if (n.c === "cycle") {
+        sh = document.createElementNS(NS, "rect");
+        sh.setAttribute("x", n.x - 7); sh.setAttribute("y", n.y - 7); sh.setAttribute("width", 14); sh.setAttribute("height", 14);
+        sh.setAttribute("transform", "rotate(45 " + n.x + " " + n.y + ")");
+      } else {
+        sh = document.createElementNS(NS, "circle");
+        sh.setAttribute("cx", n.x); sh.setAttribute("cy", n.y);
+        sh.setAttribute("r", n.c === "macro" ? 9 : (n.id === "oak" ? 9 : 6.5));
+      }
+      if (n.c === "macro") {
+        var ring = document.createElementNS(NS, "circle");
+        ring.setAttribute("cx", n.x); ring.setAttribute("cy", n.y); ring.setAttribute("r", 14);
+        ring.setAttribute("fill", "none"); ring.setAttribute("stroke", CAT.macro);
+        ring.setAttribute("stroke-width", "1.2"); ring.setAttribute("opacity", "0.55");
+        g.appendChild(ring);
+      }
+      sh.setAttribute("fill", CAT[n.c]); sh.setAttribute("stroke", "#ffffff"); sh.setAttribute("stroke-width", "1.5");
+      g.appendChild(sh);
+      var tx = document.createElementNS(NS, "text");
+      var lx = n.x, ly = n.y, anc = "middle";
+      if (n.lp === "t") ly = n.y - 12;
+      else if (n.lp === "b") ly = n.y + 20;
+      else if (n.lp === "e" || n.lp === "r") { lx = n.x + (n.lp === "r" ? 13 : 11); ly = n.y + 4; anc = "start"; }
+      else if (n.lp === "s" || n.lp === "l") { lx = n.x - 11; ly = n.y + 4; anc = "end"; }
+      else ly = n.y + 20;
+      tx.setAttribute("x", lx); tx.setAttribute("y", ly); tx.setAttribute("text-anchor", anc);
+      tx.setAttribute("font-size", "11.5"); tx.setAttribute("font-family", '"Helvetica Neue", Helvetica, Arial, sans-serif');
+      tx.setAttribute("fill", "#111111"); tx.setAttribute("stroke", "#ffffff"); tx.setAttribute("stroke-width", "3"); tx.setAttribute("paint-order", "stroke");
+      tx.textContent = n.t; g.appendChild(tx);
+      g.__nid = n.id;
+      gn.appendChild(g); nodeEls[n.id] = { g: g, sh: sh, tx: tx };
+      if (canHover) g.addEventListener("mouseenter", function () { if (!pointerDown) select(n.id); });
+      if (!mobileMode) g.addEventListener("click", function () {
+        if (canHover) go(n); else if (selected === n.id) go(n); else select(n.id);
+      });
+    });
+    function go(n) { if (!n.href) return; var dst = /^https?:/.test(n.href) ? n.href : base + n.href; var top = window.top || window; try { top.location.href = dst; } catch (err) { window.location.href = dst; } }
+    function clearHi() {
+      eLines.forEach(function (l) { l.setAttribute("stroke", "#cfcfca"); l.setAttribute("stroke-width", "1"); l.setAttribute("opacity", "0.5"); });
+      N.forEach(function (n) { nodeEls[n.id].g.style.opacity = "1"; nodeEls[n.id].tx.setAttribute("font-weight", "400"); });
+    }
+    var selected = null;
+    function select(id) {
+      selected = id; clearHi();
+      var n = byId[id], col = CAT[n.c], nbr = {};
+      n.adj.forEach(function (a) { nbr[a.o] = 1; });
+      N.forEach(function (m) { if (m.id !== id && !nbr[m.id]) nodeEls[m.id].g.style.opacity = "0.26"; });
+      nodeEls[id].tx.setAttribute("font-weight", "500");
+      Object.keys(nbr).forEach(function (k) { nodeEls[k].tx.setAttribute("font-weight", "500"); });
+      eLines.forEach(function (l) {
+        if (l.dataset.a === id || l.dataset.b === id) { l.setAttribute("stroke", col); l.setAttribute("stroke-width", "2"); l.setAttribute("opacity", "0.9"); }
+        else l.setAttribute("opacity", "0.08");
+      });
+      var openHtml = "";
+      if (n.c === "macro") {
+        if (n.href) openHtml = ' <a class="fg-open" href="' + n.href + '" target="_blank" rel="noopener">Data source ↗</a>';
+      } else {
+        openHtml = ' <a class="fg-open" href="' + base + n.href + '" target="_top">Open page ↗</a>';
+      }
+      head.innerHTML = '<span class="fg-dot" style="background:' + col + '"></span>' + esc(n.t) + openHtml;
+      body.innerHTML = n.adj.map(function (a) {
+        return '<div class="fg-row" data-go="' + a.o + '"><b>' + esc(byId[a.o].t) + '</b> — ' + esc(a.r) + "</div>";
+      }).join("");
+      body.querySelectorAll(".fg-row").forEach(function (row) {
+        row.addEventListener("click", function () { select(row.dataset.go); });
+      });
+    }
+
+    var resetBtn = document.getElementById("fg-reset");
+    var hintEl = document.getElementById("fg-hint");
+    if (!mobileMode) {
+      if (resetBtn) resetBtn.style.display = "none";
+      if (hintEl) hintEl.style.display = "none";
+    } else {
+      svg.style.touchAction = "none";
+      var view = document.getElementById("fg-view");
+      var vt = { s: 1, x: 0, y: 0 };
+      var applyView = function () { view.setAttribute("transform", "translate(" + vt.x + "," + vt.y + ") scale(" + vt.s + ")"); };
+      var clampS = function (s) { return Math.max(0.5, Math.min(6, s)); };
+      var toView = function (cx, cy) { var m = svg.getScreenCTM(); if (!m) return { x: cx, y: cy }; var p = svg.createSVGPoint(); p.x = cx; p.y = cy; return p.matrixTransform(m.inverse()); };
+      var zoomAt = function (P, ns) { ns = clampS(ns); var f = ns / vt.s; vt.x = P.x - f * (P.x - vt.x); vt.y = P.y - f * (P.y - vt.y); vt.s = ns; applyView(); };
+      var tapNode = function (id) { if (selected === id) go(byId[id]); else select(id); };
+      var pts = {}, last = null, moved = false, downTarget = null, startC = null, pinchLast = null;
+      svg.addEventListener("pointerdown", function (e) {
+        try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+        pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+        pointerDown = true;
+        if (Object.keys(pts).length === 1) { moved = false; downTarget = e.target; startC = { x: e.clientX, y: e.clientY }; last = toView(e.clientX, e.clientY); }
+      });
+      svg.addEventListener("pointermove", function (e) {
+        if (!pts[e.pointerId]) return;
+        pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+        var ids = Object.keys(pts);
+        if (ids.length >= 2) {
+          var a = pts[ids[0]], b = pts[ids[1]];
+          var dist = Math.hypot(a.x - b.x, a.y - b.y);
+          var mid = toView((a.x + b.x) / 2, (a.y + b.y) / 2);
+          if (pinchLast) zoomAt(mid, vt.s * (dist / pinchLast));
+          pinchLast = dist; moved = true; e.preventDefault(); return;
+        }
+        var P = toView(e.clientX, e.clientY);
+        if (startC && Math.hypot(e.clientX - startC.x, e.clientY - startC.y) > 6) moved = true;
+        if (moved && last) { vt.x += P.x - last.x; vt.y += P.y - last.y; applyView(); }
+        last = P; e.preventDefault();
+      });
+      var endPtr = function (e) {
+        delete pts[e.pointerId];
+        var n = Object.keys(pts).length;
+        if (n < 2) pinchLast = null;
+        if (n === 0) {
+          pointerDown = false;
+          if (!moved && downTarget && downTarget.closest) { var g = downTarget.closest(".fg-node"); if (g && g.__nid) tapNode(g.__nid); }
+          last = null; startC = null; downTarget = null;
+        }
+      };
+      svg.addEventListener("pointerup", endPtr);
+      svg.addEventListener("pointercancel", endPtr);
+      svg.addEventListener("wheel", function (e) { e.preventDefault(); zoomAt(toView(e.clientX, e.clientY), vt.s * (e.deltaY < 0 ? 1.12 : 0.89)); }, { passive: false });
+      if (resetBtn) resetBtn.addEventListener("click", function () { vt = { s: 1, x: 0, y: 0 }; applyView(); });
+    }
+  }
 })();

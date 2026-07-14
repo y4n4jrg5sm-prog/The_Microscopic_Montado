@@ -58,6 +58,13 @@
                 font-style: normal;
                 font-display: swap;
             }
+            @font-face {
+                font-family: "Tiny5";
+                src: url("fonts/Tiny5-Regular.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
 
             .hero-scroll {
                 position: relative;
@@ -73,7 +80,9 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 2560 / 1600; 
+                aspect-ratio: 2560 / 1600;
+                object-fit: cover;
+                object-position: center 35%; 
             }
 
             .hero-copy {
@@ -260,22 +269,32 @@
             }
 
             sup.ref {
-                color: var(--accent);
-                cursor: pointer;
-                font-size: 0.62em;
-                line-height: 0;
-                padding: 0 1px;
-                text-decoration: underline;
-                text-underline-offset: 2px;
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--accent);
                 vertical-align: super;
+                position: relative;
+                top: -0.15em;
+                margin-left: 3px;
+                cursor: pointer;
+                text-decoration: none;
+                user-select: none;
+                transition: background 0.15s;
             }
-
+            sup.ref:hover,
+            sup.ref:focus-visible {
+                background: var(--ink);
+            }
             sup.ref::before {
-                content: "[";
+                content: none;
             }
-
             sup.ref::after {
-                content: "]";
+                content: "";
+                position: absolute;
+                inset: -8px;
+                border-radius: 50%;
             }
 
             .ref-card {
@@ -344,6 +363,8 @@
                 flex-wrap: wrap;
                 margin-bottom: 26px;
             }
+
+            .continue-bottom { text-align: center; margin: 30px 0 4px; }
 
             .continue-btn {
                 display: inline-flex;
@@ -439,11 +460,17 @@
                 margin: 50px 0;
             }
 
+            .note-block { margin: 50px 0; }
+            .note-block .caption-text { max-width: none; }
             .caption-text {
                 font-size: 15px;
                 color: #555;
                 max-width: 480px;
                 padding-top: 4px;
+            }
+            .caption-text.wide {
+                max-width: none;
+                width: 100%;
             }
 
             .image-grid {
@@ -683,7 +710,8 @@
             }
 
             .poem-text {
-                font-size: 14px;
+                font-family: "Tiny5", var(--font-mono);
+                font-size: 16px;
                 color: #555;
                 line-height: 1.9;
                 white-space: pre-line;
@@ -851,6 +879,24 @@
                 outline: 2px solid var(--accent);
                 outline-offset: 3px;
             }
+                    .relweb-section { margin: 50px 0; }
+            .relweb { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin: 40px 0 0; }
+            .relweb-card { border: 1px solid var(--line, #e2e2e2); padding: 24px 22px 26px; background: #fff; transition: box-shadow 0.3s, transform 0.3s; }
+            .relweb-card:hover { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); transform: translateY(-3px); }
+            .relweb-jump { text-decoration: none; color: inherit; display: block; }
+            .relweb-jump .rw-icon { width: auto; height: 60px; object-fit: contain; display: block; margin-bottom: 14px; }
+            .relweb-jump h3 { margin: 0 0 16px; font-family: var(--font-display, inherit); font-weight: 300; font-size: 21px; color: var(--ink, #111); font-style: italic; }
+            .relweb-jump:hover h3 { text-decoration: underline; }
+            .relweb-card ul { margin: 0; padding: 0; list-style: none; }
+            .relweb-card li { font-size: 13.5px; color: #555; padding: 9px 0; border-top: 1px solid var(--line, #eee); line-height: 1.5; }
+            .relweb-card li:first-child { border-top: none; }
+            .relweb-card li b { color: var(--ink, #111); font-weight: 600; }
+                    .montado-photo { margin: 40px 0; }
+            .montado-photo img { width: 100%; height: auto; display: block; border-radius: 0; }
+            .montado-photo figcaption { margin-top: 9px; font-size: 12px; line-height: 1.55; color: #888; }
+            .montado-photo figcaption a { color: var(--accent, #777); text-decoration: none; }
+            .montado-photo figcaption a:hover { text-decoration: underline; }
+            .montado-photo.diagram img { max-width: 760px; margin: 0 auto; border: 1px solid var(--line, #e2e2e2); border-radius: 0; background: #fff; }
         </style>
     </head>
     <body>
@@ -1019,7 +1065,7 @@
             <section class="hero-section">
                 <div class="hero-left">
                     <div class="continue-actions">
-                        <a class="continue-btn" href="index.html"
+                        <a class="continue-btn" href="index.html#field-guide"
                             >← Continue exploring Field Guide</a
                         >
                     </div>
@@ -1058,7 +1104,7 @@
 
             <hr />
 
-            <section class="content-block">
+            <section class="note-block">
                 <div class="caption-text">
                     Montado soils are often thin, acidic, rain-fed and
                     low-input. The system cannot depend on constant synthetic
@@ -1089,164 +1135,24 @@
                         aria-label="source"
                     ></sup>
                 </div>
-                <div
-                    class="image-grid"
-                    aria-label="Online source image set for Montado rhizobia"
-                >
-                    <div class="image-card web-photo">
-                        <img
-                            src="images/rhizobia-web/quercus-suber-alentejo.jpg"
-                            alt="Cork oak trees in Alentejo montado"
-                        />
-                        <span>
-                            Alentejo cork-oak montado: the above-ground
-                            structure of the soil story.
-                            <sup
-                                class="ref"
-                                data-ref="imgQuercus"
-                                role="button"
-                                tabindex="0"
-                                aria-label="image source"
-                            ></sup>
-                        </span>
-                    </div>
-                    <div class="image-card web-photo">
-                        <img
-                            src="images/rhizobia-web/vicia-faba-rhizobium-root-nodule.jpg"
-                            alt="Rhizobium root nodule on Vicia faba root"
-                        />
-                        <span>
-                            <span class="sci">Rhizobium</span> nodule on a
-                            legume root: the microscopic process made visible.
-                            <sup
-                                class="ref"
-                                data-ref="imgVicia"
-                                role="button"
-                                tabindex="0"
-                                aria-label="image source"
-                            ></sup>
-                        </span>
-                    </div>
-                    <div class="image-card web-photo">
-                        <img
-                            src="images/rhizobia-web/white-clover-pink-root-nodule.jpg"
-                            alt="Pink leghaemoglobin inside white clover root nodule"
-                        />
-                        <span>
-                            White clover nodules with pink leghaemoglobin, a
-                            sign of active nitrogen fixation.
-                            <sup
-                                class="ref"
-                                data-ref="imgClover"
-                                role="button"
-                                tabindex="0"
-                                aria-label="image source"
-                            ></sup>
-                        </span>
-                    </div>
-                    <div class="image-card web-photo map">
-                        <img
-                            src="images/rhizobia-web/mapa-do-alentejo-em-portugal.png"
-                            alt="Map of Alentejo in Portugal"
-                        />
-                        <span>
-                            Alentejo location map: where Montado pasture, cork
-                            oak and soil microbes overlap.
-                            <sup
-                                class="ref"
-                                data-ref="imgMap"
-                                role="button"
-                                tabindex="0"
-                                aria-label="image source"
-                            ></sup>
-                        </span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="field-section">
-                <div class="field-copy">
-                    <div>
-                        <p>
-                            Rhizobia are microscopic, but their effect is
-                            landscape-sized. Under the cork oaks, legume roots
-                            make nodules that turn atmospheric nitrogen into
-                            plant-available forms; after grazing and
-                            decomposition, that nitrogen re-enters the montado
-                            as litter, dung, roots and humus.<sup
-                                class="ref"
-                                data-ref="jic"
-                                role="button"
-                                tabindex="0"
-                                aria-label="source"
-                            ></sup>
-                        </p>
-                    </div>
-                </div>
-                <figure class="field-photo">
-                    <img
-                        src="images/rhizobia-web/vicia-faba-rhizobium-root-nodule.jpg"
-                        alt="Close view of Rhizobium root nodule on Vicia faba"
-                    />
-                    <figcaption class="photo-caption">
-                        Root nodule photograph from Forestry Images /
-                        Bugwood.org via Wikimedia Commons.
-                        <sup
-                            class="ref"
-                            data-ref="imgVicia"
-                            role="button"
-                            tabindex="0"
-                            aria-label="image source"
-                        ></sup>
-                    </figcaption>
+                <figure class="montado-photo">
+                    <img src="images/rhizobia-web/white-clover-pink-root-nodule.jpg" alt="White clover root nodules with pink leghaemoglobin" loading="lazy" />
+                    <figcaption>White clover root nodules, pink with leghaemoglobin — a sign of active nitrogen fixation.<sup class="ref" data-ref="imgClover" role="button" tabindex="0" aria-label="image source"></sup></figcaption>
                 </figure>
             </section>
 
-            <section class="map-section">
-                <figure class="map-panel satellite">
-                    <img
-                        src="images/rhizobia-web/quercus-suber-alentejo.jpg"
-                        alt="Cork oak montado landscape in Alentejo"
-                    />
-                    <figcaption class="map-label">
-                        Cork oak in Alentejo, Portugal: the visible tree layer
-                        above a pasture-and-soil microbial system.
-                        <sup
-                            class="ref"
-                            data-ref="imgQuercus"
-                            role="button"
-                            tabindex="0"
-                            aria-label="image source"
-                        ></sup>
-                    </figcaption>
-                </figure>
-                <div class="map-side">
-                    <div class="map-copy">
-                        <p>
-                            The same symbiosis can be read at two scales: pink
-                            nodules on a single root, and legume-rich pastures
-                            repeated across the Alentejo. For this page, the map
-                            matters because rhizobia are not just a lab
-                            organism; they are part of a managed landscape.
-                        </p>
-                    </div>
-                    <figure class="map-panel basemap">
-                        <img
-                            src="images/rhizobia-web/mapa-do-alentejo-em-portugal.png"
-                            alt="Map highlighting Alentejo in Portugal"
-                        />
-                        <figcaption class="map-label">
-                            Alentejo highlighted within Portugal.
-                            <sup
-                                class="ref"
-                                data-ref="imgMap"
-                                role="button"
-                                tabindex="0"
-                                aria-label="image source"
-                            ></sup>
-                        </figcaption>
-                    </figure>
+            <section class="note-block">
+                <div class="caption-text">
+                    Rhizobia are microscopic, but their effect is
+                    landscape-sized. Under the cork oaks, legume roots make
+                    nodules that turn atmospheric nitrogen into plant-available
+                    forms; after grazing and decomposition, that nitrogen
+                    re-enters the montado as litter, dung, roots and humus.<sup class="ref" data-ref="jic" role="button" tabindex="0" aria-label="source"></sup>
                 </div>
+                <figure class="montado-photo">
+                    <img src="images/rhizobia-web/vicia-faba-rhizobium-root-nodule.jpg" alt="Rhizobium root nodule on a Vicia faba root" loading="lazy" />
+                    <figcaption>Root nodule photograph from Forestry Images / Bugwood.org, via Wikimedia Commons.<sup class="ref" data-ref="imgVicia" role="button" tabindex="0" aria-label="image source"></sup></figcaption>
+                </figure>
             </section>
 
             <hr />
@@ -1311,15 +1217,121 @@
                 </div>
             </section>
 
-            <section class="poem-section">
-                <div class="poem-text">
-                    A root curls. A bacterium enters. Sugar moves downward,
-                    nitrogen moves up. The pasture is green because something
-                    microscopic made a room inside a root.
+            <hr />
+
+            <figure class="montado-photo diagram">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Nitrogen_fixation_Fabaceae_en.svg?width=900" alt="Diagram of nitrogen fixation in a legume root nodule" loading="lazy" />
+                <figcaption>How the deal works: the legume feeds the rhizobia its photosynthetic sugars, and the bacteria — housed in root nodules — fix nitrogen from the air into compounds the plant can use. Diagram by Nefronus, <a href="https://commons.wikimedia.org/wiki/File:Nitrogen_fixation_Fabaceae_en.svg" target="_blank" rel="noopener">via Wikimedia Commons</a> (CC BY-SA 4.0).</figcaption>
+            </figure>
+
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Closeup_of_a_Dissected_Medicago_Root_Nodule_1.JPG?width=1000" alt="A root nodule cut in half, its interior pink with leghaemoglobin" loading="lazy" />
+                <figcaption>A nodule cut in half: the pink inside is leghaemoglobin, the oxygen shield that lets the bacteria fix nitrogen — a sign the room the plant built is alive and working. A Medicago nodule inoculated with Sinorhizobium meliloti. Photo by Ninjatacoshell, <a href="https://commons.wikimedia.org/wiki/File:Closeup_of_a_Dissected_Medicago_Root_Nodule_1.JPG" target="_blank" rel="noopener">via Wikimedia Commons</a> (CC BY-SA 3.0).</figcaption>
+            </figure>
+
+
+            <section class="note-block">
+                <div class="caption-text">
+                    <b>Why the montado leans on it.</b> Nitrogen reaches an
+                    ecosystem in two ways: as fertiliser, or fixed biologically
+                    from the air. The montado is barely fertilised, so the second
+                    path — the symbiosis between its understorey legumes and
+                    rhizobia — is the main way nitrogen enters the system,
+                    replenishing the soil's nitrogen pool season after
+                    season.<sup class="ref" data-ref="medrev" role="button" tabindex="0" aria-label="source"></sup>
+                    The partnership only pays, though, under conditions: mineral
+                    nitrogen must be low enough to be worth the cost (when it is
+                    abundant, legumes downregulate nodulation to save carbon),
+                    host and rhizobium must be genetically compatible, and both
+                    must be suited to the local soil and climate.<sup class="ref" data-ref="medrev" role="button" tabindex="0" aria-label="source"></sup>
                 </div>
             </section>
 
             <hr />
+
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Trifolium_subterraneum_habit2_%2810734390724%29.jpg?width=1200" alt="Subterranean clover growing in a grazed pasture sward" loading="lazy" />
+                <figcaption>The other half of the partnership: subterranean clover, a Mediterranean annual legume and one of the montado's backbone pasture plants — it is in the roots of legumes like this that rhizobia fix the montado's nitrogen. Photo by Harry Rose, <a href="https://commons.wikimedia.org/wiki/File:Trifolium_subterraneum_habit2_(10734390724).jpg" target="_blank" rel="noopener">via Wikimedia Commons</a> (CC BY 2.0).</figcaption>
+            </figure>
+
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/CSIRO_ScienceImage_2483_Rhizobium_bacteria.jpg?width=1000" alt="Rhizobium, the nitrogen-fixing bacteria of legume root nodules" loading="lazy" />
+                <figcaption>Rhizobium itself — the nitrogen-fixing bacteria that form symbiotic nodules on the roots of legumes such as clover, medic and beans. Photo: CSIRO, <a href="https://commons.wikimedia.org/wiki/File:CSIRO_ScienceImage_2483_Rhizobium_bacteria.jpg" target="_blank" rel="noopener">via Wikimedia Commons</a> (CC BY 3.0).</figcaption>
+            </figure>
+
+            <section class="note-block">
+                <div class="caption-text">
+                    <b>The threat of acid ground.</b> The montado's soils are
+                    acidic, and acidity is one of the harshest constraints on
+                    this symbiosis. Low pH disrupts the whole sequence — the
+                    exchange of nodulation signals, the attachment of rhizobia to
+                    the root, the number of nodules formed, and nitrogenase
+                    activity itself — so that plant and bacterium both grow and
+                    fix less.<sup class="ref" data-ref="zahran" role="button" tabindex="0" aria-label="source"></sup>
+                    Acid conditions also mobilise aluminium and manganese to
+                    levels that are toxic to plants, and manganese toxicity in
+                    particular can hold down pasture productivity.<sup class="ref" data-ref="zahran" role="button" tabindex="0" aria-label="source"></sup>
+                    Rhizobia tolerate a fairly wide span of soil acidity, but
+                    their partnership with legumes does not escape its effects.<sup class="ref" data-ref="zahran" role="button" tabindex="0" aria-label="source"></sup>
+                </div>
+            </section>
+
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Aluminium_toxocity_maize_roots_2017_01_05_6161.jpg?width=1000" alt="Maize roots stunted and malformed by aluminium toxicity in acid soil" loading="lazy" />
+                <figcaption>What acid ground does underground: in strongly acid soils, aluminium turns toxic and stunts roots into malformed, thickened stubs — cutting water and nutrient uptake, and with it the legume's capacity to nodulate and fix nitrogen. Photo by Alandmanson, <a href="https://commons.wikimedia.org/wiki/File:Aluminium_toxocity_maize_roots_2017_01_05_6161.jpg" target="_blank" rel="noopener">via Wikimedia Commons</a> (CC BY-SA 4.0).</figcaption>
+            </figure>
+
+            <hr />
+
+            <section class="note-block">
+                <div class="caption-text">
+                    <b>Water, pores and movement.</b> Water decides whether the
+                    two partners can even meet. Rhizobia travel to the root
+                    through water-filled pores; as the soil dries and those pores
+                    become discontinuous, their movement slows and then stops,
+                    cutting infection and nodulation.<sup class="ref" data-ref="zahran" role="button" tabindex="0" aria-label="source"></sup>
+                    Texture matters too — where pores are very fine, as in clay
+                    soils, the bacteria cannot move freely even when water is
+                    present.<sup class="ref" data-ref="zahran" role="button" tabindex="0" aria-label="source"></sup>
+                    Where rhizobia are sparse, the start of the symbiosis can
+                    hinge on the brief saturation that follows a rain.
+                </div>
+            </section>
+
+            <hr />
+
+            <section class="note-block">
+                <div class="caption-text">
+                    <b>Keeping the nitrogen flowing.</b> None of this makes the
+                    symbiosis fragile so much as manageable. Choosing
+                    acid-tolerant legume varieties, sowing a richer mix of legume
+                    species, and managing soil fertility all raise biological
+                    nitrogen fixation — building biomass and soil organic matter,
+                    offsetting acidification, and cutting the need for synthetic
+                    fertiliser and the emissions that come with making it.<sup class="ref" data-ref="medrev" role="button" tabindex="0" aria-label="source"></sup>
+                </div>
+            </section>
+
+                        <hr />
+            <style>.twoscale .caption-text { max-width: none; } .twoscale a.el { color: inherit; text-decoration: underline; text-underline-offset: 2px; }</style>
+            <section class="content-block twoscale">
+                <div class="caption-text wide">For all its microscopic scale, this is where the montado’s two magnifications meet. Every gram of nitrogen the woodland runs on was pulled from the air by a rhizobium inside a root nodule — biological fixation that keeps the pasture and the <a class="el" href="oak-leaves-acorns.html">oak</a> fertile without synthetic fertiliser.<sup class="ref" data-ref="zahran" role="button" tabindex="0" aria-label="source"></sup> Scaled across millions of hectares of montado and dehesa, that microscopic exchange lets the landscape feed itself, green its canopy and store carbon; scaled down, it is one bacterium and one broken triple bond. Trace the whole web — micro to global — in the <b>Web of Relations</b> panel at the corner of the page.</div>
+            </section>
+
+            <hr />
+            <section class="relweb-section">
+                <div class="caption-text wide" style="margin-top: 6px">Rhizobia live in the root nodules of the montado's pasture legumes, turning nitrogen from the air into food the plants can use — keeping the ground fertile without any fertiliser.<sup class="ref" data-ref="jic" role="button" tabindex="0" aria-label="source"></sup></div>
+                <div class="relweb"><div class="relweb-card"><a class="relweb-jump" href="nitrogen-gas.html"><img class="rw-icon" src="images/N2.webp" alt="Nitrogen gas" loading="lazy" /><h3>Nitrogen gas</h3></a><ul><li>They break the air's triple-bonded N₂<sup class="ref" data-ref="jic" role="button" tabindex="0" aria-label="source"></sup></li><li>Only microbes like them can<sup class="ref" data-ref="jic" role="button" tabindex="0" aria-label="source"></sup></li><li>The start of biological nitrogen fixation<sup class="ref" data-ref="jic" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="ammonia.html"><img class="rw-icon" src="images/NH3.webp" alt="Ammonia" loading="lazy" /><h3>Ammonia</h3></a><ul><li>They convert it into ammonia<sup class="ref" data-ref="jic" role="button" tabindex="0" aria-label="source"></sup></li><li>Handed to the plant as nutrients<sup class="ref" data-ref="jic" role="button" tabindex="0" aria-label="source"></sup></li><li>In exchange for the plant's sugars<sup class="ref" data-ref="jic" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="rhizobium-leguminosarum.html"><img class="rw-icon" src="images/rhizobium-leguminosarum-4.webp" alt="R. leguminosarum" loading="lazy" /><h3>R. leguminosarum</h3></a><ul><li>The fast rhizobium of clovers and vetches<sup class="ref" data-ref="trifolium" role="button" tabindex="0" aria-label="source"></sup></li><li>A named member of the group<sup class="ref" data-ref="jic" role="button" tabindex="0" aria-label="source"></sup></li><li>Partner of the montado's pasture clovers<sup class="ref" data-ref="trifolium" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="bradyrhizobium.html"><img class="rw-icon" src="images/bradyrhizobium-1.webp" alt="Bradyrhizobium" loading="lazy" /><h3>Bradyrhizobium</h3></a><ul><li>The slow-growing rhizobium<sup class="ref" data-ref="jic" role="button" tabindex="0" aria-label="source"></sup></li><li>Partner of brooms, lupins and serradella</li><li>Fixing nitrogen without hurry</li></ul></div><div class="relweb-card"><a class="relweb-jump" href="nitrogen-cycle.html"><img class="rw-icon" src="images/nitrogen-cycle.webp" alt="The Nitrogen Cycle" loading="lazy" /><h3>The Nitrogen Cycle</h3></a><ul><li>Rhizobial inoculation is built into biodiverse pastures<sup class="ref" data-ref="sbp" role="button" tabindex="0" aria-label="source"></sup></li><li>Their fixed nitrogen feeds grasses, animals and oaks<sup class="ref" data-ref="sbp" role="button" tabindex="0" aria-label="source"></sup></li><li>Keeping the montado's nitrogen loop turning</li></ul></div></div>
+            </section>
+
+            <hr />
+            <section class="poem-section">
+                <div class="poem-text">A root curls.
+A bacterium enters.
+Sugar moves downward,
+nitrogen moves up.
+The pasture is green because something microscopic made a room inside a root.</div>
+            </section>
 
             <section class="refs-footer">
                 <div class="sec-head">Sources & reading</div>
@@ -1328,74 +1340,9 @@
 
             <hr />
 
-            <section class="explore-section">
-                <div class="explore-title">Explore Related Elements</div>
-                <div class="explore-scroller">
-                    <div class="explore-grid" id="exploreGrid">
-                        <a href="rhizobia.html" class="explore-item">
-                            <img src="images/rhizobia-3.webp" alt="Rhizobia" />
-                            <span>Rhizobia</span>
-                        </a>
-                        <a
-                            href="bradyrhizobium.html"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/bradyrhizobium-1.webp"
-                                alt="Bradyrhizobium"
-                            />
-                            <span>Bradyrhizobium</span>
-                        </a>
-                        <a
-                            href="#" onclick="var g=document.getElementById('gpop-trigger');if(g){g.click();}return false;"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/yellow-serradella.webp"
-                                alt="Yellow serradella"
-                            />
-                            <span>Yellow Serradella</span>
-                        </a>
-                        <a
-                            href="#" onclick="var g=document.getElementById('gpop-trigger');if(g){g.click();}return false;"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/subterranean-clover-0.webp"
-                                alt="Subterranean clover"
-                            />
-                            <span>Subterranean Clover</span>
-                        </a>
-                        <a
-                            href="#" onclick="var g=document.getElementById('gpop-trigger');if(g){g.click();}return false;"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/H2PO4.webp"
-                                alt="Dihydrogen phosphate"
-                            />
-                            <span>Dihydrogen phosphate</span>
-                        </a>
-                        <a
-                            href="phytophthora-cinnamomi.html"
-                            class="explore-item"
-                        >
-                            <img
-                                src="images/phytophthora-cinnamomi-4.webp"
-                                alt="Phytophthora cinnamomi"
-                            />
-                            <span>Phytophthora cinnamomi</span>
-                        </a>
-                    </div>
-                    <button
-                        class="explore-arrow"
-                        id="exploreArrow"
-                        aria-label="Scroll right"
-                    >
-                        ›
-                    </button>
-                </div>
-            </section>
+            <div class="continue-bottom">
+                <a class="continue-btn" href="index.html#field-guide"><span class="arrow" aria-hidden="true">←</span> Continue exploring Field Guide</a>
+            </div>
         </div>
 
         <script>
@@ -1505,8 +1452,8 @@
                     var byUrl = {};
                     if (typeof REFS !== "undefined")
                         for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
-                    var html =
-                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
+                    var map = window.__refNum || {};
+                    var html = "";
                     cites.forEach(function (c) {
                         var m = byUrl[c.url], title, meta;
                         if (m) {
@@ -1519,6 +1466,9 @@
                                 p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
                         }
                         html +=
+                            '<div class="rc-kicker">Reference ' +
+                            (map[c.url] || "") +
+                            "</div>" +
                             (title
                                 ? '<div class="rc-title">' + esc(title) + "</div>"
                                 : "") +
@@ -1620,6 +1570,16 @@
                     meta: "Wikimedia Commons. Map highlighting Alentejo in Portugal. CC BY-SA 4.0.",
                     url: "https://commons.wikimedia.org/wiki/File:Mapa_do_Alentejo_em_Portugal.png",
                 },
+                medrev: {
+                    title: "Legume–Rhizobium symbiosis in Mediterranean-type ecosystems",
+                    meta: "Pérez-Fernández, M. A., De Lara-Del Rey, I. A., & Magadlela, A. (2026). Environmental drivers of legume–Rhizobium symbiosis across the five Mediterranean-type regions of the world. Earth, 7(2), 66.",
+                    url: "https://doi.org/10.3390/earth7020066",
+                },
+                zahran: {
+                    title: "Rhizobium–legume symbiosis under severe conditions",
+                    meta: "Zahran, H. H. (1999). Rhizobium–legume symbiosis and nitrogen fixation under severe conditions and in an arid climate. Microbiology and Molecular Biology Reviews, 63(4), 968–989.",
+                    url: "https://journals.asm.org/doi/10.1128/MMBR.63.4.968-989.1999",
+                },
             };
 
             (function setupRefs() {
@@ -1629,7 +1589,7 @@
                     .forEach(function (el) {
                         var key = el.getAttribute("data-ref");
                         if (keys.indexOf(key) === -1) keys.push(key);
-                        el.textContent = keys.indexOf(key) + 1;
+                        el.dataset.num = keys.indexOf(key) + 1;
                     });
 
                 var list = document.getElementById("refsList");
@@ -1658,7 +1618,7 @@
                     var ref = REFS[key];
                     if (!ref) return;
                     card.querySelector(".rc-kicker").textContent =
-                        "source [" + el.textContent + "]";
+                        "Reference " + (el.dataset.num || "");
                     card.querySelector(".rc-title").textContent = ref.title;
                     card.querySelector(".rc-meta").textContent = ref.meta;
                     card.querySelector(".rc-link").href = ref.url;
@@ -1723,41 +1683,42 @@
                     var r = B[raw] || {};
                     return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
                 }
-                var seen = {}, order = [];
+                var urlNum = {}, orderCites = [];
                 document
                     .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
                     .forEach(function (el) {
                         var cs = citesOf(el);
-                        var key =
-                            cs.map(function (c) { return c.url; }).join("|") ||
-                            el.getAttribute("data-ref");
-                        if (!(key in seen)) {
-                            order.push(cs);
-                            seen[key] = order.length;
-                        }
-                        el.dataset.num = seen[key];
+                        var nums = [];
+                        cs.forEach(function (c) {
+                            var key = c.url || c.meta || "";
+                            if (!(key in urlNum)) {
+                                orderCites.push(c);
+                                urlNum[key] = orderCites.length;
+                            }
+                            nums.push(urlNum[key]);
+                        });
+                        el.dataset.nums = nums.join(",");
+                        el.dataset.num = nums[0] || "";
                     });
+                window.__refNum = {};
+                orderCites.forEach(function (c, i) {
+                    window.__refNum[c.url || c.meta || ""] = i + 1;
+                });
                 var list = document.getElementById("refsList");
                 if (list) {
-                    list.innerHTML = order
-                        .map(function (cs, i) {
-                            var inner = cs
-                                .map(function (c) {
-                                    var link = c.url
-                                        ? ' <a href="' + c.url +
-                                          '" target="_blank" rel="noopener">Open ↗</a>'
-                                        : "";
-                                    return (
-                                        (c.title
-                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
-                                            : "") +
-                                        esc(c.meta) + link
-                                    );
-                                })
-                                .join("<br />");
+                    list.innerHTML = orderCites
+                        .map(function (c, i) {
+                            var link = c.url
+                                ? ' <a href="' + c.url +
+                                  '" target="_blank" rel="noopener">Open ↗</a>'
+                                : "";
                             return (
                                 '<li><span class="rn">[' + (i + 1) +
-                                "]</span><span>" + inner + "</span></li>"
+                                "]</span><span>" +
+                                (c.title
+                                    ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                    : "") +
+                                esc(c.meta) + link + "</span></li>"
                             );
                         })
                         .join("");

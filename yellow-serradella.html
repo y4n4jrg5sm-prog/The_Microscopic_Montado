@@ -48,6 +48,13 @@
                 font-style: normal;
                 font-display: swap;
             }
+            @font-face {
+                font-family: "Tiny5";
+                src: url("fonts/Tiny5-Regular.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
 
             .hero-scroll {
                 position: relative;
@@ -63,7 +70,16 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 2560 / 1600; 
+                aspect-ratio: 2560 / 1600;
+                object-fit: cover;
+                object-position: center 30%;
+            }
+            .hero-bg-sticky::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(100deg, rgba(0, 0, 0, 0) 16%, rgba(0, 0, 0, 0.5) 48%, rgba(0, 0, 0, 0.82) 86%);
+                pointer-events: none;
             }
 
             .hero-copy {
@@ -81,6 +97,7 @@
                 line-height: 1.72;
                 margin: 0 0 1.3em;
                 text-align: left;
+                text-shadow: 0 1px 12px rgba(0, 0, 0, 0.7), 0 0 3px rgba(0, 0, 0, 0.6);
             }
             .hero-copy p:last-child {
                 margin-bottom: 0;
@@ -428,6 +445,7 @@
                 flex-wrap: wrap;
                 margin-bottom: 26px;
             }
+            .continue-bottom { text-align: center; margin: 30px 0 4px; }
             .continue-btn {
                 display: inline-flex;
                 align-items: center;
@@ -1017,8 +1035,8 @@
                 justify-content: center;
             }
             .poem-text {
-                font-family: var(--font-mono);
-                font-size: 14px;
+                font-family: "Tiny5", var(--font-mono);
+                font-size: 16px;
                 color: #555;
                 line-height: 1.9;
                 white-space: pre-line;
@@ -1206,6 +1224,18 @@
                 }
             }
 
+                    .relweb-section { margin: 50px 0; }
+            .relweb { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin: 40px 0 0; }
+            .relweb-card { border: 1px solid var(--line, #e2e2e2); padding: 24px 22px 26px; background: #fff; transition: box-shadow 0.3s, transform 0.3s; }
+            .relweb-card:hover { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); transform: translateY(-3px); }
+            .relweb-jump { text-decoration: none; color: inherit; display: block; }
+            .relweb-jump .rw-icon { width: auto; height: 60px; object-fit: contain; display: block; margin-bottom: 14px; }
+            .relweb-jump h3 { margin: 0 0 16px; font-family: var(--font-display, inherit); font-weight: 300; font-size: 21px; color: var(--ink, #111); font-style: italic; }
+            .relweb-jump:hover h3 { text-decoration: underline; }
+            .relweb-card ul { margin: 0; padding: 0; list-style: none; }
+            .relweb-card li { font-size: 13.5px; color: #555; padding: 9px 0; border-top: 1px solid var(--line, #eee); line-height: 1.5; }
+            .relweb-card li:first-child { border-top: none; }
+            .relweb-card li b { color: var(--ink, #111); font-weight: 600; }
         </style>
     </head>
     <body>
@@ -1243,7 +1273,7 @@
             <section class="hero-section">
                 <div class="hero-left">
                     <div class="continue-actions">
-                        <a class="continue-btn" href="index.html"
+                        <a class="continue-btn" href="index.html#field-guide"
                             ><span class="arrow" aria-hidden="true">←</span>
                             Continue exploring Field Guide</a>
                     </div>
@@ -1324,15 +1354,39 @@
             </section>
 
             <hr />
+            <style>
+                .montado-photo { margin: 40px 0; }
+                .montado-photo img { width: 100%; height: auto; display: block; border-radius: 0; }
+                .montado-photo figcaption { margin-top: 9px; font-size: 12px; line-height: 1.55; color: #888; }
+                .montado-photo figcaption a { color: var(--accent, #777); }
+                .montado-photo.diagram img { max-width: 760px; margin: 0 auto; border: 1px solid var(--line, #e2e2e2); border-radius: 0; background: #fff; }
+                .twoscale .caption-text { max-width: none; }
+                .twoscale a.el { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+            </style>
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ornithopus_sativus_sl6.jpg?width=1000" alt="Serradella plant, Ornithopus" loading="lazy" />
+                <figcaption>Serradella (Ornithopus) — a hardy pasture legume the montado is sown with, fixing nitrogen on thin, acid soils.<sup class="ref" data-ref="tsImg" role="button" tabindex="0" aria-label="image source"></sup></figcaption>
+            </figure>
+            <section class="content-block twoscale">
+                <div class="caption-text wide">Yellow serradella thrives where little else will — on thin, acid, phosphorus-poor ground — and still fixes nitrogen through its <a class="el" href="rhizobia.html">rhizobia</a>. That lets the montado green and hold carbon on the poorest soils, without fertiliser<sup class="ref" data-ref="tsSink" role="button" tabindex="0" aria-label="source"></sup> — a small legume doing, at landscape scale, the work that keeps a whole woodland productive and part of the global <a class="el" href="nitrogen-cycle.html">nitrogen cycle</a>.</div>
+            </section>
+
+            <hr />
+            <section class="relweb-section">
+                <div class="caption-text wide" style="margin-top: 6px">Yellow serradella is a hardy annual legume of poor, acid, sandy ground — fixing nitrogen with Bradyrhizobium, feeding the flock, and needing very little phosphate.<sup class="ref" data-ref="serr" role="button" tabindex="0" aria-label="source"></sup></div>
+                <div class="relweb"><div class="relweb-card"><a class="relweb-jump" href="bradyrhizobium.html"><img class="rw-icon" src="images/bradyrhizobium-1.webp" alt="Bradyrhizobium" loading="lazy" /><h3>Bradyrhizobium</h3></a><ul><li>Its nitrogen-fixing root partner<sup class="ref" data-ref="serr" role="button" tabindex="0" aria-label="source"></sup></li><li>A slow rhizobium suited to acid soil</li><li>Turning air into nitrogen in its nodules<sup class="ref" data-ref="rhiz" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="ammonia.html"><img class="rw-icon" src="images/NH3.webp" alt="Ammonia" loading="lazy" /><h3>Ammonia</h3></a><ul><li>Its rhizobia fix nitrogen into ammonia<sup class="ref" data-ref="rhiz" role="button" tabindex="0" aria-label="source"></sup></li><li>Feeding the pasture and the soil</li><li>Grown, not bought<sup class="ref" data-ref="montadoN" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="dihydrogen-phosphate.html"><img class="rw-icon" src="images/H2PO4.webp" alt="Dihydrogen phosphate" loading="lazy" /><h3>Dihydrogen phosphate</h3></a><ul><li>It thrives on very little phosphate<sup class="ref" data-ref="serr" role="button" tabindex="0" aria-label="source"></sup></li><li>Cutting a pasture's P-fertiliser need by ~30%<sup class="ref" data-ref="serr" role="button" tabindex="0" aria-label="source"></sup></li><li>Suited to the montado's poor ground<sup class="ref" data-ref="serr" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="oak-leaves-acorns.html"><img class="rw-icon" src="images/oak-leaves-acorns.webp" alt="Oak" loading="lazy" /><h3>Oak</h3></a><ul><li>Its fixed nitrogen enriches the soil<sup class="ref" data-ref="montadoN" role="button" tabindex="0" aria-label="source"></sup></li><li>Feeding animals and, in turn, the oaks</li><li>A self-renewing green manure<sup class="ref" data-ref="serr" role="button" tabindex="0" aria-label="source"></sup></li></ul></div></div>
+            </section>
+
+            <hr />
             <section class="poem-section">
-                <div class="poem-text">A yellow flower, a claw-shaped pod,
+                <div class="poem-text">A yellow flower,
+a claw-shaped pod,
 nothing you would stop to name.
 Yet it drinks nitrogen from the sky,
 asks the soil for almost nothing,
 and comes back on its own each spring.
 
-The montado is fed
-by what no one notices.</div>
+The montado is fed by what no one notices.</div>
             </section>
 
             <section class="refs-footer">
@@ -1342,34 +1396,9 @@ by what no one notices.</div>
 
             <hr />
 
-            <section class="explore-section">
-                <div class="explore-title">Explore Related Elements</div>
-                <div class="explore-scroller">
-                    <div class="explore-grid" id="exploreGrid">
-<a href="rhizobium-leguminosarum.html" class="explore-item">
-                            <img src="images/rhizobium-leguminosarum-4.webp" alt="Rhizobium leguminosarum" />
-                            <span>Rhizobium leguminosarum</span>
-                        </a>
-<a href="bradyrhizobium.html" class="explore-item">
-                            <img src="images/bradyrhizobium-1.webp" alt="Bradyrhizobium" />
-                            <span>Bradyrhizobium</span>
-                        </a>
-<a href="subterranean-clover.html" class="explore-item">
-                            <img src="images/subterranean-clover-0.webp" alt="Subterranean Clover" />
-                            <span>Subterranean Clover</span>
-                        </a>
-<a href="nitrogen-cycle.html" class="explore-item">
-                            <img src="images/nitrogen-cycle.webp" alt="The Nitrogen Cycle" />
-                            <span>The Nitrogen Cycle</span>
-                        </a>
-<a href="ammonia.html" class="explore-item">
-                            <img src="images/NH3.webp" alt="Ammonia" />
-                            <span>Ammonia</span>
-                        </a>
-                    </div>
-                    <button class="explore-arrow" id="exploreArrow" aria-label="Scroll right">›</button>
-                </div>
-            </section>
+            <div class="continue-bottom">
+                <a class="continue-btn" href="index.html#field-guide"><span class="arrow" aria-hidden="true">←</span> Continue exploring Field Guide</a>
+            </div>
         </div>
 
         <script>
@@ -1407,13 +1436,13 @@ by what no one notices.</div>
                     "1": [
                                         {
                                                             "t": "Ornithopus compressus L. (yellow serradella), Fabaceae — an annual pasture legume native to the Mediterranean, North Africa, W Asia and Macaronesia; the genus name means 'bird's foot' for its curved pods.",
-                                                            "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926669019304029"
+                                                            "url": "https://doi.org/10.1071/CP12194"
                                         }
                     ],
                     "2": [
                                         {
                                                             "t": "Serradellas are productive on deep, sandy, acidic soils in Mediterranean climates — often out-yielding subterranean clover — with tolerance of acid and P-deficient soils and potential to cut pasture P-fertiliser by ~30%. Nichols, P. G. H., et al. (pasture-legume reviews).",
-                                                            "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926669019304029"
+                                                            "url": "https://doi.org/10.1071/CP12194"
                                         }
                     ],
                     "3": [
@@ -1425,7 +1454,7 @@ by what no one notices.</div>
                     "4": [
                                         {
                                                             "t": "Yellow serradella self-regenerates annually from hard seed that softens slowly over summer, persisting from the soil seed-bank after a single sowing.",
-                                                            "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926669019304029"
+                                                            "url": "https://doi.org/10.1071/CP12194"
                                         }
                     ]
 };
@@ -1445,8 +1474,8 @@ by what no one notices.</div>
                     var byUrl = {};
                     if (typeof REFS !== "undefined")
                         for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
-                    var html =
-                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
+                    var map = window.__refNum || {};
+                    var html = "";
                     cites.forEach(function (c) {
                         var m = byUrl[c.url], title, meta;
                         if (m) {
@@ -1459,6 +1488,9 @@ by what no one notices.</div>
                                 p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
                         }
                         html +=
+                            '<div class="rc-kicker">Reference ' +
+                            (map[c.url] || "") +
+                            "</div>" +
                             (title
                                 ? '<div class="rc-title">' + esc(title) + "</div>"
                                 : "") +
@@ -1525,10 +1557,13 @@ by what no one notices.</div>
             })();
 
             var REFS = {
+                tsSink: { title: "Rhizobium–legume symbiosis &amp; nitrogen fixation under severe conditions", meta: "Zahran, H. H. (1999). Rhizobium–legume symbiosis and nitrogen fixation under severe conditions and in an arid climate. Microbiology and Molecular Biology Reviews, 63(4), 968–989.", url: "https://journals.asm.org/doi/10.1128/MMBR.63.4.968-989.1999" },
+                tsImg: { title: "Image: serradella (Ornithopus sativus)", meta: "Wikimedia Commons. Ornithopus sativus. Author: Stefan.lefnaer. CC BY-SA 4.0.", url: "https://commons.wikimedia.org/wiki/File:Ornithopus_sativus_sl6.jpg" },
+
                 "serr": {
                                 "title": "Ornithopus compressus — biology & agronomy",
                                 "meta": "Yellow serradella (Fabaceae): annual Mediterranean pasture legume of acid, sandy soils; nitrogen-fixing, protein-rich, hard-seeded and self-regenerating; low phosphate requirement. Species profile & pasture-legume reviews (Nichols et al. 2012).",
-                                "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926669019304029",
+                                "url": "https://doi.org/10.1071/CP12194",
                                 "n": 1
                 },
                 "montadoN": {
@@ -1653,41 +1688,42 @@ by what no one notices.</div>
                     var r = B[raw] || {};
                     return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
                 }
-                var seen = {}, order = [];
+                var urlNum = {}, orderCites = [];
                 document
                     .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
                     .forEach(function (el) {
                         var cs = citesOf(el);
-                        var key =
-                            cs.map(function (c) { return c.url; }).join("|") ||
-                            el.getAttribute("data-ref");
-                        if (!(key in seen)) {
-                            order.push(cs);
-                            seen[key] = order.length;
-                        }
-                        el.dataset.num = seen[key];
+                        var nums = [];
+                        cs.forEach(function (c) {
+                            var key = c.url || c.meta || "";
+                            if (!(key in urlNum)) {
+                                orderCites.push(c);
+                                urlNum[key] = orderCites.length;
+                            }
+                            nums.push(urlNum[key]);
+                        });
+                        el.dataset.nums = nums.join(",");
+                        el.dataset.num = nums[0] || "";
                     });
+                window.__refNum = {};
+                orderCites.forEach(function (c, i) {
+                    window.__refNum[c.url || c.meta || ""] = i + 1;
+                });
                 var list = document.getElementById("refsList");
                 if (list) {
-                    list.innerHTML = order
-                        .map(function (cs, i) {
-                            var inner = cs
-                                .map(function (c) {
-                                    var link = c.url
-                                        ? ' <a href="' + c.url +
-                                          '" target="_blank" rel="noopener">Open ↗</a>'
-                                        : "";
-                                    return (
-                                        (c.title
-                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
-                                            : "") +
-                                        esc(c.meta) + link
-                                    );
-                                })
-                                .join("<br />");
+                    list.innerHTML = orderCites
+                        .map(function (c, i) {
+                            var link = c.url
+                                ? ' <a href="' + c.url +
+                                  '" target="_blank" rel="noopener">Open ↗</a>'
+                                : "";
                             return (
                                 '<li><span class="rn">[' + (i + 1) +
-                                "]</span><span>" + inner + "</span></li>"
+                                "]</span><span>" +
+                                (c.title
+                                    ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                    : "") +
+                                esc(c.meta) + link + "</span></li>"
                             );
                         })
                         .join("");

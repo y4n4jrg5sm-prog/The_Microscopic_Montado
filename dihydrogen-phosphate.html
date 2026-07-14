@@ -48,6 +48,13 @@
                 font-style: normal;
                 font-display: swap;
             }
+            @font-face {
+                font-family: "Tiny5";
+                src: url("fonts/Tiny5-Regular.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
 
             .hero-scroll {
                 position: relative;
@@ -63,7 +70,9 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 2560 / 1600; 
+                aspect-ratio: 2560 / 1600;
+                object-fit: cover;
+                object-position: center 35%; 
             }
 
             .hero-copy {
@@ -428,6 +437,7 @@
                 flex-wrap: wrap;
                 margin-bottom: 26px;
             }
+            .continue-bottom { text-align: center; margin: 30px 0 4px; }
             .continue-btn {
                 display: inline-flex;
                 align-items: center;
@@ -1017,8 +1027,8 @@
                 justify-content: center;
             }
             .poem-text {
-                font-family: var(--font-mono);
-                font-size: 14px;
+                font-family: "Tiny5", var(--font-mono);
+                font-size: 16px;
                 color: #555;
                 line-height: 1.9;
                 white-space: pre-line;
@@ -1206,6 +1216,18 @@
                 }
             }
 
+                    .relweb-section { margin: 50px 0; }
+            .relweb { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin: 40px 0 0; }
+            .relweb-card { border: 1px solid var(--line, #e2e2e2); padding: 24px 22px 26px; background: #fff; transition: box-shadow 0.3s, transform 0.3s; }
+            .relweb-card:hover { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); transform: translateY(-3px); }
+            .relweb-jump { text-decoration: none; color: inherit; display: block; }
+            .relweb-jump .rw-icon { width: auto; height: 60px; object-fit: contain; display: block; margin-bottom: 14px; }
+            .relweb-jump h3 { margin: 0 0 16px; font-family: var(--font-display, inherit); font-weight: 300; font-size: 21px; color: var(--ink, #111); font-style: italic; }
+            .relweb-jump:hover h3 { text-decoration: underline; }
+            .relweb-card ul { margin: 0; padding: 0; list-style: none; }
+            .relweb-card li { font-size: 13.5px; color: #555; padding: 9px 0; border-top: 1px solid var(--line, #eee); line-height: 1.5; }
+            .relweb-card li:first-child { border-top: none; }
+            .relweb-card li b { color: var(--ink, #111); font-weight: 600; }
         </style>
     </head>
     <body>
@@ -1243,7 +1265,7 @@
             <section class="hero-section">
                 <div class="hero-left">
                     <div class="continue-actions">
-                        <a class="continue-btn" href="index.html"
+                        <a class="continue-btn" href="index.html#field-guide"
                             ><span class="arrow" aria-hidden="true">←</span>
                             Continue exploring Field Guide</a>
                     </div>
@@ -1305,15 +1327,39 @@
             </section>
 
             <hr />
-            <section class="poem-section">
-                <div class="poem-text">Not the mineral, not the stone —
-only this: one small dissolved ion,
-two hydrogens and a phosphate,
-adrift in a film of water
-at the tip of a root.
+            <style>
+                .montado-photo { margin: 40px 0; }
+                .montado-photo img { width: 100%; height: auto; display: block; border-radius: 0; }
+                .montado-photo figcaption { margin-top: 9px; font-size: 12px; line-height: 1.55; color: #888; }
+                .montado-photo figcaption a { color: var(--accent, #777); }
+                .montado-photo.diagram img { max-width: 640px; margin: 0 auto; border: 1px solid var(--line, #e2e2e2); border-radius: 0; background: #fff; }
+                .twoscale .caption-text { max-width: none; }
+                .twoscale a.el { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+            </style>
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Phosphorite_Mine_Oron_Israel_070313.jpg?width=1100" alt="A phosphate (phosphorite) open-pit mine" loading="lazy" />
+                <figcaption>A phosphate mine — almost all the phosphorus in fertiliser is dug from finite rock like this. The montado instead runs on phosphate that microbes free from its own soil.<sup class="ref" data-ref="tsImg" role="button" tabindex="0" aria-label="image source"></sup></figcaption>
+            </figure>
+            <section class="content-block twoscale">
+                <div class="caption-text wide">Dihydrogen phosphate is the one form of phosphorus a root can actually drink. Almost all soil phosphorus stays locked in minerals until a microbe frees it, so this tiny ion is the bottleneck the whole montado depends on. At the global scale phosphorus is a finite, mined resource that leaks from farmland as fertiliser runoff and drives eutrophication<sup class="ref" data-ref="tsSink" role="button" tabindex="0" aria-label="source"></sup>; the montado instead recycles it tightly, keeping the woodland productive and its carbon stored on very little added phosphate. The single ion and the planet’s phosphorus budget are the same story at two scales — trace it in the <a class="el" href="phosphorus-cycle.html">phosphorus cycle</a>, freed from minerals like <a class="el" href="variscite.html">variscite</a> by microbes such as <a class="el" href="bacillus-megaterium.html">Bacillus megaterium</a>.</div>
+            </section>
 
-The whole forest waits
-on so faint a thing.</div>
+            <hr />
+            <section class="relweb-section">
+                <div class="caption-text wide" style="margin-top: 6px">H₂PO₄⁻ is the only form of phosphorus a root can drink — scarce in the montado's acid soil, and kept in supply only by the microbes that free it from locked minerals.<sup class="ref" data-ref="hins" role="button" tabindex="0" aria-label="source"></sup></div>
+                <div class="relweb"><div class="relweb-card"><a class="relweb-jump" href="variscite.html"><img class="rw-icon" src="images/variscite.webp" alt="Variscite" loading="lazy" /><h3>Variscite</h3></a><ul><li>Phosphorus starts locked in minerals like it<sup class="ref" data-ref="hins" role="button" tabindex="0" aria-label="source"></sup></li><li>Out of the reach of roots<sup class="ref" data-ref="hins" role="button" tabindex="0" aria-label="source"></sup></li><li>Until microbes dissolve it<sup class="ref" data-ref="psb" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="bacillus-megaterium.html"><img class="rw-icon" src="images/bacillus-megaterium-2.webp" alt="Bacillus megaterium" loading="lazy" /><h3>Bacillus megaterium</h3></a><ul><li>Phosphate-solubilisers release it<sup class="ref" data-ref="meg" role="button" tabindex="0" aria-label="source"></sup></li><li>Using organic acids to free the mineral phosphorus<sup class="ref" data-ref="psb" role="button" tabindex="0" aria-label="source"></sup></li><li>The montado's true source of phosphorus<sup class="ref" data-ref="meg" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="oak-leaves-acorns.html"><img class="rw-icon" src="images/oak-leaves-acorns.webp" alt="Oak" loading="lazy" /><h3>Oak</h3></a><ul><li>The oak's roots take it up directly<sup class="ref" data-ref="hins" role="button" tabindex="0" aria-label="source"></sup></li><li>Building leaves, flowers and acorns from it<sup class="ref" data-ref="hins" role="button" tabindex="0" aria-label="source"></sup></li><li>Its scarcity sets how much can grow<sup class="ref" data-ref="hins" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="phosphorus-cycle.html"><img class="rw-icon" src="images/phosphorus-cycle.webp" alt="The Phosphorus Cycle" loading="lazy" /><h3>The Phosphorus Cycle</h3></a><ul><li>The plant-available step of the cycle<sup class="ref" data-ref="hins" role="button" tabindex="0" aria-label="source"></sup></li><li>Freed by microbes, taken up by roots<sup class="ref" data-ref="psb" role="button" tabindex="0" aria-label="source"></sup></li><li>Returned to soil as plants die back</li></ul></div></div>
+            </section>
+
+            <hr />
+            <section class="poem-section">
+                <div class="poem-text">Not the mineral,
+not the stone —
+only this:
+one small dissolved ion,
+two hydrogens and a phosphate,
+adrift in a film of water at the tip of a root.
+
+The whole forest waits on so faint a thing.</div>
             </section>
 
             <section class="refs-footer">
@@ -1323,34 +1369,9 @@ on so faint a thing.</div>
 
             <hr />
 
-            <section class="explore-section">
-                <div class="explore-title">Explore Related Elements</div>
-                <div class="explore-scroller">
-                    <div class="explore-grid" id="exploreGrid">
-<a href="variscite.html" class="explore-item">
-                            <img src="images/variscite.webp" alt="Variscite" />
-                            <span>Variscite</span>
-                        </a>
-<a href="phosphorus-cycle.html" class="explore-item">
-                            <img src="images/phosphorus-cycle.webp" alt="The Phosphorus Cycle" />
-                            <span>The Phosphorus Cycle</span>
-                        </a>
-<a href="bacillus-megaterium.html" class="explore-item">
-                            <img src="images/bacillus-megaterium-2.webp" alt="Bacillus megaterium" />
-                            <span>Bacillus megaterium</span>
-                        </a>
-<a href="bacillus-subtilis.html" class="explore-item">
-                            <img src="images/bacillus-subtilis-1.webp" alt="Bacillus subtilis" />
-                            <span>Bacillus subtilis</span>
-                        </a>
-<a href="rhizobia.html" class="explore-item">
-                            <img src="images/rhizobia-3.webp" alt="Rhizobia" />
-                            <span>Rhizobia</span>
-                        </a>
-                    </div>
-                    <button class="explore-arrow" id="exploreArrow" aria-label="Scroll right">›</button>
-                </div>
-            </section>
+            <div class="continue-bottom">
+                <a class="continue-btn" href="index.html#field-guide"><span class="arrow" aria-hidden="true">←</span> Continue exploring Field Guide</a>
+            </div>
         </div>
 
         <script>
@@ -1426,8 +1447,8 @@ on so faint a thing.</div>
                     var byUrl = {};
                     if (typeof REFS !== "undefined")
                         for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
-                    var html =
-                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
+                    var map = window.__refNum || {};
+                    var html = "";
                     cites.forEach(function (c) {
                         var m = byUrl[c.url], title, meta;
                         if (m) {
@@ -1440,6 +1461,9 @@ on so faint a thing.</div>
                                 p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
                         }
                         html +=
+                            '<div class="rc-kicker">Reference ' +
+                            (map[c.url] || "") +
+                            "</div>" +
                             (title
                                 ? '<div class="rc-title">' + esc(title) + "</div>"
                                 : "") +
@@ -1506,6 +1530,9 @@ on so faint a thing.</div>
             })();
 
             var REFS = {
+                tsSink: { title: "The story of phosphorus: a finite, mined resource", meta: "Cordell, D., Drangert, J.-O., & White, S. (2009). The story of phosphorus: global food security and food for thought. Global Environmental Change, 19(2), 292–305.", url: "https://doi.org/10.1016/j.gloenvcha.2008.10.009" },
+                tsImg: { title: "Image: phosphorite (phosphate rock) mine", meta: "Wikimedia Commons. Phosphorite mine near Oron, Negev, Israel. Author: Wilson44691. Public domain (CC0).", url: "https://commons.wikimedia.org/wiki/File:Phosphorite_Mine_Oron_Israel_070313.jpg" },
+
                 "hins": {
                                 "title": "Bioavailability of soil inorganic phosphorus in the rhizosphere",
                                 "meta": "Hinsinger, P. (2001). Bioavailability of soil inorganic P in the rhizosphere as affected by root-induced chemical changes: a review. Plant and Soil, 237, 173–195.",
@@ -1520,7 +1547,7 @@ on so faint a thing.</div>
                 },
                 "meg": {
                                 "title": "Cork oak forests soil bacteria (phosphate solubilisers)",
-                                "meta": "Mendes, R., et al. (2021). Microorganisms, 9(9), 1973. B. megaterium from cork-oak soils solubilises phosphate via organic acids, releasing phosphorus locked in the acid ground.",
+                                "meta": "Reis, F., et al. (2021). Microorganisms, 9(9), 1973. B. megaterium from cork-oak soils solubilises phosphate via organic acids, releasing phosphorus locked in the acid ground.",
                                 "url": "https://doi.org/10.3390/microorganisms9091973",
                                 "n": 3
                 }
@@ -1634,41 +1661,42 @@ on so faint a thing.</div>
                     var r = B[raw] || {};
                     return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
                 }
-                var seen = {}, order = [];
+                var urlNum = {}, orderCites = [];
                 document
                     .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
                     .forEach(function (el) {
                         var cs = citesOf(el);
-                        var key =
-                            cs.map(function (c) { return c.url; }).join("|") ||
-                            el.getAttribute("data-ref");
-                        if (!(key in seen)) {
-                            order.push(cs);
-                            seen[key] = order.length;
-                        }
-                        el.dataset.num = seen[key];
+                        var nums = [];
+                        cs.forEach(function (c) {
+                            var key = c.url || c.meta || "";
+                            if (!(key in urlNum)) {
+                                orderCites.push(c);
+                                urlNum[key] = orderCites.length;
+                            }
+                            nums.push(urlNum[key]);
+                        });
+                        el.dataset.nums = nums.join(",");
+                        el.dataset.num = nums[0] || "";
                     });
+                window.__refNum = {};
+                orderCites.forEach(function (c, i) {
+                    window.__refNum[c.url || c.meta || ""] = i + 1;
+                });
                 var list = document.getElementById("refsList");
                 if (list) {
-                    list.innerHTML = order
-                        .map(function (cs, i) {
-                            var inner = cs
-                                .map(function (c) {
-                                    var link = c.url
-                                        ? ' <a href="' + c.url +
-                                          '" target="_blank" rel="noopener">Open ↗</a>'
-                                        : "";
-                                    return (
-                                        (c.title
-                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
-                                            : "") +
-                                        esc(c.meta) + link
-                                    );
-                                })
-                                .join("<br />");
+                    list.innerHTML = orderCites
+                        .map(function (c, i) {
+                            var link = c.url
+                                ? ' <a href="' + c.url +
+                                  '" target="_blank" rel="noopener">Open ↗</a>'
+                                : "";
                             return (
                                 '<li><span class="rn">[' + (i + 1) +
-                                "]</span><span>" + inner + "</span></li>"
+                                "]</span><span>" +
+                                (c.title
+                                    ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                    : "") +
+                                esc(c.meta) + link + "</span></li>"
                             );
                         })
                         .join("");

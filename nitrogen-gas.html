@@ -48,6 +48,13 @@
                 font-style: normal;
                 font-display: swap;
             }
+            @font-face {
+                font-family: "Tiny5";
+                src: url("fonts/Tiny5-Regular.ttf") format("truetype");
+                font-weight: 400;
+                font-style: normal;
+                font-display: swap;
+            }
 
             .hero-scroll {
                 position: relative;
@@ -63,7 +70,9 @@
                 display: block;
                 width: 100%;
                 height: auto;
-                aspect-ratio: 2560 / 1600; 
+                aspect-ratio: 2560 / 1600;
+                object-fit: cover;
+                object-position: center 35%; 
             }
 
             .hero-copy {
@@ -428,6 +437,7 @@
                 flex-wrap: wrap;
                 margin-bottom: 26px;
             }
+            .continue-bottom { text-align: center; margin: 30px 0 4px; }
             .continue-btn {
                 display: inline-flex;
                 align-items: center;
@@ -1017,8 +1027,8 @@
                 justify-content: center;
             }
             .poem-text {
-                font-family: var(--font-mono);
-                font-size: 14px;
+                font-family: "Tiny5", var(--font-mono);
+                font-size: 16px;
                 color: #555;
                 line-height: 1.9;
                 white-space: pre-line;
@@ -1206,6 +1216,18 @@
                 }
             }
 
+                    .relweb-section { margin: 50px 0; }
+            .relweb { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin: 40px 0 0; }
+            .relweb-card { border: 1px solid var(--line, #e2e2e2); padding: 24px 22px 26px; background: #fff; transition: box-shadow 0.3s, transform 0.3s; }
+            .relweb-card:hover { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); transform: translateY(-3px); }
+            .relweb-jump { text-decoration: none; color: inherit; display: block; }
+            .relweb-jump .rw-icon { width: auto; height: 60px; object-fit: contain; display: block; margin-bottom: 14px; }
+            .relweb-jump h3 { margin: 0 0 16px; font-family: var(--font-display, inherit); font-weight: 300; font-size: 21px; color: var(--ink, #111); font-style: italic; }
+            .relweb-jump:hover h3 { text-decoration: underline; }
+            .relweb-card ul { margin: 0; padding: 0; list-style: none; }
+            .relweb-card li { font-size: 13.5px; color: #555; padding: 9px 0; border-top: 1px solid var(--line, #eee); line-height: 1.5; }
+            .relweb-card li:first-child { border-top: none; }
+            .relweb-card li b { color: var(--ink, #111); font-weight: 600; }
         </style>
     </head>
     <body>
@@ -1243,7 +1265,7 @@
             <section class="hero-section">
                 <div class="hero-left">
                     <div class="continue-actions">
-                        <a class="continue-btn" href="index.html"
+                        <a class="continue-btn" href="index.html#field-guide"
                             ><span class="arrow" aria-hidden="true">←</span>
                             Continue exploring Field Guide</a>
                     </div>
@@ -1304,11 +1326,34 @@
             </section>
 
             <hr />
+            <style>
+                .montado-photo { margin: 40px 0; }
+                .montado-photo img { width: 100%; height: auto; display: block; border-radius: 0; }
+                .montado-photo figcaption { margin-top: 9px; font-size: 12px; line-height: 1.55; color: #888; }
+                .montado-photo figcaption a { color: var(--accent, #777); }
+                .montado-photo.diagram img { max-width: 760px; margin: 0 auto; border: 1px solid var(--line, #e2e2e2); border-radius: 0; background: #fff; }
+                .twoscale .caption-text { max-width: none; }
+                .twoscale a.el { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+            </style>
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Lightning_over_Oradea_Romania_cropped.jpg?width=1000" alt="Lightning over a landscape" loading="lazy" />
+                <figcaption>Lightning — the one natural force besides microbes that can split N₂ from the air, fixing a trace of nitrogen with each strike.<sup class="ref" data-ref="tsImg" role="button" tabindex="0" aria-label="image source"></sup></figcaption>
+            </figure>
+            <section class="content-block twoscale">
+                <div class="caption-text wide">Nitrogen gas makes up most of the air, yet almost nothing alive can touch it — the triple bond is that strong. Breaking N₂ into ammonia inside a <a class="el" href="rhizobia.html">rhizobium</a>’s nodule is the one microscopic step that lets the montado build protein and grow. Scaled up, biological fixation is why these woodlands stay fertile and productive without synthetic fertiliser, feeding the greening canopy and the carbon it stores.<sup class="ref" data-ref="tsSink" role="button" tabindex="0" aria-label="source"></sup> A whole global <a class="el" href="nitrogen-cycle.html">nitrogen cycle</a> turns on a reaction you need a microbe to see.</div>
+            </section>
+
+            <hr />
+            <section class="relweb-section">
+                <div class="caption-text wide" style="margin-top: 6px">Nitrogen gas is 78% of the air, yet locked behind a triple bond almost nothing can break. In the montado it is the bacteria in legume roots that open it — for free, at soil temperature.<sup class="ref" data-ref="fix" role="button" tabindex="0" aria-label="source"></sup></div>
+                <div class="relweb"><div class="relweb-card"><a class="relweb-jump" href="ammonia.html"><img class="rw-icon" src="images/NH3.webp" alt="Ammonia" loading="lazy" /><h3>Ammonia</h3></a><ul><li>Fixation turns N₂ into ammonia<sup class="ref" data-ref="fix" role="button" tabindex="0" aria-label="source"></sup></li><li>The first usable form of nitrogen<sup class="ref" data-ref="fix" role="button" tabindex="0" aria-label="source"></sup></li><li>Made without heat or pressure<sup class="ref" data-ref="hb" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="rhizobia.html"><img class="rw-icon" src="images/rhizobia-3.webp" alt="Rhizobia" loading="lazy" /><h3>Rhizobia</h3></a><ul><li>Only microbes like rhizobia can break its bond<sup class="ref" data-ref="fix" role="button" tabindex="0" aria-label="source"></sup></li><li>Nitrogenase does what industry does with fire<sup class="ref" data-ref="hb" role="button" tabindex="0" aria-label="source"></sup></li><li>In the montado, inside legume roots<sup class="ref" data-ref="montadoN" role="button" tabindex="0" aria-label="source"></sup></li></ul></div><div class="relweb-card"><a class="relweb-jump" href="nitrogen-cycle.html"><img class="rw-icon" src="images/nitrogen-cycle.webp" alt="The Nitrogen Cycle" loading="lazy" /><h3>The Nitrogen Cycle</h3></a><ul><li>The atmospheric reservoir of the cycle<sup class="ref" data-ref="cycle" role="button" tabindex="0" aria-label="source"></sup></li><li>Fixed, taken up, and eventually returned<sup class="ref" data-ref="cycle" role="button" tabindex="0" aria-label="source"></sup></li><li>The loop that keeps poor soil fertile<sup class="ref" data-ref="montadoN" role="button" tabindex="0" aria-label="source"></sup></li></ul></div></div>
+            </section>
+
+            <hr />
             <section class="poem-section">
-                <div class="poem-text">The whole sky is nitrogen
-and the leaf beneath it goes hungry.
-Two atoms, tied in a knot
-no fire in a plant can burn through.
+                <div class="poem-text">The whole sky is nitrogen and the leaf beneath it goes hungry.
+Two atoms,
+tied in a knot no fire in a plant can burn through.
 
 It took us a factory.
 It takes the clover a bacterium,
@@ -1323,34 +1368,9 @@ and asking for nothing.</div>
 
             <hr />
 
-            <section class="explore-section">
-                <div class="explore-title">Explore Related Elements</div>
-                <div class="explore-scroller">
-                    <div class="explore-grid" id="exploreGrid">
-<a href="ammonia.html" class="explore-item">
-                            <img src="images/NH3.webp" alt="Ammonia" />
-                            <span>Ammonia</span>
-                        </a>
-<a href="nitrogen-cycle.html" class="explore-item">
-                            <img src="images/nitrogen-cycle.webp" alt="The Nitrogen Cycle" />
-                            <span>The Nitrogen Cycle</span>
-                        </a>
-<a href="bradyrhizobium.html" class="explore-item">
-                            <img src="images/bradyrhizobium-1.webp" alt="Bradyrhizobium" />
-                            <span>Bradyrhizobium</span>
-                        </a>
-<a href="rhizobium-leguminosarum.html" class="explore-item">
-                            <img src="images/rhizobium-leguminosarum-4.webp" alt="Rhizobium leguminosarum" />
-                            <span>Rhizobium leguminosarum</span>
-                        </a>
-<a href="subterranean-clover.html" class="explore-item">
-                            <img src="images/subterranean-clover-0.webp" alt="Subterranean Clover" />
-                            <span>Subterranean Clover</span>
-                        </a>
-                    </div>
-                    <button class="explore-arrow" id="exploreArrow" aria-label="Scroll right">›</button>
-                </div>
-            </section>
+            <div class="continue-bottom">
+                <a class="continue-btn" href="index.html#field-guide"><span class="arrow" aria-hidden="true">←</span> Continue exploring Field Guide</a>
+            </div>
         </div>
 
         <script>
@@ -1426,8 +1446,8 @@ and asking for nothing.</div>
                     var byUrl = {};
                     if (typeof REFS !== "undefined")
                         for (var k in REFS) byUrl[REFS[k].url] = REFS[k];
-                    var html =
-                        '<div class="rc-kicker">Reference ' + (num || n) + "</div>";
+                    var map = window.__refNum || {};
+                    var html = "";
                     cites.forEach(function (c) {
                         var m = byUrl[c.url], title, meta;
                         if (m) {
@@ -1440,6 +1460,9 @@ and asking for nothing.</div>
                                 p.length > 1 ? p[p.length - 1].split(/\. /)[0] : "";
                         }
                         html +=
+                            '<div class="rc-kicker">Reference ' +
+                            (map[c.url] || "") +
+                            "</div>" +
                             (title
                                 ? '<div class="rc-title">' + esc(title) + "</div>"
                                 : "") +
@@ -1506,6 +1529,9 @@ and asking for nothing.</div>
             })();
 
             var REFS = {
+                tsSink: { title: "Rhizobium–legume symbiosis &amp; nitrogen fixation under severe conditions", meta: "Zahran, H. H. (1999). Rhizobium–legume symbiosis and nitrogen fixation under severe conditions and in an arid climate. Microbiology and Molecular Biology Reviews, 63(4), 968–989.", url: "https://journals.asm.org/doi/10.1128/MMBR.63.4.968-989.1999" },
+                tsImg: { title: "Image: lightning (natural nitrogen fixation)", meta: "Wikimedia Commons. Lightning over Oradea, Romania. Author: Mircea Madau (Nelumadau). Public domain.", url: "https://commons.wikimedia.org/wiki/File:Lightning_over_Oradea_Romania_cropped.jpg" },
+
                 "fix": {
                                 "n": 1,
                                 "title": "The global nitrogen cycle in the twenty-first century",
@@ -1640,41 +1666,42 @@ and asking for nothing.</div>
                     var r = B[raw] || {};
                     return [{ title: r.title || "", meta: r.meta || "", url: r.url || "" }];
                 }
-                var seen = {}, order = [];
+                var urlNum = {}, orderCites = [];
                 document
                     .querySelectorAll(".hero-ref[data-ref], sup.ref[data-ref]")
                     .forEach(function (el) {
                         var cs = citesOf(el);
-                        var key =
-                            cs.map(function (c) { return c.url; }).join("|") ||
-                            el.getAttribute("data-ref");
-                        if (!(key in seen)) {
-                            order.push(cs);
-                            seen[key] = order.length;
-                        }
-                        el.dataset.num = seen[key];
+                        var nums = [];
+                        cs.forEach(function (c) {
+                            var key = c.url || c.meta || "";
+                            if (!(key in urlNum)) {
+                                orderCites.push(c);
+                                urlNum[key] = orderCites.length;
+                            }
+                            nums.push(urlNum[key]);
+                        });
+                        el.dataset.nums = nums.join(",");
+                        el.dataset.num = nums[0] || "";
                     });
+                window.__refNum = {};
+                orderCites.forEach(function (c, i) {
+                    window.__refNum[c.url || c.meta || ""] = i + 1;
+                });
                 var list = document.getElementById("refsList");
                 if (list) {
-                    list.innerHTML = order
-                        .map(function (cs, i) {
-                            var inner = cs
-                                .map(function (c) {
-                                    var link = c.url
-                                        ? ' <a href="' + c.url +
-                                          '" target="_blank" rel="noopener">Open ↗</a>'
-                                        : "";
-                                    return (
-                                        (c.title
-                                            ? '<span class="rt">' + esc(c.title) + "</span><br />"
-                                            : "") +
-                                        esc(c.meta) + link
-                                    );
-                                })
-                                .join("<br />");
+                    list.innerHTML = orderCites
+                        .map(function (c, i) {
+                            var link = c.url
+                                ? ' <a href="' + c.url +
+                                  '" target="_blank" rel="noopener">Open ↗</a>'
+                                : "";
                             return (
                                 '<li><span class="rn">[' + (i + 1) +
-                                "]</span><span>" + inner + "</span></li>"
+                                "]</span><span>" +
+                                (c.title
+                                    ? '<span class="rt">' + esc(c.title) + "</span><br />"
+                                    : "") +
+                                esc(c.meta) + link + "</span></li>"
                             );
                         })
                         .join("");

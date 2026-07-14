@@ -9,3 +9,13 @@ PRESENTATION-SCRIPT.md
 
 # 临时/未命名图片
 images/未命名.webp
+
+# 提交/作品集文件（体积大，且不属于网站）
+*.pdf
+*.docx
+Whole Year Portfolio.pdf
+
+# 内部工作文档（不发布到网站）
+IRP-PDF-逐页脚本.md
+Field-Guide-关联图谱.md
+引用核对报告.md

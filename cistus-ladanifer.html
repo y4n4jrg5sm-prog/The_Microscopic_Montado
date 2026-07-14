@@ -303,6 +303,7 @@
                 flex-wrap: wrap;
                 margin-bottom: 26px;
             }
+            .continue-bottom { text-align: center; margin: 30px 0 4px; }
             .continue-btn {
                 display: inline-flex;
                 align-items: center;
@@ -799,7 +800,7 @@
             <section class="hero-section">
                 <div class="hero-left">
                     <div class="continue-actions">
-                        <a class="continue-btn" href="index.html"
+                        <a class="continue-btn" href="index.html#field-guide"
                             ><span class="arrow" aria-hidden="true">←</span>
                             Continue exploring Field Guide</a
                         >
@@ -835,18 +836,9 @@
                 <div class="hero-right">
                     <figure class="wc-figure">
                         <div class="wc-slot">
-                            <img
-                                id="heroImg"
-                                src="images/cistus-ladanifer-4.webp"
-                                alt="Cistus ladanifer flower, watercolour — white petals with crimson basal blotches"
-                                onerror="
-                                    this.style.display = 'none';
-                                    document.getElementById('heroSvg').style.display = 'block';
-                                "
-                            />
                             <svg
                                 id="heroSvg"
-                                style="display: none"
+                                style="display: block"
                                 viewBox="0 0 460 380"
                                 xmlns="http://www.w3.org/2000/svg"
                                 role="img"
@@ -974,8 +966,8 @@
             <figure class="section-photos">
                 <div class="ph single">
                     <img
-                        src="images/cistus-ladanifer-flower.webp"
-                        alt="Cistus ladanifer in flower — white petals with a crimson basal blotch"
+                        src="https://commons.wikimedia.org/wiki/Special:FilePath/Cistus_ladanifer,_Gum_labdanum.jpg?width=1200"
+                        alt="Cistus ladanifer in flower — white petals above resinous, aromatic leaves"
                         loading="lazy"
                         onerror="
                             this.style.display='none';
@@ -987,8 +979,11 @@
                     >
                 </div>
                 <figcaption class="credit">
-                    The flower most farmers know before they know the name.
-                    <b>Credit: add field photo / CC-BY source ↗</b>
+                    The flower most farmers know before they know the name. Each
+                    bloom lasts a single day; the leaves stay coated in labdanum,
+                    the resin that makes the shrub both fragrant and flammable.
+                    Photo: Haggeswood,
+                    <a href="https://commons.wikimedia.org/wiki/File:Cistus_ladanifer,_Gum_labdanum.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY 4.0.
                 </figcaption>
             </figure>
 
@@ -1154,8 +1149,8 @@
             <figure class="section-photos">
                 <div class="ph single">
                     <img
-                        src="images/cistus-ladanifer-sao-domingos.webp"
-                        alt="Esteva colonising the red tailings of São Domingos mine, Alentejo"
+                        src="https://commons.wikimedia.org/wiki/Special:FilePath/Chimney_over_a_purple_hill_in_Mina_de_S%C3%A3o_Domingos.jpg?width=1200"
+                        alt="The purple-red spoil heaps of São Domingos mine, Mértola, with a surviving chimney"
                         loading="lazy"
                         onerror="
                             this.style.display='none';
@@ -1168,8 +1163,10 @@
                 </div>
                 <figcaption class="credit">
                     São Domingos, Mértola — one of the oldest mine scars in the
-                    Alentejo, slowly greening from the roots up.
-                    <b>Credit: add photo / CC-BY source ↗</b>
+                    Alentejo. The spoil is acidic and metal-rich, and esteva is
+                    among the few shrubs that will root in ground like this.
+                    Photo: Rosino,
+                    <a href="https://commons.wikimedia.org/wiki/File:Chimney_over_a_purple_hill_in_Mina_de_S%C3%A3o_Domingos.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 2.0.
                 </figcaption>
             </figure>
 
@@ -1183,6 +1180,24 @@
                 </p>
             </div>
 
+            <hr />
+            <style>
+                .montado-photo { margin: 40px 0; }
+                .montado-photo img { width: 100%; height: auto; display: block; border-radius: 0; }
+                .montado-photo figcaption { margin-top: 9px; font-size: 12px; line-height: 1.55; color: #888; }
+                .montado-photo figcaption a { color: var(--accent, #777); }
+                .montado-photo.diagram img { max-width: 640px; margin: 0 auto; border: 1px solid var(--line, #e2e2e2); border-radius: 0; background: #fff; }
+                .twoscale .caption-text { max-width: none; }
+                .twoscale a.el { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+            </style>
+            <figure class="montado-photo">
+                <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Cistus_ladanifer_molinos.jpg?width=1000" alt="White flower of Cistus ladanifer (gum rockrose)" loading="lazy" />
+                <figcaption>Cistus ladanifer, the gum rockrose — a resin-coated, fire-adapted shrub of the montado understorey (here in a Spanish dehesa).<sup class="ref" data-ref="tsImg" role="button" tabindex="0" aria-label="image source"></sup></figcaption>
+            </figure>
+            <section class="content-block twoscale">
+                <div class="caption-text wide">Cistus ladanifer is the montado’s comeback shrub — resin-coated, fire-adapted, first to return after drought or burning. It shelters soil, feeds mycorrhizae and holds ground while <a class="el" href="oak-leaves-acorns.html">oak</a> seedlings establish, part of what lets the woodland persist and keep storing carbon<sup class="ref" data-ref="tsSink" role="button" tabindex="0" aria-label="source"></sup> under a hotter, drier Mediterranean climate. A single hardy shrub, multiplied across the hills, is part of how the montado answers a warming world and stays inside the <a class="el" href="carbon-cycle.html">carbon cycle</a>.</div>
+            </section>
+
             <section class="refs-footer">
                 <div class="sec-head">Sources &amp; reading</div>
                 <ol class="refs-list" id="refsList"></ol>
@@ -1190,77 +1205,9 @@
 
             <hr />
 
-            <section class="explore-section">
-                <div class="explore-title">Explore Related Elements</div>
-                <div class="explore-scroller">
-                    <div class="explore-grid" id="exploreGrid">
-                        <a href="rhizobia.html" class="explore-item">
-                            <span class="thumb"
-                                ><img
-                                    src="images/rhizobia-3.webp"
-                                    alt="Rhizobia"
-                                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
-                            /></span>
-                            <span>Rhizobia</span>
-                        </a>
-                        <a
-                            href="pseudomonas-fluorescens.html"
-                            class="explore-item"
-                        >
-                            <span class="thumb"
-                                ><img
-                                    src="images/pseudomonas-fluorescens-1.webp"
-                                    alt="Pseudomonas fluorescens"
-                                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
-                            /></span>
-                            <span><i>Pseudomonas</i></span>
-                        </a>
-                        <a href="bacillus-subtilis.html" class="explore-item">
-                            <span class="thumb"
-                                ><img
-                                    src="images/bacillus-subtilis-1.webp"
-                                    alt="Bacillus"
-                                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
-                            /></span>
-                            <span><i>Bacillus</i></span>
-                        </a>
-                        <a href="bryobacter-aggregatus.html" class="explore-item">
-                            <span class="thumb"
-                                ><img
-                                    src="images/bryobacter-aggregatus-7.webp"
-                                    alt="Acidobacteria"
-                                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
-                            /></span>
-                            <span>Acidobacteria</span>
-                        </a>
-                        <a
-                            href="phytophthora-cinnamomi.html"
-                            class="explore-item"
-                        >
-                            <span class="thumb"
-                                ><img
-                                    src="images/phytophthora-cinnamomi-4.webp"
-                                    alt="Phytophthora cinnamomi"
-                                    onerror="this.style.display='none';this.parentNode.innerHTML='<span class=\'dot-fallback\'></span>';"
-                            /></span>
-                            <span><i>Phytophthora</i></span>
-                        </a>
-                        <a href="index.html" class="explore-item">
-                            <span class="thumb"
-                                ><span class="dot-fallback"></span
-                            ></span>
-                            <span>← All 23 organisms</span>
-                        </a>
-                    </div>
-                    <button
-                        class="explore-arrow"
-                        id="exploreArrow"
-                        aria-label="Scroll right"
-                    >
-                        ›
-                    </button>
-                </div>
-            </section>
+            <div class="continue-bottom">
+                <a class="continue-btn" href="index.html#field-guide"><span class="arrow" aria-hidden="true">←</span> Continue exploring Field Guide</a>
+            </div>
         </div>
 
         <footer>
@@ -1270,6 +1217,9 @@
         <script>
             
             var REFS = {
+                tsSink: { title: "Cork oak wooded grasslands: plant diversity, pasture &amp; soil carbon", meta: "Seddaiu, G., Bagella, S., Pulina, A., et al. (2018). Mediterranean cork oak wooded grasslands: synergies and trade-offs between plant diversity, pasture production and soil carbon. Agroforestry Systems, 92, 893–908.", url: "https://doi.org/10.1007/s10457-018-0225-7" },
+                tsImg: { title: "Image: Cistus ladanifer (gum rockrose)", meta: "Wikimedia Commons. Cistus ladanifer, Alcalá de los Gazules, Cádiz, Spain (a Natura 2000 dehesa). Author: Xemenendura. CC BY-SA 4.0.", url: "https://commons.wikimedia.org/wiki/File:Cistus_ladanifer_molinos.jpg" },
+
                 1: {
                     n: 1,
                     title:
