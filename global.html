@@ -280,6 +280,19 @@
                 line-height: 1.1;
                 margin-top: 0px;
             }
+            .climate-caption__source {
+                font-family: var(--font-main);
+                font-size: clamp(10px, 1.15vw, 13px);
+                font-weight: 400;
+                color: #111;
+                opacity: 0.8;
+                margin-top: 10px;
+                max-width: min(92vw, 640px);
+                line-height: 1.35;
+                text-shadow: var(--cap-shadow);
+                pointer-events: none;
+                user-select: none;
+            }
             .climate-year {
                 position: relative; 
                 margin-bottom: clamp(
@@ -466,6 +479,7 @@
                 </div>
                 <div class="climate-caption__title" id="capTitle"></div>
                 <div class="climate-caption__sub" id="capSub"></div>
+                <div class="climate-caption__source" id="capSource"></div>
             </div>
 
             <div class="legend" id="legendTemp">
@@ -503,6 +517,8 @@
                         "How much warmer or cooler<br>than the 1951–1980 average",
                     years: ["1986-1995", "1996-2005", "2006-2015", "2016-2025"],
                     legend: "temp",
+                    source:
+                        "Data: Berkeley Earth, gridded land + ocean temperature (CC BY-NC 4.0)",
                 },
                 {
                     src: "videos/ndvi_anomaly_web",
@@ -511,6 +527,8 @@
                         "Where plant cover grew denser or thinned out<br>than the 1982–1990 average",
                     years: ["1991-2000", "2001-2010", "2011-2020", "2021-2022"],
                     legend: "ndvi",
+                    source:
+                        "Data: NASA GIMMS NDVI3g+ (AVHRR), NASA / ORNL DAAC · doi:10.3334/ORNLDAAC/2187",
                 },
             ];
             var BG_VIDEOS = VIDEOS.map(function (x) {
@@ -590,6 +608,7 @@
             var yearFront = 0; 
             var capTitleEl = document.getElementById("capTitle");
             var capSubEl = document.getElementById("capSub");
+            var capSourceEl = document.getElementById("capSource");
             var legendEls = {
                 temp: document.getElementById("legendTemp"),
                 ndvi: document.getElementById("legendNdvi"),
@@ -612,7 +631,8 @@
                 if (!meta) return;
                 capTitleEl.textContent = meta.title;
                 capSubEl.innerHTML = meta.subtitle;
-                
+                if (capSourceEl) capSourceEl.innerHTML = meta.source || "";
+
                 lastQuarter = 0;
                 setYearInstant(meta.years[0]);
                 
